@@ -13,7 +13,7 @@ int main() {
 	sf::Sprite background;
 	std::vector<sf::Sprite> vecSprite;
 
-	
+	//Jopa cpp
 	sf::Texture back,p1;
 	sf::Image image,pimage;
 	image.create(63, 63, sf::Color::Green); //18x20
