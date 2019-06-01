@@ -1,0 +1,1 @@
+(int x, int y, int id, bool solid,)

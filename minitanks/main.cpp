@@ -1,12 +1,18 @@
 #include "Renderer.h"
-#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <math.h>
+#include "TileMap.h"
 #define FPS 60
+#define width 1152
+#define height 1024
+
 
 int main() {
-	sf::RenderWindow mWindow(sf::VideoMode(1152, 1024), "Main window", sf::Style::Close | sf::Style::Titlebar);
+	sf::RenderWindow mWindow(sf::VideoMode(width, height), "Main window", sf::Style::Close | sf::Style::Titlebar);
+	mWindow.setFramerateLimit(FPS);
 
+	TileMap map("example_map.txt", 32, width, height);
 
 
 	while (mWindow.isOpen()) {
@@ -22,8 +28,9 @@ int main() {
 		}
 
 		mWindow.clear();
+		mWindow.draw(map);
 		mWindow.display();
 	}
-	
+
 	return 0;
 }
