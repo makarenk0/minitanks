@@ -1,1 +1,1 @@
-(int x, int y, int id, bool solid,)
+(int x, int y, int id, int currentHealth, bool solid,)

@@ -6,11 +6,13 @@
 class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
-	TileMap(std::string FILE, int tileSize, int width, int height);
+	TileMap(std::string FILE, int tileSize, int width, int height, bool randomMap);
+	~TileMap();
+	void changeCurrentHealth(int xPoint, int yPoint, int delta);
+	bool checkCollisionOfPoint(int xPoint, int yPoint);
 private:
-	sf::VertexArray tiles;
-	sf::Texture tileTexture;
-	sf::Image image;
+	sf::VertexArray tiles, overlay;
+	sf::Texture tileTexture, overlayTexture;
 	int tileSize;
 	int width;
 	int height;
@@ -18,14 +20,17 @@ private:
 	std::string buf;
 	int x;
 	int y;
-	int readValue(std::string str);
-	double last;
+	int last;
 	int id;
-
+	int curHealth;
 	bool solid;
-	std::vector<std::vector<bool>> solidBool;
-	std::vector<bool> buffer;
 
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	std::vector<std::vector<bool>> solidBool;
+	std::vector<std::vector<int>> currentHealth;
+
+	std::string readValue(std::string str);
+	void generateMapRandom();
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const; // prefix "virtual" helps to call my overrided function "draw"()
+	                                                                            // when i "window.draw(map)" this function is called
 };
 
