@@ -3,24 +3,29 @@
 #include <iostream>
 #include <math.h>
 #include "TileMap.h"
+#include "Player.h"
 
 #define FPS 60
-#define width 1024
-#define height 1024
+#define width 800
+#define height 608
+#define cellWidth 32
 
 
 int main() {
 	sf::RenderWindow mWindow(sf::VideoMode(width, height), "Main window", sf::Style::Close | sf::Style::Titlebar);
+	
 	mWindow.setFramerateLimit(FPS);
 
-	TileMap map("example_map.txt", 32, width, height, true);
-	map.changeCurrentHealth(0, 0, -5);  //test of change health function
-	map.changeCurrentHealth(35, 0, -4);
-	map.changeCurrentHealth(67, 0, -3);
-	map.changeCurrentHealth(100, 0, 0);
+	TileMap map("example_map", cellWidth, width, height, false, false);
+	Player pl("Player.png", 13, 13, 26, 26, 2, 1, cellWidth, &map);
+	
+//	map.changeCurrentHealth(0, 0, -5);  //test of change health function
+//	map.changeCurrentHealth(35, 0, -4);
+//	map.changeCurrentHealth(67, 0, -3);
+//	map.changeCurrentHealth(100, 0, 0);
 
 
-	//std::cout << map.checkCollisionOfPoint(36, 40);
+	std::cout << map.checkCollisionOfPoint(416, 160);
 
 	//for fps
 	sf::Clock clock;
@@ -29,7 +34,7 @@ int main() {
 	//for fps
 
 	while (mWindow.isOpen()) {
-		
+	
 		time = clock.getElapsedTime().asSeconds();
 		fpscount++;
 		if (time >= 1) {
@@ -51,12 +56,23 @@ int main() {
 		}
 
 		mWindow.clear();
-		try {
-			mWindow.draw(map);
+
+		//for map
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::I)) {  //this event is when user press "editor" to create own map
+			map.initMap("example_map", cellWidth, width, height, false, true);
 		}
-		catch (int i) {
-			std::cout << i;
+		if (map.getEditMode()) {   //checking if user switched to editor mod
+			map.editMap(mWindow);
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::O)) {  //this event is when user press "exit" from editor
+				map.setExitEditMode(true);
+			}
 		}
+		//for map
+
+		pl.updatePlayer();
+		mWindow.draw(map);
+		mWindow.draw(pl);
+		
 		
 		mWindow.display();
 	}
