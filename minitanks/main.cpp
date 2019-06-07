@@ -1,49 +1,36 @@
-#include "Renderer.h"
+
+#include "toolbox.h"
+#include "TileMap.h"
+#include "Player.h"
+#include "Widget.h"
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <math.h>
-#include "TileMap.h"
-#include "Player.h"
+#define FPS 60
+#define mapHeight 768
+#define mapWidth 864
+#define widgetWidth 192
+
 
 #define FPS 60
-#define width 800
-#define height 608
-#define cellWidth 32
+#define cellWidth 48
+#define playerSize
 
 
 int main() {
-	sf::RenderWindow mWindow(sf::VideoMode(width, height), "Main window", sf::Style::Close | sf::Style::Titlebar);
+  sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
+                           "Main window",
+                           sf::Style::Close | sf::Style::Titlebar);
+
+	TileMap map("example_map", cellWidth, mapWidth, mapHeight, false, false);
+	Player pl("Player.png", 13, 13, playerSize, playerSize, 2, 1, cellWidth, &map);
 	
-	mWindow.setFramerateLimit(FPS);
-
-	TileMap map("example_map", cellWidth, width, height, false, false);
-	Player pl("Player.png", 13, 13, 26, 26, 2, 1, cellWidth, &map);
-	
-//	map.changeCurrentHealth(0, 0, -5);  //test of change health function
-//	map.changeCurrentHealth(35, 0, -4);
-//	map.changeCurrentHealth(67, 0, -3);
-//	map.changeCurrentHealth(100, 0, 0);
-
-
-	std::cout << map.checkCollisionOfPoint(416, 160);
-
-	//for fps
-	sf::Clock clock;
-	float time;
-	int fpscount = 0;
-	//for fps
-
+  Widget p1Widget(sf::Vector2f(0, 0),widgetWidth, mapHeight, true);
+  Widget p2Widget(sf::Vector2f(mapWidth + widgetWidth, 0), widgetWidth, mapHeight, false);
+  p1Widget.updateHealth(2);
+  p2Widget.updateHealth(0);
 	while (mWindow.isOpen()) {
-	
-		time = clock.getElapsedTime().asSeconds();
-		fpscount++;
-		if (time >= 1) {
-			clock.restart();
-			system("cls");
-			std::cout<<"fps:"<< fpscount;
-			fpscount = 0;
-		}
-		
 
 		sf::Event event;
 		while (mWindow.pollEvent(event)) {
@@ -72,7 +59,8 @@ int main() {
 		pl.updatePlayer();
 		mWindow.draw(map);
 		mWindow.draw(pl);
-		
+			p1Widget.draw(mWindow);
+	p2Widget.draw(mWindow);
 		
 		mWindow.display();
 	}
