@@ -23,12 +23,12 @@ Widget::Widget(sf::Vector2f position, int width, int height, bool firstPlayer) {
     std::cout << "error loading background" << std::endl;
   if (!emptyHeart.loadFromFile("assets\\emptyheart.png"))
     std::cout << "error loading background" << std::endl;
-  heart1.setPosition(heartRect.getPosition().x + heartRect.getSize().x * 1 / 7,
-                     heartRect.getPosition().y);
-  heart2.setPosition(heartRect.getPosition().x + heartRect.getSize().x * 3 / 3,
-                     heartRect.getPosition().y);
-  heart3.setPosition(heartRect.getPosition().x + heartRect.getSize().x * 5 / 3,
-                     heartRect.getPosition().y);
+  heart1.setPosition(heartRect.getPosition().x +4,
+                     heartRect.getPosition().y+4);
+  heart2.setPosition(heartRect.getPosition().x + heartRect.getSize().x * 9 / 28 + 4,
+                     heartRect.getPosition().y+4);
+  heart3.setPosition(heartRect.getPosition().x + heartRect.getSize().x * 9 / 14+4,
+                     heartRect.getPosition().y+4);
   // main render texture as canvas.
   widgetCanvas.create(width, height);
   mainSprite.setTexture(widgetCanvas.getTexture(), false);

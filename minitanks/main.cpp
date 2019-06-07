@@ -23,8 +23,8 @@ int main() {
   testSprite.setPosition(widgetWidth,0);
   Widget p1Widget(sf::Vector2f(0, 0),widgetWidth, mapHeight, true);
   Widget p2Widget(sf::Vector2f(mapWidth + widgetWidth, 0), widgetWidth, mapHeight, false);
-  p1Widget.updateHealth(3);
-  p2Widget.updateHealth(3);
+  p1Widget.updateHealth(2);
+  p2Widget.updateHealth(0);
   while (mWindow.isOpen()) {
 
     sf::Event event;
