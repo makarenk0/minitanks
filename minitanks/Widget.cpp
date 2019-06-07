@@ -45,6 +45,7 @@ void Widget::draw(sf::RenderWindow &window) {
   widgetCanvas.draw(heart3);
   widgetCanvas.draw(playerId);
   widgetCanvas.display();
+
   window.draw(mainSprite);
 }
 

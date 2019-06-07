@@ -139,11 +139,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="TileMap.cpp" />
     <ClCompile Include="toolbox.cpp" />
     <ClCompile Include="Widget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="TileMap.h" />
     <ClInclude Include="toolbox.h" />
     <ClInclude Include="Widget.h" />
   </ItemGroup>
