@@ -3,6 +3,7 @@
 #include "TileMap.h"
 #include "Widget.h"
 #include "toolbox.h"
+#include "MainMenu.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -15,9 +16,11 @@
 #define cellWidth 48
 #define playerSize 40
 
-//DEBUG
+// DEBUG
 int score = 0;
 
+//render mode, 0 for mainMenu, 1 for game, 2 for editor
+int renderMode = 0;
 int main() {
   sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
                            "Main window",
@@ -30,6 +33,7 @@ int main() {
   Widget p1Widget(sf::Vector2f(0, 0), widgetWidth, mapHeight, true);
   Widget p2Widget(sf::Vector2f(mapWidth + widgetWidth, 0), widgetWidth,
                   mapHeight, false);
+  MainMenu menu(sf::Vector2f(widgetWidth, 0), sf::Vector2i(mapWidth, mapHeight));
   p1Widget.updateHealth(2);
   p2Widget.updateHealth(0);
   p1Widget.updateBullet(2);
@@ -37,23 +41,37 @@ int main() {
   p1Widget.speedActive(true);
   p2Widget.speedActive(false);
 
-
+  sf::SoundBuffer buffer;
+  if (!buffer.loadFromFile("assets\\mainOST.ogg"))
+    return -1;
+  sf::Sound sound;
+  sound.setBuffer(buffer);
+  sound.setLoop(true);
+  sound.setVolume(70);
+  sound.play();				// UNCOMMENT BEFORE RELEASE
   while (mWindow.isOpen()) {
+	  if (renderMode == 0) {
+		  sf::Event event;
+		  while (mWindow.pollEvent(event)) {
+			  switch (event.type) {
+			  case sf::Event::Closed: {
+				  mWindow.close();
+				  break;
+			  }
+			  case sf::Event::KeyPressed: {
+				  if (event.key.code == sf::Keyboard::Equal)
+					  sound.setVolume(sound.getVolume() + 10.f);
 
-    sf::Event event;
-    while (mWindow.pollEvent(event)) {
-      switch (event.type) {
-      case sf::Event::Closed: {
-        mWindow.close();
-        break;
-      }
-      }
-    }
-
-    // DEBUG
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Equal)) {
-      p1Widget.updateScore(score += 10);
-    }
+				  else if (event.key.code == sf::Keyboard::Hyphen)
+					  sound.setVolume(sound.getVolume() - 10.f);
+				  else if (event.key.code == sf::Keyboard::Up)
+					  menu.previousOption();
+				  else if (event.key.code == sf::Keyboard::Down)
+					  menu.nextOption();
+			  }
+			  }
+		  }
+	  }
     mWindow.clear();
 
     //// for map
@@ -77,7 +95,7 @@ int main() {
     // mWindow.draw(pl);
     p1Widget.draw(mWindow);
     p2Widget.draw(mWindow);
-
+	menu.draw(mWindow);
     mWindow.display();
   }
 
