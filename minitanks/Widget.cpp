@@ -31,15 +31,21 @@ Widget::Widget(sf::Vector2f position, int width, int height, bool firstPlayer) {
   heart3.setPosition(heartRect.getPosition().x +
                          heartRect.getSize().x * 9 / 14 + 4,
                      heartRect.getPosition().y + 4);
-  //loading bullet textures
+  // loading bullet textures
   if (!bullet.loadFromFile("assets\\bullet.png"))
-	  std::cout << "error loading bullets"<< std::endl;
+    std::cout << "error loading bullets" << std::endl;
   if (!emptyBullet.loadFromFile("assets\\emptyBullet.png"))
-	  std::cout << "error loading bullets" << std::endl;
+    std::cout << "error loading bullets" << std::endl;
   bullet1.setPosition(width * 2 / 10, height * 6 / 10);
   bullet2.setPosition(width * 6 / 10, height * 6 / 10);
   bullet1.scale(2, 2);
   bullet2.scale(2, 2);
+  // loading powerups
+  speed.loadFromFile("assets\\speed.png");
+  emptySpeed.loadFromFile("assets\\emptySpeed.png");
+  speedPU.setTexture(speed);
+  speedPU.setPosition(0, height / 5);
+  speedPU.scale(2, 2);
   // main render texture as canvas.
   widgetCanvas.create(width, height);
   mainSprite.setTexture(widgetCanvas.getTexture(), false);
@@ -57,6 +63,7 @@ void Widget::draw(sf::RenderWindow &window) {
   widgetCanvas.draw(heart3);
   widgetCanvas.draw(bullet1);
   widgetCanvas.draw(bullet2);
+  widgetCanvas.draw(speedPU);
   widgetCanvas.draw(playerId);
   widgetCanvas.draw(score);
   widgetCanvas.display();
@@ -107,25 +114,27 @@ void Widget::updateHealth(int currentHealth) {
   }
 }
 void Widget::updateScore(int newScore) {
-	score.setString("SCORE " + std::to_string(newScore));
+  score.setString("SCORE " + std::to_string(newScore));
 }
 
 void Widget::updateBullet(int currentBullets) {
-	if (currentBullets >= 2) {
-		bullet1.setTexture(bullet);
-		bullet2.setTexture(bullet);
-	}
-	else if (currentBullets == 1) {
-		bullet1.setTexture(bullet);
-		bullet2.setTexture(emptyBullet);
-	}
-	else {
-		bullet1.setTexture(emptyBullet);
-		bullet2.setTexture(emptyBullet);
-	}
+  if (currentBullets >= 2) {
+    bullet1.setTexture(bullet);
+    bullet2.setTexture(bullet);
+  } else if (currentBullets == 1) {
+    bullet1.setTexture(bullet);
+    bullet2.setTexture(emptyBullet);
+  } else {
+    bullet1.setTexture(emptyBullet);
+    bullet2.setTexture(emptyBullet);
+  }
 }
 
-Widget::~Widget() {
-
+void Widget::speedActive(bool isActive) {
+	if (isActive)
+		speedPU.setTexture(speed);
+	else
+		speedPU.setTexture(emptySpeed);
 }
 
+Widget::~Widget() {}
