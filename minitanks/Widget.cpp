@@ -45,7 +45,7 @@ Widget::Widget(sf::Vector2f position, int width, int height, bool firstPlayer) {
   emptySpeed.loadFromFile("assets\\emptySpeed.png");
   speedPU.setTexture(speed);
   speedPU.setPosition(0, height / 5);
-  speedPU.scale(2, 2);
+  speedPU.scale(1.5, 1.5);
   // main render texture as canvas.
   widgetCanvas.create(width, height);
   mainSprite.setTexture(widgetCanvas.getTexture(), false);
