@@ -1,8 +1,7 @@
 #include "TileMap.h"
 
-TileMap::TileMap(std::string FILE, int tileSize, int width, int height, int widgetWidth,
+TileMap::TileMap(std::string FILE, int tileSize, int width, int height,
                  bool randomMap, bool editMode) {
-	this->widgetWidth = widgetWidth;
   initMap(FILE, tileSize, width, height, randomMap, editMode);
 }
 
@@ -13,14 +12,6 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height,
   this->height = height;
   this->fileName = FILE;
   this->editMode = editMode;
-
-  toolsWidth = width;
-
-  canvas.create(width, height);
-  canvas.display();
-
-  canvasOverlay.create(width, height);
-  canvasOverlay.display();
 
   if (editMode) {
     exitEditMode = false;
@@ -118,16 +109,6 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height,
     counter++;
   }
   file.close();
-
-  mainSprite.setPosition(widgetWidth, 0);
-  mainSprite.setTexture(canvas.getTexture());
-
-  overlaySprite.setPosition(widgetWidth, 0);
-  overlaySprite.setTexture(canvasOverlay.getTexture());
-
-  canvas.draw(tiles, &tileTexture);
-  canvasOverlay.draw(overlay, &overlayTexture);
-  
 }
 TileMap::~TileMap() {
   //	tiles.clear();
@@ -148,23 +129,11 @@ bool TileMap::checkCollisionOfPoint(int xPoint, int yPoint) {
   return false;
 }
 
-void TileMap::draw(sf::RenderWindow &window){ // override function of drawing
-	if (firstLayer) {
-		window.draw(mainSprite);
-    }
-	else {
-		window.draw(overlaySprite);
-	}
-  
+void TileMap::draw(sf::RenderTarget &target, sf::RenderStates states)
+    const { // override function of drawing
+  target.draw(tiles, &tileTexture);
+  target.draw(overlay, &overlayTexture);
 }
-
-void TileMap::setFirstLayer(bool set) {
-	firstLayer = set;
-}
-
-
-
-
 
 void TileMap::changeCurrentHealth(int xPoint, int yPoint, int delta) {
 
@@ -193,9 +162,6 @@ void TileMap::changeCurrentHealth(int xPoint, int yPoint, int delta) {
   quadOverlay[2].texCoords =
       sf::Vector2f(curHealth * tileSize + tileSize, tileSize);
   quadOverlay[3].texCoords = sf::Vector2f(curHealth * tileSize, tileSize);
-
-  canvas.draw(tiles, &tileTexture);    //update
-  canvasOverlay.draw(overlay, &overlayTexture);
 }
 
 void TileMap::generateMapRandom() {
@@ -242,6 +208,7 @@ void TileMap::generateMapEmpty() {
 }
 
 void TileMap::openEditWindow() {
+  toolsHeight = height;
   tools.create(sf::VideoMode(toolsWidth, toolsHeight), "tools",
                sf::Style::Titlebar);
   // init graphic part of menu
@@ -270,13 +237,14 @@ void TileMap::openEditWindow() {
   for (int i = 0; i < 3; i++) { // buttons for bricks health
     sf::Vertex *overlaysMenuPointer = &overlaysMenu[i * 4];
     overlaysMenuPointer[0].position =
-        sf::Vector2f(indent + indent * (i+4) + tileSize * (i+4), indent);
+        sf::Vector2f(indent + indent * i + tileSize * i, 2 * indent + tileSize);
     overlaysMenuPointer[1].position = sf::Vector2f(
-		indent + indent * (i+4) + tileSize * (i+4) + tileSize, indent);
+        indent + indent * i + tileSize * i + tileSize, 2 * indent + tileSize);
     overlaysMenuPointer[2].position =
-        sf::Vector2f(indent + indent * (i+4) + tileSize * (i+4) + tileSize, indent + tileSize);
+        sf::Vector2f(indent + indent * i + tileSize * i + tileSize,
+                     2 * indent + 2 * tileSize);
     overlaysMenuPointer[3].position = sf::Vector2f(
-		indent + indent * (i+4) + tileSize * (i+4), indent + tileSize);
+        indent + indent * i + tileSize * i, 2 * indent + 2 * tileSize);
 
     overlaysMenuPointer[0].texCoords = sf::Vector2f(i * tileSize, 0);
     overlaysMenuPointer[1].texCoords = sf::Vector2f(i * tileSize + tileSize, 0);
@@ -291,18 +259,15 @@ bool TileMap::getEditMode() { return editMode; }
 void TileMap::setEditMode(bool mode) { editMode = mode; }
 
 void TileMap::editMap(sf::RenderWindow &mWindow) {
-	canvas.draw(tiles, &tileTexture);    //update
-	canvasOverlay.draw(overlay, &overlayTexture);
-
   drawToolWindow(mWindow.getPosition().x, mWindow.getPosition().y);
 
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-    if ((sf::Mouse::getPosition(mWindow).x-widgetWidth) / tileSize == previousX) {
+    if (sf::Mouse::getPosition(mWindow).x / tileSize == previousX) {
       if (sf::Mouse::getPosition(mWindow).y / tileSize == previousY) {
         return;
       }
     }
-    previousX = (sf::Mouse::getPosition(mWindow).x-widgetWidth) / tileSize;
+    previousX = sf::Mouse::getPosition(mWindow).x / tileSize;
     previousY = sf::Mouse::getPosition(mWindow).y / tileSize;
 
     if (previousX >= 0 && previousX < width / tileSize && previousY >= 0 &&
@@ -365,7 +330,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
     }
   }
   tools.clear(sf::Color(173, 216, 230));
-  tools.setPosition(sf::Vector2i(winX + widgetWidth, winY-toolsHeight-43));
+  tools.setPosition(sf::Vector2i(winX - toolsWidth, winY));
   // tool menu
   tools.draw(toolsMenu, &tileTexture);
   tools.draw(overlaysMenu, &overlayTexture);

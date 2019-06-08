@@ -4,21 +4,18 @@
 
 Entity::Entity(int x, int y, int w, int h,int dir, std::string file, int speed, int tileSize, TileMap* map)
 {
-
-	widgetWidth = map->widgetWidth;
 	this->x = x;
 	this->y = y;
-	this->w = w;
+	this->w = x;
 	this->h = h;
 	this->speed = speed;
 	this->tileSize = tileSize;
 	this->dir = dir;
 	this->map = map;
-
-	entityTexture.loadFromFile("assets/" + file);
+	entityTexture.loadFromFile("textures/" + file);
 	entitySprite.setTexture(entityTexture);
 	entitySprite.setOrigin((w/2), (h/2));
-	entitySprite.setPosition(x+widgetWidth, y);
+	entitySprite.setPosition(x, y);
 }
 
 void Entity::update()
@@ -45,24 +42,25 @@ void Entity::setSpeed(int speed)
 
 void Entity::interactMap()
 {
-	for (int i = (y-(h/2)+ rangeBetweenTiles) / tileSize; i <= ((y+(h/2)- rangeBetweenTiles)/tileSize); i++) {
-		for (int j = (x-(w/2)+ rangeBetweenTiles) / tileSize; j <= ((x+(w/2)- rangeBetweenTiles) / tileSize); j++) {
+	for (int i = (y-(h/2)+1) / tileSize; i <= ((y+(h/2)-1)/tileSize); i++) {
+		for (int j = (x-(w/2)-6) / tileSize; j <= ((x+(w/2)+6) / tileSize); j++) {
+		//	std::cout << x-7 - w / 2 <<","<<y-(h/2)<< std::endl;
 			if (map->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
 				if (dy > 0) {
-					y = i * tileSize - h/2-1 + rangeBetweenTiles;
-					entitySprite.setPosition(widgetWidth+x, y);
+					y = i * tileSize - h/2;
+					entitySprite.setPosition(x, y);
 				}
 				if (dy < 0) {
-					y = (i * tileSize) + tileSize+h/2 - rangeBetweenTiles;
-					entitySprite.setPosition(widgetWidth+x, y);
+					y = (i * tileSize) + tileSize+h/2;
+					entitySprite.setPosition(x, y);
 				}
 				if (dx > 0) {
-					x = j * tileSize - w/2-1 + rangeBetweenTiles;
-					entitySprite.setPosition(widgetWidth+x, y);
+					x = j * tileSize - w/2-7;
+					entitySprite.setPosition(x, y);
 				}
 				if (dx < 0) {
-					x = j * tileSize + tileSize+w/2 - rangeBetweenTiles;
-					entitySprite.setPosition(widgetWidth+x, y);
+					x = j * tileSize + tileSize+w/2+7;
+					entitySprite.setPosition(x, y);
 				}
 			}
 		}
