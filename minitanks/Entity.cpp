@@ -8,8 +8,8 @@ Entity::Entity(int x, int y, int w, int h,int dir, std::string file, int speed, 
 	widgetWidth = map->widgetWidth;
 	this->x = x;
 	this->y = y;
-	this->w = w;
-	this->h = h;
+	this->w = w*0.8f;
+	this->h = h * 0.8f;
 	this->speed = speed;
 	this->tileSize = tileSize;
 	this->dir = dir;
@@ -19,6 +19,7 @@ Entity::Entity(int x, int y, int w, int h,int dir, std::string file, int speed, 
 	entitySprite.setTexture(entityTexture);
 	entitySprite.setOrigin((w/2), (h/2));
 	entitySprite.setPosition(x+widgetWidth, y);
+	entitySprite.scale(0.8f, 0.8f);
 }
 
 void Entity::update()

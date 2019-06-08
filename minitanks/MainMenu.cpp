@@ -3,7 +3,7 @@
 
 void MainMenu::nextOption() {
 	if (currentOption < 2) {
-		std::cout << "next" << std::endl;
+		
 		currentOption++;
 		cursor.setPosition(cursor.getPosition() + sf::Vector2f(0, offset));
 		sound.play();
@@ -14,7 +14,7 @@ void MainMenu::nextOption() {
 
 void MainMenu::previousOption() {
 	if (currentOption > 0 ) {
-		std::cout << "prev" << std::endl;
+		
 		currentOption--;
 		cursor.setPosition(cursor.getPosition() - sf::Vector2f(0, offset));
 		sound.play();
