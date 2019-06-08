@@ -78,7 +78,7 @@ int main() {
 	map.setFirstLayer(true);  //draw first layer
 	map.draw(mWindow);
 
-    mWindow.draw(pl);    //player between ground and some overlays
+    mWindow.draw(pl);    //player between ground and some(bushes) overlays
 
 	map.setFirstLayer(false); //draw overlay
 	map.draw(mWindow);
