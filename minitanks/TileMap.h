@@ -24,7 +24,10 @@ public:
 	void editMap(sf::RenderWindow &mWindow);
 	void setExitEditMode(bool ex);
 	void initMap(std::string FILE, int tileSize, int width, int height, bool randomMap, bool editMode);
-	
+	void draw(sf::RenderWindow& window);
+	void setFirstLayer(bool set);
+	int widgetWidth;
+
 private:
 	
 	sf::RenderWindow tools;
