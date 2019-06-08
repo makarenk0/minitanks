@@ -23,10 +23,15 @@ void MainMenu::previousOption() {
 }
 
 MainMenu::MainMenu(sf::Vector2f position, sf::Vector2i size) {
+	//canvas creation
 	canvas.create(size.x, size.y);
 	canvas.clear({ 0,0,0,255 });
 	mainSprite.setTexture(canvas.getTexture(), false);
 	mainSprite.setPosition(position);
+	//TITLE
+	titleTexture.loadFromFile("assets\\Title.png");
+	titleSprite.setTexture(titleTexture);
+	titleSprite.setPosition(0, size.y / 10);
 	//option init
 	if (!font.loadFromFile("assets\\ARCADECLASSIC.TTF"))
 		std::cout << "font load error" << std::endl;
@@ -42,24 +47,18 @@ MainMenu::MainMenu(sf::Vector2f position, sf::Vector2i size) {
 	option1.setString("1 PLAYER");
 	option2.setString("2 PLAYERS");
 	option3.setString("MAP EDITOR");
-	option1.setPosition(canvas.getSize().x   / 3, canvas.getSize().y * 4 / 12);
-	option2.setPosition(canvas.getSize().x  / 3, canvas.getSize().y * 6 / 12);
-	option3.setPosition(canvas.getSize().x  / 3, canvas.getSize().y * 8 / 12);
-	canvas.draw(option1);
-	canvas.draw(option2);
-	canvas.draw(option3);
+	option1.setPosition(canvas.getSize().x   / 3, canvas.getSize().y * 4 / 12+100);
+	option2.setPosition(canvas.getSize().x  / 3, canvas.getSize().y * 6 / 12 + 100);
+	option3.setPosition(canvas.getSize().x  / 3, canvas.getSize().y * 8 / 12 + 100);
 	//cursor init
 	cursorTex.loadFromFile("assets\\Player.png");
 	cursor.setTexture(cursorTex);
 	cursor.setPosition(option1.getPosition() - sf::Vector2f(75, -10));
-	canvas.draw(cursor);
-	canvas.display();
+	redraw();
 
 	
 	buffer.loadFromFile("assets\\select.wav");
 	sound.setBuffer(buffer);
-	
-
 }
 
 void MainMenu::draw(sf::RenderWindow& window) {
@@ -72,6 +71,7 @@ int MainMenu::getCurrentOption() {
 
 void MainMenu::redraw() {
 	canvas.clear();
+	canvas.draw(titleSprite);
 	canvas.draw(option1);
 	canvas.draw(option2);
 	canvas.draw(option3);
