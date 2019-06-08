@@ -8,8 +8,8 @@ private:
 	sf::Sound sound;
 	sf::RenderTexture canvas;
 	sf::Image title;
-	sf::Texture titleTexture,cursorTex;
-	sf::Sprite cursor, titleSprite,mainSprite;
+	sf::Texture titleTexture,cursorTex, authorsTex;
+	sf::Sprite cursor, titleSprite, mainSprite, authorsSprite;
 	sf::Text option1, option2, option3;
 	sf::Font font;
 	int currentOption = 0;

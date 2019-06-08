@@ -32,6 +32,11 @@ MainMenu::MainMenu(sf::Vector2f position, sf::Vector2i size) {
 	titleTexture.loadFromFile("assets\\Title.png");
 	titleSprite.setTexture(titleTexture);
 	titleSprite.setPosition(0, size.y / 10);
+	//authors
+	authorsTex.loadFromFile("assets\\Authors.png");
+	authorsSprite.setTexture(authorsTex);
+	authorsSprite.setPosition(size.x * 2 / 3-50.f, size.y *9/ 10);
+	authorsSprite.scale(0.8f, 0.8f);
 	//option init
 	if (!font.loadFromFile("assets\\ARCADECLASSIC.TTF"))
 		std::cout << "font load error" << std::endl;
@@ -72,6 +77,7 @@ int MainMenu::getCurrentOption() {
 void MainMenu::redraw() {
 	canvas.clear();
 	canvas.draw(titleSprite);
+	canvas.draw(authorsSprite);
 	canvas.draw(option1);
 	canvas.draw(option2);
 	canvas.draw(option3);

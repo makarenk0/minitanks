@@ -48,7 +48,8 @@ int main() {
   sound.setBuffer(buffer);
   sound.setLoop(true);
   sound.setVolume(70);
-  sound.play();				// UNCOMMENT BEFORE RELEASE
+ // sound.play();				// UNCOMMENT BEFORE RELEASE
+
   while (mWindow.isOpen()) {
 	  if (renderMode == 0) {
 		  sf::Event event;
