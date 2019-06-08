@@ -10,7 +10,7 @@ public:
 	void update();
 	void setSpeed(int speed);
 protected:
-	const int rangeBetweenTiles = 3;
+	const int rangeBetweenTiles = 2;
 	int widgetWidth;
 	int health;
 	sf::Texture entityTexture;

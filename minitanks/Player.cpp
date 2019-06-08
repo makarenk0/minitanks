@@ -8,7 +8,9 @@ Player::Player(std::string file, int x, int y, int w, int h,int dir, int speed, 
 
 void Player::updatePlayer()
 {
-	if (!map->getEditMode()) {
+	if (map->getEditMode()) {
+		delete this;
+	}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			dir = 1;
@@ -37,7 +39,6 @@ void Player::updatePlayer()
 			entitySprite.setRotation(90);
 			//	std::cout << x << "," << y << std::endl;
 		}
-	}
 		update();
 	
 }

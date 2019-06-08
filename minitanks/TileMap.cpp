@@ -1,8 +1,9 @@
 #include "TileMap.h"
 
 TileMap::TileMap(std::string FILE, int tileSize, int width, int height, int widgetWidth,
-                 bool randomMap, bool editMode) {
+                 bool randomMap, bool editMode, int playersNum) {
 	this->widgetWidth = widgetWidth;
+	this->playersNum = playersNum;
   initMap(FILE, tileSize, width, height, randomMap, editMode);
 }
 
@@ -60,10 +61,30 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height,
   int counter = 0;
   while (true) {
     std::getline(file, buf);
+	last = 1;
+
+	if (buf.substr(0, 2) == "p1") {
+		buf = buf.substr(3);
+		pl1X = tileSize * std::stoi(readValue(buf));
+		buf = buf.substr(last + 1);
+		pl1Y = tileSize * std::stoi(readValue(buf));
+		std::cout << pl1X << "," << pl1Y;
+		continue;
+
+	}
+	else if (buf.substr(0, 2) == "p2") {
+		buf = buf.substr(3);
+		pl2X = tileSize * std::stoi(readValue(buf));
+		buf = buf.substr(last + 1);
+		pl2Y = tileSize * std::stoi(readValue(buf));
+		std::cout << pl1X << "," << pl1Y;
+		continue;
+
+	}
     if (buf == "end")
       break;
 
-    last = 1;
+    
     buf = buf.substr(last);
     x = tileSize * std::stoi(readValue(buf)); // get x coord from file
 

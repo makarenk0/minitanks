@@ -23,8 +23,8 @@ int main() {
                            "Main window",
                            sf::Style::Close | sf::Style::Titlebar);
   mWindow.setFramerateLimit(FPS);
-  TileMap map("example_map", cellWidth, mapWidth, mapHeight, widgetWidth, false, true);
- Player pl("Player.png", 200, 200, playerSize, playerSize, 2, 1, cellWidth,
+  TileMap map("example_map", cellWidth, mapWidth, mapHeight, widgetWidth, false, false, 1);
+  Player pl("Player.png", map.pl1X, map.pl1Y, playerSize, playerSize, 2, 1, cellWidth,
            &map);
 
   Widget p1Widget(sf::Vector2f(0, 0), widgetWidth, mapHeight, true);
@@ -76,33 +76,38 @@ int main() {
 		  menu.draw(mWindow);
 		  mWindow.display();
 	  }
-	  // for map
-	  if (sf::Keyboard::isKeyPressed(
-		  sf::Keyboard::I)) { // this event is when user press "editor" to
-							  // create own map
-		  map.initMap("example_map", cellWidth, mapWidth, mapHeight, false, true);
-	  }
-	  if (map.getEditMode()) { // checking if user switched to editor mod
-		  map.editMap(mWindow);
+	  else {
+		  // for map
 		  if (sf::Keyboard::isKeyPressed(
-			  sf::Keyboard::O)) { // this event is when user press "exit" from
-								  // editor
-			  map.setExitEditMode(true);
+			  sf::Keyboard::I)) { // this event is when user press "editor" to
+								  // create own map
+			  map.initMap("example_map", cellWidth, mapWidth, mapHeight, false, true);
 		  }
-	  }
-	  
-	  // for map
-	  mWindow.clear();
-	  pl.updatePlayer();
-	  map.setFirstLayer(true); // draw first layer
-	  map.draw(mWindow);
-	  mWindow.draw(pl);         // player between ground and some(bushes) overlays
-	  map.setFirstLayer(false); // draw overlay
-	  map.draw(mWindow);
-	  p1Widget.draw(mWindow);
-	  p2Widget.draw(mWindow);
-	  mWindow.display();
-  }
+		  if (map.getEditMode()) { // checking if user switched to editor mod
+			  map.editMap(mWindow);
+			  if (sf::Keyboard::isKeyPressed(
+				  sf::Keyboard::O)) { // this event is when user press "exit" from
+									  // editor
+				  renderMode = 0;
+				  map.setExitEditMode(true);
+			  }
+		  }
 
+		  // for map
+		  mWindow.clear();
+		  
+		  map.setFirstLayer(true); // draw first layer
+		  map.draw(mWindow);
+		  if (!map.getEditMode()) {
+			  pl.updatePlayer();        // player between ground and some(bushes) overlays
+			  mWindow.draw(pl);
+		  }       
+		  map.setFirstLayer(false); // draw overlay
+		  map.draw(mWindow);
+		  p1Widget.draw(mWindow);
+		  p2Widget.draw(mWindow);
+		  mWindow.display();
+	  }
+  }
 return 0;
 }

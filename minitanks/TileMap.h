@@ -15,7 +15,7 @@ health = 5 special condition, means that over the ground cell it is a bush
 class TileMap
 {
 public:
-	TileMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode);
+	TileMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode, int playersNum);
 	~TileMap();
 	void changeCurrentHealth(int xPoint, int yPoint, int delta);
 	bool checkCollisionOfPoint(int xPoint, int yPoint);
@@ -27,7 +27,7 @@ public:
 	void draw(sf::RenderWindow& window);
 	void setFirstLayer(bool set);
 	int widgetWidth;
-	int pl1X, pl1Y;
+	int pl1X, pl1Y, pl2X, pl2Y;
 private:
 	sf::RenderTexture canvas, canvasOverlay;
 	sf::Sprite mainSprite, overlaySprite;
@@ -49,6 +49,7 @@ private:
 	bool solid, firstLayer;
 	bool editMode, exitEditMode;
 	int previousX=0, previousY=0;
+	int playersNum;
 
 	
 
