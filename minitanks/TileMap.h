@@ -26,6 +26,7 @@ public:
 	void initMap(std::string FILE, int tileSize, int width, int height, bool randomMap, bool editMode);
 	void draw(sf::RenderWindow& window);
 	void setFirstLayer(bool set);
+
 	int widgetWidth;
 private:
 	sf::RenderTexture canvas, canvasOverlay;
