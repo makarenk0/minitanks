@@ -12,6 +12,7 @@ private:
   sf::Text playerId, score;
   sf::Font font;
   void initText(int width, int height, bool firstPlayer);
+  int currentScore = 0;
 
 public:
   Widget(sf::Vector2f position, int width, int height, bool firstPlayer);
@@ -21,5 +22,6 @@ public:
   void updateScore(int score);
   void updateBullet(int currentBullets);
   void speedActive(bool isActive);
+  void getScore();
   ~Widget();
 };
