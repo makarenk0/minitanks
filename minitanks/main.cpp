@@ -17,15 +17,15 @@
 #define playerSize 40
 
 // render mode, 0 for mainMenu, 1 for game, 2 for editor
-int renderMode = 0;
+int renderMode = 1;
 int main() {
   sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
                            "Main window",
                            sf::Style::Close | sf::Style::Titlebar);
-
-  TileMap map("example_map", cellWidth, mapWidth, mapHeight, false, false);
-  Player pl("Player.png", 20, 20, playerSize, playerSize, 2, 1, cellWidth,
-            &map);
+  mWindow.setFramerateLimit(FPS);
+  TileMap map("example_map", cellWidth, mapWidth, mapHeight, widgetWidth, false, true);
+ Player pl("Player.png", 200, 200, playerSize, playerSize, 2, 1, cellWidth,
+           &map);
 
   Widget p1Widget(sf::Vector2f(0, 0), widgetWidth, mapHeight, true);
   Widget p2Widget(sf::Vector2f(mapWidth + widgetWidth, 0), widgetWidth,
@@ -90,7 +90,7 @@ int main() {
 			  map.setExitEditMode(true);
 		  }
 	  }
-
+	  
 	  // for map
 	  mWindow.clear();
 	  pl.updatePlayer();

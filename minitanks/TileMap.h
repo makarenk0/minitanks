@@ -12,10 +12,10 @@ health = 4 means that this cell could not be damaged
 health = 5 special condition, means that over the ground cell it is a bush
 */
 
-class TileMap : public sf::Drawable, public sf::Transformable
+class TileMap
 {
 public:
-	TileMap(std::string FILE, int tileSize, int width, int height, bool randomMap, bool editMode);
+	TileMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode);
 	~TileMap();
 	void changeCurrentHealth(int xPoint, int yPoint, int delta);
 	bool checkCollisionOfPoint(int xPoint, int yPoint);
@@ -27,16 +27,17 @@ public:
 	void draw(sf::RenderWindow& window);
 	void setFirstLayer(bool set);
 	int widgetWidth;
-
+	int pl1X, pl1Y;
 private:
-	
+	sf::RenderTexture canvas, canvasOverlay;
+	sf::Sprite mainSprite, overlaySprite;
 	sf::RenderWindow tools;
 	sf::VertexArray tiles, overlay, toolsMenu, overlaysMenu;
 	sf::Texture tileTexture, overlayTexture;
 	int tileSize;
 	int width;
-	const int toolsWidth = 300, amountOfTools = 4;
-	int height, toolsHeight;
+	int toolsWidth, amountOfTools = 4;
+	int height, toolsHeight = 80;
 	std::ifstream file;
 	std::string buf;
 	std::string fileName;
@@ -45,7 +46,7 @@ private:
 	int last;
 	int id;
 	int curHealth;
-	bool solid;
+	bool solid, firstLayer;
 	bool editMode, exitEditMode;
 	int previousX=0, previousY=0;
 
@@ -68,7 +69,5 @@ private:
 	void drawToolWindow(int winX, int winY);
 	void changeTile(int x, int y);
 
-	virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const; // prefix "virtual" helps to call my overrided function "draw"()
-	                                                                            // when i "window.draw(map)" this function is called
 };
 

@@ -8,34 +8,38 @@ Player::Player(std::string file, int x, int y, int w, int h,int dir, int speed, 
 
 void Player::updatePlayer()
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		dir = 1;
-		speed = 2;
-		entitySprite.setRotation(180);
-	//	std::cout << x << "," << y<<std::endl;
-	}
+	if (!map->getEditMode()) {
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		dir = 0;
-		speed = 2;
-		entitySprite.setRotation(0);
-	//	std::cout << x << "," << y << std::endl;
-	}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+			dir = 1;
+			speed = 2;
+			entitySprite.setRotation(180);
+			//	std::cout << x << "," << y<<std::endl;
+		}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		dir = 3;
-		speed = 2;
-		entitySprite.setRotation(270);
-	//	std::cout << x << "," << y << std::endl;
-	}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+			dir = 0;
+			speed = 2;
+			entitySprite.setRotation(0);
+			//	std::cout << x << "," << y << std::endl;
+		}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		dir = 2;
-		speed = 2;
-		entitySprite.setRotation(90);
-	//	std::cout << x << "," << y << std::endl;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			dir = 3;
+			speed = 2;
+			entitySprite.setRotation(270);
+			//	std::cout << x << "," << y << std::endl;
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+			dir = 2;
+			speed = 2;
+			entitySprite.setRotation(90);
+			//	std::cout << x << "," << y << std::endl;
+		}
 	}
-	update();
+		update();
+	
 }
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const

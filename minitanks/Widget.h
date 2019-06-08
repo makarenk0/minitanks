@@ -22,6 +22,6 @@ public:
   void updateScore(int score);
   void updateBullet(int currentBullets);
   void speedActive(bool isActive);
-  void getScore();
+  int getScore();
   ~Widget();
 };
