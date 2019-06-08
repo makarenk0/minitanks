@@ -52,6 +52,7 @@ Widget::Widget(sf::Vector2f position, int width, int height, bool firstPlayer) {
   mainSprite.setPosition(position);
   // initialising text on widget
   initText(width, height, firstPlayer);
+  mainSprite.getGlobalBounds()
 }
 
 void Widget::draw(sf::RenderWindow &window) {
@@ -114,7 +115,12 @@ void Widget::updateHealth(int currentHealth) {
   }
 }
 void Widget::updateScore(int newScore) {
-  score.setString("SCORE " + std::to_string(newScore));
+	currentScore = newScore;
+  score.setString("SCORE " + std::to_string(currentScore));
+}
+
+void Widget::getScore() {
+	return currentScore;
 }
 
 void Widget::updateBullet(int currentBullets) {
