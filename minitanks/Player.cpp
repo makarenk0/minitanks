@@ -11,30 +11,30 @@ void Player::updatePlayer()
 	if (!map->getEditMode()) {
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			dir = 1;
+			dir = 3;
 			speed = 2;
-			entitySprite.setRotation(180);
+			entitySprite.setRotation(270);
 			//	std::cout << x << "," << y<<std::endl;
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+			dir = 1;
+			speed = 2;
+			entitySprite.setRotation(90);
+			//	std::cout << x << "," << y << std::endl;
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 			dir = 0;
 			speed = 2;
 			entitySprite.setRotation(0);
 			//	std::cout << x << "," << y << std::endl;
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			dir = 3;
-			speed = 2;
-			entitySprite.setRotation(270);
-			//	std::cout << x << "," << y << std::endl;
-		}
-
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 			dir = 2;
 			speed = 2;
-			entitySprite.setRotation(90);
+			entitySprite.setRotation(180);
 			//	std::cout << x << "," << y << std::endl;
 		}
 	}
@@ -46,3 +46,4 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(entitySprite);
 }
+

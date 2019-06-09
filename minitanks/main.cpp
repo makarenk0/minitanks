@@ -1,4 +1,5 @@
 
+#include "Bullet.h"
 #include "MainMenu.h"
 #include "Player.h"
 #include "TileMap.h"
@@ -8,6 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <math.h>
+#include <stdio.h>
 #define FPS 60
 #define mapHeight 768
 #define mapWidth 864
@@ -18,8 +20,15 @@
 
 // render mode, 0 for mainMenu,, 1 for editor 2 for game with 1 P,3 for 2 P
 int renderMode = 0;
+const float bulletSpeed = 0.3f;
+std::vector<Bullet> vecBullet;
 
 int main() {
+  std::map<std::string, int> myFirstMap = {
+      {"0", 3}, // 0 - bricks, 1 - metal, 2 - bush
+      {"1", 10},
+      {"2", 1}};
+
   sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
                            "Main window",
                            sf::Style::Close | sf::Style::Titlebar);
@@ -105,7 +114,11 @@ int main() {
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Escape)
             renderMode = 0;
-          else if (event.key.code == sf::Keyboard::I)
+          else if (event.key.code == sf::Keyboard::Space) {
+            Bullet newBullet(pl.getFacePosition(), pl.getDirection(),
+                             bulletSpeed, false);
+            vecBullet.push_back(newBullet);
+          } else if (event.key.code == sf::Keyboard::I)
             map.initMap("example_map", cellWidth, mapWidth, mapHeight, false,
                         true);
           break;
@@ -115,12 +128,17 @@ int main() {
 
       // for map
       mWindow.clear();
+
       pl.updatePlayer();
       map.setFirstLayer(true); // draw first layer
       map.draw(mWindow);
       mWindow.draw(pl); // player between ground and some(bushes) overlays
       map.setFirstLayer(false); // draw overlay
       map.draw(mWindow);
+      for (auto &i : vecBullet) {
+        i.updateBullet();
+		i.draw(mWindow);
+      }
       p1Widget.draw(mWindow);
       p2Widget.draw(mWindow);
       mWindow.display();

@@ -9,6 +9,8 @@ public:
 	int tileSize;
 	void update();
 	void setSpeed(int speed);
+	sf::Vector2f getFacePosition();
+	int getDirection();
 protected:
 	const int rangeBetweenTiles = 2;
 	int widgetWidth;
@@ -17,6 +19,7 @@ protected:
 	sf::Sprite entitySprite;
 	TileMap* map;
 	void interactMap();
+	
 
 };
 
