@@ -1,9 +1,16 @@
 #include "Player.h"
 
 
+Player::Player(){
 
+}
 Player::Player(std::string file, int x, int y, int w, int h,int dir, int speed, int tileSize, TileMap* map) : Entity(x, y, w, h, dir, file, speed, tileSize, map)
 {
+}
+
+void Player::initPlayer(std::string file, int x, int y, int w, int h, int dir, int speed, int tileSize, TileMap* map) 
+{
+	initEntity(x, y, w, h, dir, file, speed, tileSize, map);
 }
 
 void Player::updatePlayer()
@@ -43,7 +50,7 @@ void Player::updatePlayer()
 	
 }
 
-void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Player::draw(sf::RenderWindow &window)
 {
-	target.draw(entitySprite);
+	window.draw(entitySprite);
 }

@@ -144,6 +144,7 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="tinyfiledialogs.c" />
     <ClCompile Include="toolbox.cpp" />
     <ClCompile Include="Widget.cpp" />
   </ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TileMap.h" />
+    <ClInclude Include="tinyfiledialogs.h" />
     <ClInclude Include="toolbox.h" />
     <ClInclude Include="Widget.h" />
   </ItemGroup>

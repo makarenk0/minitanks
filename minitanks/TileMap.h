@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include<thread>
+#include "toolbox.h"
 
 /*
 health meanings:
@@ -15,6 +15,7 @@ health = 5 special condition, means that over the ground cell it is a bush
 class TileMap
 {
 public:
+	TileMap();
 	TileMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode, int playersNum);
 	~TileMap();
 	void changeCurrentHealth(int xPoint, int yPoint, int delta);
@@ -23,7 +24,7 @@ public:
 	void setEditMode(bool mode);
 	void editMap(sf::RenderWindow &mWindow);
 	void setExitEditMode(bool ex);
-	void initMap(std::string FILE, int tileSize, int width, int height, bool randomMap, bool editMode);
+	void initMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode, int plauersNum);
 	void draw(sf::RenderWindow& window);
 	void setFirstLayer(bool set);
 	int widgetWidth;
@@ -41,6 +42,7 @@ private:
 	std::ifstream file;
 	std::string buf;
 	std::string fileName;
+	std::string toFile;
 	int x;
 	int y;
 	int last;
@@ -50,6 +52,7 @@ private:
 	bool editMode, exitEditMode;
 	int previousX=0, previousY=0;
 	int playersNum;
+	std::string fromFile;
 
 	
 

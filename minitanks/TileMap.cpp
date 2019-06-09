@@ -1,14 +1,18 @@
 #include "TileMap.h"
 
+TileMap::TileMap() {
+	playersNum = 0;
+}
 TileMap::TileMap(std::string FILE, int tileSize, int width, int height, int widgetWidth,
                  bool randomMap, bool editMode, int playersNum) {
-	this->widgetWidth = widgetWidth;
-	this->playersNum = playersNum;
-  initMap(FILE, tileSize, width, height, randomMap, editMode);
+	
+  initMap(FILE, tileSize, width, height, widgetWidth, randomMap, editMode, playersNum);
 }
 
-void TileMap::initMap(std::string FILE, int tileSize, int width, int height,
-                      bool randomMap, bool editMode) {
+void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int widgetWidth,
+                      bool randomMap, bool editMode, int playersNum) {
+  this->widgetWidth = widgetWidth;
+  this->playersNum = playersNum;
   this->tileSize = tileSize;
   this->width = width;
   this->height = height;
@@ -27,14 +31,30 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height,
     exitEditMode = false;
     openEditWindow();
     generateMapEmpty();
-    file = std::ifstream("maps/" + fileName + ".txt");
-
+    file = std::ifstream("maps/" + fileName + ".bcm");
+	while (true) {
+		if (buf == "end") {
+			file.close();
+			break;
+		}
+		std::getline(file, buf);
+		fromFile.append(buf);
+	} 
   } else {
     if (randomMap) {
       generateMapRandom();
       file = std::ifstream("maps/" + fileName + ".txt");
+	  while (true) {
+		  if (buf == "end") {
+			  file.close();
+			  break;
+		  }
+		  std::getline(file, buf);
+		  fromFile += buf;
+	  }
     } else {
-      file = std::ifstream("maps/" + fileName + ".txt");
+      file = std::ifstream("maps/" + fileName + ".bcm");
+	  fromFile = openFile();
     }
   }
 
@@ -59,9 +79,18 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height,
                  4); // init VertexArray with overlay vertices
 
   int counter = 0;
+
+
+ // std::cout << fromFile.substr(0,fromFile.find(")"));
   while (true) {
-    std::getline(file, buf);
+	  if (fromFile.substr(0,3) == "end") {
+		  break;
+	}
+	buf = fromFile.substr(0, fromFile.find(")")+1);
+	
+	fromFile = fromFile.substr(fromFile.find(")")+1);
 	last = 1;
+	
 
 	if (buf.substr(0, 2) == "p1") {
 		buf = buf.substr(3);
@@ -138,7 +167,7 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 
     counter++;
   }
-  file.close();
+//  file.close();
 
   mainSprite.setPosition(widgetWidth, 0);
   mainSprite.setTexture(canvas.getTexture());
@@ -252,7 +281,7 @@ void TileMap::generateMapRandom() {
 }
 
 void TileMap::generateMapEmpty() {
-  std::ofstream customMap("maps/" + fileName + ".txt");
+  std::ofstream customMap("maps/empty_map.bcm");
   for (int i = 0; i < (width / tileSize) * (height / tileSize); i++) {
     customMap << "(" << i % (width / tileSize) << ","
               << std::floor(i / (width / tileSize)) << "," << 0 << "," << 4
@@ -317,6 +346,35 @@ void TileMap::editMap(sf::RenderWindow &mWindow) {
 
   drawToolWindow(mWindow.getPosition().x, mWindow.getPosition().y);
 
+
+  if (exitEditMode) {// then goes code when user exit edit mode
+	  editMode = false;
+
+	  tools.close();
+	  toFile = "";
+	  int x;
+	  int y;
+	  for (int i = 0; i < (width / tileSize) * (height / tileSize); i++) {
+		  sf::Vertex* quadTiles = &tiles[i * 4];
+
+		  x = i % (width / tileSize);
+		  y = floor(i / (width / tileSize));
+		  toFile.append("(");
+		  toFile.append(std::to_string(x));
+		  toFile.append(",");
+		  toFile.append(std::to_string(y));
+		  toFile.append(",");
+		  toFile.append(std::to_string(int(quadTiles->texCoords.x / tileSize)));
+		  toFile.append(",");
+		  toFile.append(std::to_string(currentHealth[y][x]));
+		  toFile.append(",");
+		  toFile.append(std::to_string(solidBool[y][x]));
+		  toFile.append(",)\n");
+	  }
+	  toFile.append("end");
+	  saveFile(toFile);
+  }
+
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
     if ((sf::Mouse::getPosition(mWindow).x-widgetWidth) / tileSize == previousX) {
       if (sf::Mouse::getPosition(mWindow).y / tileSize == previousY) {
@@ -332,26 +390,8 @@ void TileMap::editMap(sf::RenderWindow &mWindow) {
     }
     return;
   }
-  // then goes code when user exit edit mode
-  if (exitEditMode) {
-    editMode = false;
-    tools.close();
-
-    std::ofstream customMap("maps/" + fileName + ".txt");
-    for (int i = 0; i < (width / tileSize) * (height / tileSize); i++) {
-      sf::Vertex *quadTiles = &tiles[i * 4];
-
-      int x = i % (width / tileSize);
-      int y = floor(i / (width / tileSize));
-      customMap << "(" << i % (width / tileSize) << ","
-                << std::floor(i / (width / tileSize)) << ","
-                << quadTiles->texCoords.x / tileSize << ","
-                << currentHealth[y][x] << "," << solidBool[y][x] << ",)"
-                << std::endl;
-    }
-    customMap << "end";
-    customMap.close();
-  }
+  
+  
 }
 
 void TileMap::setExitEditMode(bool ex) { exitEditMode = ex; }

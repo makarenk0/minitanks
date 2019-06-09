@@ -1,7 +1,9 @@
 #include "Entity.h"
 
 
+Entity::Entity() {
 
+}
 Entity::Entity(int x, int y, int w, int h,int dir, std::string file, int speed, int tileSize, TileMap* map)
 {
 
@@ -21,7 +23,24 @@ Entity::Entity(int x, int y, int w, int h,int dir, std::string file, int speed, 
 	entitySprite.setScale(0.8, 0.8);
 	entitySprite.setPosition(x+widgetWidth, y);
 }
+void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file, int speed, int tileSize, TileMap* map)
+{
+	widgetWidth = map->widgetWidth;
+	this->x = x;
+	this->y = y;
+	this->w = w * 0.8;
+	this->h = h * 0.8;
+	this->speed = speed;
+	this->tileSize = tileSize;
+	this->dir = dir;
+	this->map = map;
 
+	entityTexture.loadFromFile("assets/" + file);
+	entitySprite.setTexture(entityTexture);
+	entitySprite.setOrigin((w / 2), (h / 2));
+	entitySprite.setScale(0.8, 0.8);
+	entitySprite.setPosition(x + widgetWidth, y);
+}
 void Entity::update()
 {
 	
@@ -44,6 +63,8 @@ void Entity::setSpeed(int speed)
 {
 	this->speed = speed;
 }
+
+
 
 void Entity::interactMap()
 {

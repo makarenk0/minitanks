@@ -4,11 +4,13 @@
 class Entity
 {
 public:
+	Entity();
 	Entity(int x, int y, int w, int h, int dir, std::string file, int speed, int tileSize, TileMap* map);
 	int x, y, speed, w, h, dx, dy, dir;
 	int tileSize;
 	void update();
 	void setSpeed(int speed);
+	void initEntity(int x, int y, int w, int h, int dir, std::string file, int speed, int tileSize, TileMap* map);
 protected:
 	const int rangeBetweenTiles = 2;
 	int widgetWidth;
