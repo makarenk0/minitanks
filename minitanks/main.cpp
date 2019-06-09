@@ -128,7 +128,6 @@ int main() {
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
-          break;
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Space && pl1.getAmmoCount() > 0) {
