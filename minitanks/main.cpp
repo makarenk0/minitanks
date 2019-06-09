@@ -31,15 +31,10 @@ sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
                          "Main window", sf::Style::Close | sf::Style::Titlebar);
 
 int main() {
-  sf::Clock clock;
-  float time;
-  int fpscount = 0;
 
   sf::Texture testTex;
   if (!testTex.loadFromFile("assets\\bullet.png"))
 	  std::cout << "error loading bullet" << std::endl;
-
-
 
   std::map<std::string, int> myFirstMap = {
       {"0", 3}, // 0 - bricks, 1 - metal, 2 - bush
@@ -114,14 +109,7 @@ int main() {
       }
       sf::Event event;
       while (mWindow.pollEvent(event)) {
-        time = clock.getElapsedTime().asSeconds();
-        fpscount++;
-        if (time >= 1) {
-          clock.restart();
-          system("cls");
-          std::cout << fpscount;
-          fpscount = 0;
-        }
+
 
         switch (event.type) {
         case sf::Event::Closed: {

@@ -8,7 +8,7 @@ Player::Player(std::string file, int x, int y, int w, int h,int dir, int speed, 
 
 void Player::updatePlayer()
 {
-	if (!map->getEditMode()) {
+	if (!map.getEditMode()) {
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			dir = 3;
