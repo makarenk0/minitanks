@@ -10,6 +10,7 @@
 #include "toolbox.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
@@ -98,7 +99,6 @@ int main() {
             } else if (menu.getCurrentOption() == 1) {
               map.initMap("example_map", cellWidth, mapWidth, mapHeight,
                           widgetWidth, false, false, 2);
-                             playerSize, 2, 1, cellWidth, &map, 3);
 							 pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
 								 playerSize, 2, 1, cellWidth, &map, 3);
               pl2.initPlayer("Player.png", map.pl2X, map.pl2Y, playerSize,
@@ -157,6 +157,8 @@ int main() {
       pl1.draw(mWindow);
       vecEntities = checkCollisionEntities(vecBullet, vecEntities, hit);
       vecBullet = getVector();
+	  checkCollisionTiles(map, vecBullet);
+	  vecBullet = getVector();
       for (auto &i : vecEntities) {
         i.draw(mWindow);
       }
@@ -198,8 +200,8 @@ int main() {
 
 		map.setFirstLayer(true); // draw first layer
 		map.draw(mWindow);
-		pl1.updatePlayer(); // player between ground and some(bushes) overlays
-		pl2.updatePlayer();
+		pl1.updatePlayer(clock); // player between ground and some(bushes) overlays
+		pl2.updatePlayer(clock);
 		pl1.draw(mWindow);
 		pl2.draw(mWindow);
 		vecEntities = checkCollisionEntities(vecBullet, vecEntities, hit);

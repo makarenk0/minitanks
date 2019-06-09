@@ -157,3 +157,5 @@ int Entity::getCurrentHealth() { return currentHealth; }
 void Entity::setCurrentHealth(int newHealth) { currentHealth = newHealth; }
 
 Entity::~Entity() {}
+Entity::Entity() {}
+

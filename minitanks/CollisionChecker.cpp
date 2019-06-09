@@ -1,12 +1,21 @@
 #include "CollisionChecker.h"
-void checkCollisionTiles(TileMap &map, std::vector<Bullet> &vecBullets) {
-  for (auto &i : vecBullets) {
-    // bool hit = map.checkTile(i.getGlobalBounds());
-    //	if (hit) i.~Bullet();
-  }
-}
 
 std::vector<Bullet> vec;
+void checkCollisionTiles(TileMap &map, std::vector<Bullet> &vecBullets) {
+	int indexI = 0;
+  for (auto &i : vecBullets) {
+     bool hit = map.checkTile(i.getGlobalBounds());
+	 if (hit) {
+		 i.~Bullet();
+		 vecBullets[indexI] = vecBullets.back();
+		 vecBullets.pop_back();
+	 }
+	 indexI++;
+  }
+  vec = vecBullets;
+}
+
+
 
 std::vector<Entity> checkCollisionEntities(std::vector<Bullet> &vecBullets,
                                            std::vector<Entity> &vecEnt,
