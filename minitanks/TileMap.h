@@ -16,7 +16,6 @@ class TileMap
 {
 public:
 	TileMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode);
-	~TileMap();
 	void changeCurrentHealth(int xPoint, int yPoint, int delta);
 	bool checkCollisionOfPoint(int xPoint, int yPoint);
 	bool getEditMode();

@@ -129,9 +129,8 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height,
   canvasOverlay.draw(overlay, &overlayTexture);
   
 }
-TileMap::~TileMap() {
-  //	tiles.clear();
-}
+
+
 std::string TileMap::readValue(std::string str) {
   last = str.find(",");
   return (str.substr(0, str.find(",")));

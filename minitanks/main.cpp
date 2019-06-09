@@ -20,29 +20,37 @@
 
 // render mode, 0 for mainMenu,, 1 for editor 2 for game with 1 P,3 for 2 P
 int renderMode = 0;
-const float bulletSpeed = 0.3f;
+const float bulletSpeed = 10.f;
 std::vector<Bullet> vecBullet;
 
+Widget p1Widget(sf::Vector2f(0, 0), widgetWidth, mapHeight, true);
+Widget p2Widget(sf::Vector2f(mapWidth + widgetWidth, 0), widgetWidth, mapHeight,
+                false);
+MainMenu menu(sf::Vector2f(widgetWidth, 0), sf::Vector2i(mapWidth, mapHeight));
+sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
+                         "Main window", sf::Style::Close | sf::Style::Titlebar);
+
 int main() {
+  sf::Clock clock;
+  float time;
+  int fpscount = 0;
+
+  sf::Texture testTex;
+  if (!testTex.loadFromFile("assets\\bullet.png"))
+	  std::cout << "error loading bullet" << std::endl;
+
+
+
   std::map<std::string, int> myFirstMap = {
       {"0", 3}, // 0 - bricks, 1 - metal, 2 - bush
       {"1", 10},
       {"2", 1}};
 
-  sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
-                           "Main window",
-                           sf::Style::Close | sf::Style::Titlebar);
   mWindow.setFramerateLimit(FPS);
   TileMap map("example_map", cellWidth, mapWidth, mapHeight, widgetWidth, false,
               false);
   Player pl("Player.png", 200, 200, playerSize, playerSize, 2, 1, cellWidth,
             &map);
-
-  Widget p1Widget(sf::Vector2f(0, 0), widgetWidth, mapHeight, true);
-  Widget p2Widget(sf::Vector2f(mapWidth + widgetWidth, 0), widgetWidth,
-                  mapHeight, false);
-  MainMenu menu(sf::Vector2f(widgetWidth, 0),
-                sf::Vector2i(mapWidth, mapHeight));
   p1Widget.updateHealth(2);
   p2Widget.updateHealth(0);
   p1Widget.updateBullet(2);
@@ -106,6 +114,15 @@ int main() {
       }
       sf::Event event;
       while (mWindow.pollEvent(event)) {
+        time = clock.getElapsedTime().asSeconds();
+        fpscount++;
+        if (time >= 1) {
+          clock.restart();
+          system("cls");
+          std::cout << fpscount;
+          fpscount = 0;
+        }
+
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
@@ -117,8 +134,15 @@ int main() {
           else if (event.key.code == sf::Keyboard::Space) {
             Bullet newBullet(pl.getFacePosition(), pl.getDirection(),
                              bulletSpeed, false);
+			newBullet.setTexture(testTex);
             vecBullet.push_back(newBullet);
-          } else if (event.key.code == sf::Keyboard::I)
+		  }
+		  else if (event.key.code == sf::Keyboard::C) {
+			  for (auto& i : vecBullet)
+				  i.~Bullet();
+			  vecBullet.clear();
+		  }
+		  else if (event.key.code == sf::Keyboard::I)
             map.initMap("example_map", cellWidth, mapWidth, mapHeight, false,
                         true);
           break;
@@ -137,7 +161,7 @@ int main() {
       map.draw(mWindow);
       for (auto &i : vecBullet) {
         i.updateBullet();
-		i.draw(mWindow);
+        i.draw(mWindow);
       }
       p1Widget.draw(mWindow);
       p2Widget.draw(mWindow);

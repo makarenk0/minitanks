@@ -143,4 +143,3 @@ void Widget::speedActive(bool isActive) {
 		speedPU.setTexture(emptySpeed);
 }
 
-Widget::~Widget() {}

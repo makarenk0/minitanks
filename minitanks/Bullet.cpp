@@ -8,9 +8,9 @@ Bullet::Bullet(sf::Vector2f position, int direction, const float speed,
   this->isSuper = isSuper;
   this->position = position;
 
-  if (!bulletTexture.loadFromFile("assets\\bullet.png"))
-    std::cout << "error loading bullet" << std::endl;
-  bulletSprite.setTexture(bulletTexture);
+  //if (!bulletTexture.loadFromFile("assets\\bullet.png"))
+  //  std::cout << "error loading bullet" << std::endl;
+  //bulletSprite.setTexture(bulletTexture);
   rotateSprite();
   bulletSprite.setPosition(position);
 }
@@ -48,4 +48,8 @@ void Bullet::rotateSprite() {
 
 void Bullet::draw(sf::RenderWindow &window) { window.draw(bulletSprite); }
 
-Bullet::~Bullet() { speed = 0.f; }
+Bullet::~Bullet() {}
+
+void Bullet::setTexture(sf::Texture& texture) {
+	bulletSprite.setTexture(texture);
+}

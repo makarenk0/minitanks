@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 class Bullet {
-private:
+protected:
   float speed;
   int direction;
   bool isSuper;
@@ -18,6 +18,6 @@ public:
   int getDirection();
   void updateBullet();
   void draw(sf::RenderWindow &window);
-
+  void setTexture(sf::Texture &texture);
   ~Bullet();
 };
