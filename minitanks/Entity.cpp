@@ -22,32 +22,58 @@ Entity::Entity(int x, int y, int w, int h, int dir, std::string file, int speed,
 
 void Entity::update() {
 
-  switch (dir) {
-  case 0:
-    dx = 0;
-    dy = -speed;
-    break;
-  case 1:
-    dx = speed;
-    dy = 0;
-    break;
-  case 2:
-    dx = 0;
-    dy = speed;
-    break;
-  case 3:
-    dx = -speed;
-    dy = 0;
-    break;
-  }
-  entitySprite.move(dx, dy);
-  x += dx;
-  y += dy;
-  speed = 0;
-  interactMap();
+	switch (dir) {
+	case 0:
+		dx = 0;
+		dy = -speed;
+		break;
+	case 1:
+		dx = speed;
+		dy = 0;
+		break;
+	case 2:
+		dx = 0;
+		dy = speed;
+		break;
+	case 3:
+		dx = -speed;
+		dy = 0;
+		break;
+	}
+	entitySprite.move(dx, dy);
+	x += dx;
+	y += dy;
+	speed = 0;
+	interactMap();
 }
 
+Entity::Entity() {
+
+}
+
+
+void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file, int speed, int tileSize, TileMap* map)
+{
+	widgetWidth = map->widgetWidth;
+	this->x = x;
+	this->y = y;
+	this->w = w * 0.8;
+	this->h = h * 0.8;
+	this->speed = speed;
+	this->tileSize = tileSize;
+	this->dir = dir;
+	this->map = map;
+	entityTexture.loadFromFile("assets/" + file);
+	entitySprite.setTexture(entityTexture);
+	entitySprite.setOrigin((w / 2), (h / 2));
+	entitySprite.setScale(0.8, 0.8);
+	entitySprite.setPosition(x + widgetWidth, y);
+}
+
+
 void Entity::setSpeed(int speed) { this->speed = speed; }
+
+
 
 void Entity::interactMap() {
   for (int i = (y - (h / 2) + rangeBetweenTiles) / tileSize;
@@ -76,6 +102,7 @@ void Entity::interactMap() {
   }
 }
 
+
 sf::Vector2f Entity::getFacePosition() {
   switch (dir) {
   case 0: {
@@ -103,6 +130,6 @@ sf::Vector2f Entity::getFacePosition() {
     break;
   }
   }
-}
+
 
 int Entity::getDirection() { return dir; }

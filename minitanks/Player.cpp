@@ -1,14 +1,26 @@
 #include "Player.h"
 
 
+Player::Player(){
 
+}
 Player::Player(std::string file, int x, int y, int w, int h,int dir, int speed, int tileSize, TileMap* map) : Entity(x, y, w, h, dir, file, speed, tileSize, map)
 {
 }
 
+void Player::initPlayer(std::string file, int x, int y, int w, int h, int dir, int speed, int tileSize, TileMap* map) 
+{
+	initEntity(x, y, w, h, dir, file, speed, tileSize, map);
+}
+
 void Player::updatePlayer()
 {
-	if (!map.getEditMode()) {
+
+
+
+	if (map->getEditMode()) {
+		delete this;
+	}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			dir = 3;
@@ -37,13 +49,12 @@ void Player::updatePlayer()
 			entitySprite.setRotation(180);
 			//	std::cout << x << "," << y << std::endl;
 		}
-	}
 		update();
 	
 }
 
-void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Player::draw(sf::RenderWindow &window)
 {
-	target.draw(entitySprite);
+	window.draw(entitySprite);
 }
 

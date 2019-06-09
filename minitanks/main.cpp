@@ -18,7 +18,7 @@
 #define cellWidth 48
 #define playerSize 40
 
-// render mode, 0 for mainMenu,, 1 for editor 2 for game with 1 P,3 for 2 P
+// render mode, 0 for mainMenu, 1 for editor 2 for game with 1 P,3 for 2 P
 int renderMode = 0;
 const float bulletSpeed = 10.f;
 std::vector<Bullet> vecBullet;
@@ -29,23 +29,26 @@ Widget p2Widget(sf::Vector2f(mapWidth + widgetWidth, 0), widgetWidth, mapHeight,
 MainMenu menu(sf::Vector2f(widgetWidth, 0), sf::Vector2i(mapWidth, mapHeight));
 sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
                          "Main window", sf::Style::Close | sf::Style::Titlebar);
+TileMap map;
+Player pl1;
+Player pl2;
+
+std::map<std::string, int> myFirstMap = {
+    {"0", 3}, // 0 - bricks, 1 - metal, 2 - bush
+    {"1", 10},
+    {"2", 1}};
 
 int main() {
+  sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
+                           "Main window",
+                           sf::Style::Close | sf::Style::Titlebar);
+  mWindow.setFramerateLimit(FPS);
 
-  sf::Texture testTex;
-  if (!testTex.loadFromFile("assets\\bullet.png"))
-	  std::cout << "error loading bullet" << std::endl;
-
-  std::map<std::string, int> myFirstMap = {
-      {"0", 3}, // 0 - bricks, 1 - metal, 2 - bush
-      {"1", 10},
-      {"2", 1}};
+  sf::Texture bulletTex;
+  if (!bulletTex.loadFromFile("assets\\bullet.png"))
+    std::cout << "error loading bullet" << std::endl;
 
   mWindow.setFramerateLimit(FPS);
-  TileMap map("example_map", cellWidth, mapWidth, mapHeight, widgetWidth, false,
-              false);
-  Player pl("Player.png", 200, 200, playerSize, playerSize, 2, 1, cellWidth,
-            &map);
   p1Widget.updateHealth(2);
   p2Widget.updateHealth(0);
   p1Widget.updateBullet(2);
@@ -63,6 +66,7 @@ int main() {
   // sound.play();				// UNCOMMENT BEFORE RELEASE
 
   while (mWindow.isOpen()) {
+
     if (renderMode == 0) {
       sf::Event event;
       while (mWindow.pollEvent(event)) {
@@ -82,10 +86,24 @@ int main() {
             menu.nextOption();
           else if (event.key.code == sf::Keyboard::Return) {
             if (menu.getCurrentOption() == 0) {
+              map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
+                          widgetWidth, false, false, 1);
+              pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
+                             playerSize, 2, 1, cellWidth, &map);
               renderMode = 2;
+
             } else if (menu.getCurrentOption() == 1) {
+              map.initMap("example_map", cellWidth, mapWidth, mapHeight,
+                          widgetWidth, false, false, 2);
+              pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
+                             playerSize, 2, 1, cellWidth, &map);
+              pl2.initPlayer("Player.png", map.pl2X, map.pl2Y, playerSize,
+                             playerSize, 2, 1, cellWidth, &map);
               renderMode = 3;
+
             } else {
+              map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
+                          widgetWidth, false, true, 0);
               renderMode = 1;
             }
           }
@@ -98,53 +116,31 @@ int main() {
       p2Widget.draw(mWindow);
       menu.draw(mWindow);
       mWindow.display();
-    } else if (renderMode == 1) {
-      if (map.getEditMode()) {
-        map.editMap(mWindow);
-        if (sf::Keyboard::isKeyPressed(
-                sf::Keyboard::O)) { // this event is when user press "exit" from
-                                    // editor
-          map.setExitEditMode(true);
-        }
-      }
+    } else if (renderMode == 2) { // game
       sf::Event event;
       while (mWindow.pollEvent(event)) {
-
-
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
           break;
         }
         case sf::Event::KeyPressed: {
-          if (event.key.code == sf::Keyboard::Escape)
-            renderMode = 0;
-          else if (event.key.code == sf::Keyboard::Space) {
+          if (event.key.code == sf::Keyboard::Space) {
             Bullet newBullet(pl.getFacePosition(), pl.getDirection(),
                              bulletSpeed, false);
-			newBullet.setTexture(testTex);
+            newBullet.setTexture(testTex);
             vecBullet.push_back(newBullet);
-		  }
-		  else if (event.key.code == sf::Keyboard::C) {
-			  for (auto& i : vecBullet)
-				  i.~Bullet();
-			  vecBullet.clear();
-		  }
-		  else if (event.key.code == sf::Keyboard::I)
-            map.initMap("example_map", cellWidth, mapWidth, mapHeight, false,
-                        true);
-          break;
+          }
         }
         }
       }
 
-      // for map
       mWindow.clear();
 
-      pl.updatePlayer();
       map.setFirstLayer(true); // draw first layer
       map.draw(mWindow);
-      mWindow.draw(pl); // player between ground and some(bushes) overlays
+      pl1.updatePlayer(); // player between ground and some(bushes) overlays
+      pl1.draw(mWindow);
       map.setFirstLayer(false); // draw overlay
       map.draw(mWindow);
       for (auto &i : vecBullet) {
@@ -154,8 +150,32 @@ int main() {
       p1Widget.draw(mWindow);
       p2Widget.draw(mWindow);
       mWindow.display();
+    } else if (renderMode == 1) { // editor is active
+
+      map.editMap(mWindow);
+      if (sf::Keyboard::isKeyPressed(
+              sf::Keyboard::Escape)) { // this event is when user press "exit"
+                                       // from
+        renderMode = 0;
+        map.setExitEditMode(true);
+        map.editMap(mWindow);
+      }
+      sf::Event event;
+      while (mWindow.pollEvent(event)) {
+        switch (event.type) {
+        case sf::Event::Closed: {
+          mWindow.close();
+          break;
+        }
+        }
+      }
+      mWindow.clear();
+      map.setFirstLayer(true); // draw first layer
+      map.draw(mWindow);
+      map.setFirstLayer(false); // draw overlay
+      map.draw(mWindow);
+      mWindow.display();
     }
   }
-
   return 0;
 }

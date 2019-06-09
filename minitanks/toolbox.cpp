@@ -28,9 +28,6 @@ std::string openFile() {
 	  while (std::getline(nameFileout, line))
 	  {
 		  output.append(line);
-		  output.append("\n");
-		  // TODO: assign item_name based on line (or if the entire line is 
-		  // the item name, replace line with item_name in the code above)
 	  }
 	  return output;
   }
