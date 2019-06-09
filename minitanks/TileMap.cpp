@@ -194,7 +194,7 @@ bool TileMap::checkCollisionOfPoint(int xPoint, int yPoint) {
 	xPoint = std::floor(xPoint / tileSize);
 	yPoint = std::floor(yPoint / tileSize);
 	if (solidBool[yPoint][xPoint]) {
-		// std::cout << "true" << std::endl;
+		std::cout << "true" << std::endl;
 		return true;
 	}
 	// std::cout << "false" << std::endl;
@@ -230,11 +230,11 @@ void TileMap::changeCurrentHealth(int xPoint, int yPoint, int delta) {
 
 	xPoint = std::floor(xPoint / tileSize);
 	yPoint = std::floor(yPoint / tileSize);
-	curHealth = currentHealth[xPoint][yPoint] + delta;
+	curHealth = currentHealth[yPoint][xPoint] + delta;
 	if (curHealth < 0) { // if the brick is destroyed, set the texture of ground
 		curHealth = 4; // curHealth = 4 means that this tile could not be destroyed
-		currentHealth[xPoint][yPoint] = curHealth;
-		sf::Vertex* quadTiles = &tiles[xPoint * yPoint * 4];
+	//	currentHealth[yPoint][xPoint] = curHealth;
+		sf::Vertex* quadTiles = &tiles[(xPoint + yPoint * width/tileSize) * 4];
 
 		quadTiles[0].texCoords = sf::Vector2f(0, 0);
 		quadTiles[1].texCoords = sf::Vector2f(tileSize, 0);
@@ -243,11 +243,11 @@ void TileMap::changeCurrentHealth(int xPoint, int yPoint, int delta) {
 
 		solidBool[yPoint][xPoint] =
 			false; // set this tile available for player(not solid)
-		return;
-	}
-	currentHealth[xPoint][yPoint] = curHealth;
 
-	sf::Vertex* quadOverlay = &overlay[(xPoint + yPoint * height / tileSize) * 4];
+	}
+	currentHealth[yPoint][xPoint] = curHealth;
+
+	sf::Vertex* quadOverlay = &overlay[(xPoint + yPoint * width / tileSize) * 4];
 	quadOverlay[0].texCoords = sf::Vector2f(curHealth * tileSize, 0);
 	quadOverlay[1].texCoords = sf::Vector2f(curHealth * tileSize + tileSize, 0);
 	quadOverlay[2].texCoords =
@@ -608,17 +608,28 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 bool TileMap::checkTile(sf::FloatRect bullet)
 {
-	for (int i = (bullet.top) / tileSize;
-		i <= ((bullet.top + bullet.height) / tileSize); i++) {
-		for (int j = (bullet.left) / tileSize;
-			j <= ((bullet.left + bullet.width) / tileSize); j++) {
-			if (this->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
-				if (currentHealth[i][j] < 4) {
-					this->changeCurrentHealth(j * tileSize, i * tileSize, -1);
+//	std::cout << bullet.left-widgetWidth << std::endl;
+	if (bullet.top<5 || bullet.top+26 > height-5||bullet.left-widgetWidth<5||bullet.left-widgetWidth+26>width-5) {
+		if (bullet.top<0 || bullet.top > height || bullet.left - widgetWidth<0 || bullet.left - widgetWidth>width) {
+
+			return true;
+		}
+	}
+	else {
+		for (int i = (int(bullet.top)) / tileSize;
+			i <= ((int(bullet.top) + int(bullet.height)) / tileSize); i++) {
+			for (int j = (int(bullet.left - widgetWidth)) / tileSize;
+				j <= ((int(bullet.left - widgetWidth) + int(bullet.width)) / tileSize); j++) {
+				if (this->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
+
+					if (currentHealth[i][j] < 4) {
+						this->changeCurrentHealth(j * tileSize, i * tileSize, -1);
+					}
+					return true;
 				}
-				return true;
 			}
 		}
 	}
-	return false;
+	return false; 
+	
 }

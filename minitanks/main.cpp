@@ -14,6 +14,7 @@
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
+
 #define FPS 60
 #define mapHeight 768
 #define mapWidth 864
@@ -72,6 +73,7 @@ int main() {
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
+		  break;
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Equal)
@@ -128,7 +130,7 @@ int main() {
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
-          break;
+		  break;
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Space && pl1.getAmmoCount() > 0) {
@@ -184,6 +186,7 @@ int main() {
 			case sf::Event::Closed: {
 				mWindow.close();
 				break;
+			
 			}
 			case sf::Event::KeyPressed: {
 				if (event.key.code == sf::Keyboard::Space) {
