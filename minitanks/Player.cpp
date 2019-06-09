@@ -49,7 +49,6 @@ void Player::updatePlayer(sf::Clock &clock) {
     //	std::cout << x << "," << y << std::endl;
   }
   update();
-}
 
 int Player::getAmmoCount() { return ammoCount; }
 

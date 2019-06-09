@@ -47,6 +47,7 @@ Enemy enemy1, enemy2;
 void initSound();
 
 int main() {
+
   initSound();
   sf::Clock clock;
   mWindow.setFramerateLimit(FPS);
@@ -97,8 +98,9 @@ int main() {
             } else if (menu.getCurrentOption() == 1) {
               map.initMap("example_map", cellWidth, mapWidth, mapHeight,
                           widgetWidth, false, false, 2);
-              pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
                              playerSize, 2, 1, cellWidth, &map, 3);
+							 pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
+								 playerSize, 2, 1, cellWidth, &map, 3);
               pl2.initPlayer("Player.png", map.pl2X, map.pl2Y, playerSize,
                              playerSize, 2, 1, cellWidth, &map, 3);
 
@@ -145,7 +147,8 @@ int main() {
         }
       }
 
-      mWindow.clear();
+
+		mWindow.clear();
 
       map.setFirstLayer(true); // draw first layer
       map.draw(mWindow);
@@ -167,12 +170,63 @@ int main() {
       p1Widget.updateBullet(pl1.getAmmoCount());
       p1Widget.updateHealth(pl1.getCurrentHealth());
       p1Widget.draw(mWindow);
-      p2Widget.updateBullet(pl1.getAmmoCount());
-      p1Widget.updateHealth(pl2.getCurrentHealth());
+      p2Widget.updateBullet(pl2.getAmmoCount());
+      p2Widget.updateHealth(pl2.getCurrentHealth());
       p2Widget.draw(mWindow);
       mWindow.display();
-    } else if (renderMode == 1) { // editor is active
+    } 
+	else if (renderMode == 3) { // game(2 players)
+		sf::Event event;
+		while (mWindow.pollEvent(event)) {
+			switch (event.type) {
+			case sf::Event::Closed: {
+				mWindow.close();
+				break;
+			}
+			case sf::Event::KeyPressed: {
+				if (event.key.code == sf::Keyboard::Space) {
+					Bullet newBullet(pl1.getFacePosition(), pl1.getDirection(),
+						bulletSpeed, false);
+					newBullet.setTexture(bulletTex);
+					vecBullet.push_back(newBullet);
+				}
+			}
+			}
+		}
 
+		mWindow.clear();
+
+		map.setFirstLayer(true); // draw first layer
+		map.draw(mWindow);
+		pl1.updatePlayer(); // player between ground and some(bushes) overlays
+		pl2.updatePlayer();
+		pl1.draw(mWindow);
+		pl2.draw(mWindow);
+		vecEntities = checkCollisionEntities(vecBullet, vecEntities, hit);
+		vecBullet = getVector();
+		for (auto& i : vecEntities) {
+			i.draw(mWindow);
+		}
+		for (auto& i : vecBullet) {
+			i.updateBullet();
+			i.draw(mWindow);
+		}
+
+		map.setFirstLayer(false); // draw overlay
+		map.draw(mWindow);
+		for (auto& i : vecBullet) {
+			i.updateBullet();
+			i.draw(mWindow);
+		}
+		p1Widget.updateBullet(pl1.getAmmoCount());
+		p1Widget.updateHealth(pl1.getCurrentHealth());
+		p1Widget.draw(mWindow);
+		p2Widget.updateBullet(pl2.getAmmoCount());
+		p2Widget.updateHealth(pl2.getCurrentHealth());
+		p2Widget.draw(mWindow);
+		mWindow.display();
+	}
+     else if (renderMode == 1) { // editor is active
       map.editMap(mWindow);
       if (sf::Keyboard::isKeyPressed(
               sf::Keyboard::Escape)) { // this event is when user press "exit"
