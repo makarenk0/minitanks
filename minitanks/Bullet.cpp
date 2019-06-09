@@ -53,3 +53,7 @@ Bullet::~Bullet() {}
 void Bullet::setTexture(sf::Texture& texture) {
 	bulletSprite.setTexture(texture);
 }
+
+sf::FloatRect Bullet::getGlobalBounds() {
+	return bulletSprite.getGlobalBounds();
+}

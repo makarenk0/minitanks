@@ -53,6 +53,7 @@ Widget::Widget(sf::Vector2f position, int width, int height, bool firstPlayer) {
   // initialising text on widget
   initText(width, height, firstPlayer);
   mainSprite.getGlobalBounds();
+  mainSprite.getGlobalBounds();
 }
 
 void Widget::draw(sf::RenderWindow &window) {

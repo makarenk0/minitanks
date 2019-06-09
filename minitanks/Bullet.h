@@ -19,5 +19,6 @@ public:
   void updateBullet();
   void draw(sf::RenderWindow &window);
   void setTexture(sf::Texture &texture);
+  sf::FloatRect getGlobalBounds();
   ~Bullet();
 };
