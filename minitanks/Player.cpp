@@ -10,7 +10,7 @@ Player::Player(std::string file, int x, int y, int w, int h,int dir, int speed, 
 
 void Player::initPlayer(std::string file, int x, int y, int w, int h, int dir, int speed, int tileSize, TileMap* map) 
 {
-	initEntity(x, y, w, h, dir, file, speed, tileSize, map);
+	initEntity(x+w/2, y+h/2, w, h, dir, file, speed, tileSize, map);
 }
 
 void Player::updatePlayer()

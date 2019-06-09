@@ -65,9 +65,12 @@ void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file, i
 	this->map = map;
 	entityTexture.loadFromFile("assets/" + file);
 	entitySprite.setTexture(entityTexture);
+	
 	entitySprite.setOrigin((w / 2), (h / 2));
-	entitySprite.setScale(0.8, 0.8);
 	entitySprite.setPosition(x + widgetWidth, y);
+	
+	entitySprite.setScale(0.8, 0.8);
+	
 }
 
 
@@ -76,6 +79,25 @@ void Entity::setSpeed(int speed) { this->speed = speed; }
 
 
 void Entity::interactMap() {
+	//map bounds
+	if (y<(h/2)) {
+	
+	y = (h/2);
+		entitySprite.setPosition(widgetWidth + x, y);
+	}
+	if (y > map->height-(h / 2)) {
+		y = map->height - (h / 2);
+		entitySprite.setPosition(widgetWidth + x, y);
+	}
+	if (x < (w / 2)) {
+		x = w / 2;
+     	entitySprite.setPosition(widgetWidth + x, y);
+	}
+	if (x > map->width-(w / 2)) {
+		x = map->width - (w / 2);
+		entitySprite.setPosition(widgetWidth + x, y);
+	}
+	//tile bounds
   for (int i = (y - (h / 2) + rangeBetweenTiles) / tileSize;
        i <= ((y + (h / 2) - rangeBetweenTiles) / tileSize); i++) {
     for (int j = (x - (w / 2) + rangeBetweenTiles) / tileSize;
@@ -104,32 +126,33 @@ void Entity::interactMap() {
 
 
 sf::Vector2f Entity::getFacePosition() {
-  switch (dir) {
-  case 0: {
-    return sf::Vector2f(entitySprite.getPosition().x -7
-                            ,
-                        entitySprite.getPosition().y-40);
-    break;
-  }
-  case 1: {
-    return sf::Vector2f(entitySprite.getPosition().x +
-                            entitySprite.getGlobalBounds().width+8,
-                        entitySprite.getPosition().y -7);
-    break;
-  }
-  case 2: {
-    return sf::Vector2f(
-        entitySprite.getPosition().x + 7,
-        entitySprite.getPosition().y + entitySprite.getGlobalBounds().height+8);
-    break;
-  }
-  case 3: {
-    return sf::Vector2f(entitySprite.getPosition().x-40,
-                        entitySprite.getPosition().y +
-                            7);
-    break;
-  }
-  }
+	switch (dir) {
+	case 0: {
+		return sf::Vector2f(entitySprite.getPosition().x - 7
+			,
+			entitySprite.getPosition().y - 40);
+		break;
+	}
+	case 1: {
+		return sf::Vector2f(entitySprite.getPosition().x +
+			entitySprite.getGlobalBounds().width + 8,
+			entitySprite.getPosition().y - 7);
+		break;
+	}
+	case 2: {
+		return sf::Vector2f(
+			entitySprite.getPosition().x + 7,
+			entitySprite.getPosition().y + entitySprite.getGlobalBounds().height + 8);
+		break;
+	}
+	case 3: {
+		return sf::Vector2f(entitySprite.getPosition().x - 40,
+			entitySprite.getPosition().y +
+			7);
+		break;
+	}
+	}
+}
 
 
 int Entity::getDirection() { return dir; }

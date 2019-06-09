@@ -39,9 +39,6 @@ std::map<std::string, int> myFirstMap = {
     {"2", 1}};
 
 int main() {
-  sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
-                           "Main window",
-                           sf::Style::Close | sf::Style::Titlebar);
   mWindow.setFramerateLimit(FPS);
 
   sf::Texture bulletTex;
@@ -97,7 +94,7 @@ int main() {
                           widgetWidth, false, false, 2);
               pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
                              playerSize, 2, 1, cellWidth, &map);
-              pl2.initPlayer("Player.png", map.pl2X, map.pl2Y, playerSize,
+              pl2.initPlayer("Player2.png", map.pl2X, map.pl2Y, playerSize,
                              playerSize, 2, 1, cellWidth, &map);
               renderMode = 3;
 
@@ -116,41 +113,80 @@ int main() {
       p2Widget.draw(mWindow);
       menu.draw(mWindow);
       mWindow.display();
-    } else if (renderMode == 2) { // game
-      sf::Event event;
-      while (mWindow.pollEvent(event)) {
-        switch (event.type) {
-        case sf::Event::Closed: {
-          mWindow.close();
-          break;
-        }
-        case sf::Event::KeyPressed: {
-          if (event.key.code == sf::Keyboard::Space) {
-            Bullet newBullet(pl.getFacePosition(), pl.getDirection(),
-                             bulletSpeed, false);
-            newBullet.setTexture(testTex);
-            vecBullet.push_back(newBullet);
-          }
-        }
-        }
-      }
+	}
+	else if (renderMode == 2) { // game(one player)
+		sf::Event event;
+		while (mWindow.pollEvent(event)) {
+			switch (event.type) {
+			case sf::Event::Closed: {
+				mWindow.close();
+				break;
+			}
+			case sf::Event::KeyPressed: {
+				if (event.key.code == sf::Keyboard::Space) {
+					Bullet newBullet(pl1.getFacePosition(), pl1.getDirection(),
+						bulletSpeed, false);
+					newBullet.setTexture(bulletTex);
+					vecBullet.push_back(newBullet);
+				}
+			}
+			}
+		}
 
-      mWindow.clear();
+		mWindow.clear();
 
-      map.setFirstLayer(true); // draw first layer
-      map.draw(mWindow);
-      pl1.updatePlayer(); // player between ground and some(bushes) overlays
-      pl1.draw(mWindow);
-      map.setFirstLayer(false); // draw overlay
-      map.draw(mWindow);
-      for (auto &i : vecBullet) {
-        i.updateBullet();
-        i.draw(mWindow);
-      }
-      p1Widget.draw(mWindow);
-      p2Widget.draw(mWindow);
-      mWindow.display();
-    } else if (renderMode == 1) { // editor is active
+		map.setFirstLayer(true); // draw first layer
+		map.draw(mWindow);
+		pl1.updatePlayer(); // player between ground and some(bushes) overlays
+		pl1.draw(mWindow);
+		map.setFirstLayer(false); // draw overlay
+		map.draw(mWindow);
+		for (auto& i : vecBullet) {
+			i.updateBullet();
+			i.draw(mWindow);
+		}
+		p1Widget.draw(mWindow);
+		p2Widget.draw(mWindow);
+		mWindow.display();
+	}
+	else if (renderMode == 3) { // game(2 players)
+		sf::Event event;
+		while (mWindow.pollEvent(event)) {
+			switch (event.type) {
+			case sf::Event::Closed: {
+				mWindow.close();
+				break;
+			}
+			case sf::Event::KeyPressed: {
+				if (event.key.code == sf::Keyboard::Space) {
+					Bullet newBullet(pl1.getFacePosition(), pl1.getDirection(),
+						bulletSpeed, false);
+					newBullet.setTexture(bulletTex);
+					vecBullet.push_back(newBullet);
+				}
+			}
+			}
+		}
+
+		mWindow.clear();
+
+		map.setFirstLayer(true); // draw first layer
+		map.draw(mWindow);
+		pl1.updatePlayer(); // player between ground and some(bushes) overlays
+		pl2.updatePlayer();
+		pl1.draw(mWindow);
+		pl2.draw(mWindow);
+		map.setFirstLayer(false); // draw overlay
+		map.draw(mWindow);
+		for (auto& i : vecBullet) {
+			i.updateBullet();
+			i.draw(mWindow);
+		}
+		p1Widget.draw(mWindow);
+		p2Widget.draw(mWindow);
+		mWindow.display();
+	}
+     else if (renderMode == 1) { // editor is active
 
       map.editMap(mWindow);
       if (sf::Keyboard::isKeyPressed(

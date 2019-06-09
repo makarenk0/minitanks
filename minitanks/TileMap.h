@@ -17,7 +17,6 @@ class TileMap
 public:
 	TileMap();
 	TileMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode, int playersNum);
-	~TileMap();
 	void changeCurrentHealth(int xPoint, int yPoint, int delta);
 	bool checkCollisionOfPoint(int xPoint, int yPoint);
 	bool getEditMode();
@@ -29,16 +28,20 @@ public:
 	void setFirstLayer(bool set);
 	int widgetWidth;
 	int pl1X, pl1Y, pl2X, pl2Y;
+	int height, width;
+	bool checkTile(sf::FloatRect bullet);
 private:
-	sf::RenderTexture canvas, canvasOverlay;
-	sf::Sprite mainSprite, overlaySprite;
+	sf::RenderTexture canvas, canvasOverlay, canvasPlayers;
+	sf::Sprite pl1Edit, pl2Edit, mapPl1, mapPl2;
+	bool pl1EditPlaced=false, pl2EditPlaced=false;
+	sf::Texture pl1Text, pl2Text;
+	sf::Sprite mainSprite, overlaySprite, playersSprite;
 	sf::RenderWindow tools;
 	sf::VertexArray tiles, overlay, toolsMenu, overlaysMenu;
 	sf::Texture tileTexture, overlayTexture;
 	int tileSize;
-	int width;
 	int toolsWidth, amountOfTools = 4;
-	int height, toolsHeight = 80;
+	int toolsHeight = 80;
 	std::ifstream file;
 	std::string buf;
 	std::string fileName;

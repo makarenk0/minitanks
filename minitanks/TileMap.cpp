@@ -97,7 +97,6 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int
 		pl1X = tileSize * std::stoi(readValue(buf));
 		buf = buf.substr(last + 1);
 		pl1Y = tileSize * std::stoi(readValue(buf));
-		std::cout << pl1X << "," << pl1Y;
 		continue;
 
 	}
@@ -106,7 +105,6 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int
 		pl2X = tileSize * std::stoi(readValue(buf));
 		buf = buf.substr(last + 1);
 		pl2Y = tileSize * std::stoi(readValue(buf));
-		std::cout << pl1X << "," << pl1Y;
 		continue;
 
 	}
@@ -175,9 +173,12 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int
   overlaySprite.setPosition(widgetWidth, 0);
   overlaySprite.setTexture(canvasOverlay.getTexture());
 
+  playersSprite.setPosition(widgetWidth, 0);
+  playersSprite.setTexture(canvasPlayers.getTexture());
+
   canvas.draw(tiles, &tileTexture);
   canvasOverlay.draw(overlay, &overlayTexture);
-  
+
 }
 
 
@@ -199,20 +200,27 @@ bool TileMap::checkCollisionOfPoint(int xPoint, int yPoint) {
 
 void TileMap::draw(sf::RenderWindow &window){ // override function of drawing
 	if (firstLayer) {
+		mainSprite.setTexture(canvas.getTexture());
 		window.draw(mainSprite);
+		
     }
 	else {
+		overlaySprite.setTexture(canvasOverlay.getTexture());
 		window.draw(overlaySprite);
+
 	}
+	if (editMode) {
+		window.draw(mapPl2);
+		window.draw(mapPl1);
+	}
+		
+	
   
 }
 
 void TileMap::setFirstLayer(bool set) {
 	firstLayer = set;
 }
-
-
-
 
 
 void TileMap::changeCurrentHealth(int xPoint, int yPoint, int delta) {
@@ -243,7 +251,10 @@ void TileMap::changeCurrentHealth(int xPoint, int yPoint, int delta) {
       sf::Vector2f(curHealth * tileSize + tileSize, tileSize);
   quadOverlay[3].texCoords = sf::Vector2f(curHealth * tileSize, tileSize);
 
-  canvas.draw(tiles, &tileTexture);    //update
+  
+  canvas.clear(sf::Color(255, 255, 255, 0)); //update
+  canvas.draw(tiles, &tileTexture);
+  canvasOverlay.clear(sf::Color(255, 255, 255, 0));
   canvasOverlay.draw(overlay, &overlayTexture);
 }
 
@@ -333,6 +344,16 @@ void TileMap::openEditWindow() {
         sf::Vector2f(i * tileSize + tileSize, tileSize);
     overlaysMenuPointer[3].texCoords = sf::Vector2f(i * tileSize, tileSize);
   }
+
+  pl1Text.loadFromFile("assets\\Player.png");
+  pl1Edit.setTexture(pl1Text);
+  pl1Edit.setScale(0.8, 0.8);
+  pl1Edit.setPosition(toolsWidth-pl1Edit.getLocalBounds().width -indent,indent);
+
+  pl2Text.loadFromFile("assets\\Player2.png");
+  pl2Edit.setTexture(pl2Text);
+  pl2Edit.setScale(0.8, 0.8);
+  pl2Edit.setPosition(toolsWidth -2*pl1Edit.getLocalBounds().width -(2*indent), indent);
 }
 
 bool TileMap::getEditMode() { return editMode; }
@@ -340,9 +361,7 @@ bool TileMap::getEditMode() { return editMode; }
 void TileMap::setEditMode(bool mode) { editMode = mode; }
 
 void TileMap::editMap(sf::RenderWindow &mWindow) {
-	canvas.draw(tiles, &tileTexture);    //update
-	canvasOverlay.draw(overlay, &overlayTexture);
-
+	
   drawToolWindow(mWindow.getPosition().x, mWindow.getPosition().y);
 
 
@@ -370,6 +389,19 @@ void TileMap::editMap(sf::RenderWindow &mWindow) {
 		  toFile.append(std::to_string(solidBool[y][x]));
 		  toFile.append(",)\n");
 	  }
+
+	  toFile.append("p1(");
+	  toFile.append(std::to_string(int((mapPl1.getGlobalBounds().left-widgetWidth)/tileSize)));
+	  toFile.append(",");
+	  toFile.append(std::to_string(int(mapPl1.getGlobalBounds().top / tileSize)));
+	  toFile.append(",)\n");
+
+	  toFile.append("p2(");
+	  toFile.append(std::to_string(int((mapPl2.getGlobalBounds().left-widgetWidth) / tileSize)));
+	  toFile.append(",");
+	  toFile.append(std::to_string(int(mapPl2.getGlobalBounds().top / tileSize)));
+	  toFile.append(",)\n");
+
 	  toFile.append("end");
 	  saveFile(toFile);
   }
@@ -382,11 +414,27 @@ void TileMap::editMap(sf::RenderWindow &mWindow) {
     }
     previousX = (sf::Mouse::getPosition(mWindow).x-widgetWidth) / tileSize;
     previousY = sf::Mouse::getPosition(mWindow).y / tileSize;
-
-    if (previousX >= 0 && previousX < width / tileSize && previousY >= 0 &&
-        previousY < height / tileSize) {
-      changeTile(previousX, previousY);
-    }
+	if (pl2EditPlaced) {
+		if (previousY >= 0) {
+			mapPl2.setTexture(pl2Text);
+			mapPl2.setScale(0.8, 0.8);
+			mapPl2.setPosition(previousX * tileSize+ widgetWidth, previousY * tileSize);
+		}
+	}
+	else if (pl1EditPlaced) {
+		if (previousY >= 0) {
+			mapPl1.setTexture(pl1Text);
+			mapPl1.setScale(0.8, 0.8);
+			mapPl1.setPosition(previousX * tileSize + widgetWidth, previousY * tileSize);
+		}
+	}
+	else {
+		if (previousX >= 0 && previousX < width / tileSize && previousY >= 0 &&
+			previousY < height / tileSize) {
+			changeTile(previousX, previousY);
+		}
+	}
+    
     return;
   }
   
@@ -396,22 +444,29 @@ void TileMap::editMap(sf::RenderWindow &mWindow) {
 void TileMap::setExitEditMode(bool ex) { exitEditMode = ex; }
 
 void TileMap::changeTile(int X, int Y) {
-  sf::Vertex *quadTiles = &tiles[(width / tileSize * Y + X) * 4];
-  sf::Vertex *quadOverlay = &overlay[(width / tileSize * Y + X) * 4];
+	
+		sf::Vertex* quadTiles = &tiles[(width / tileSize * Y + X) * 4];
+		sf::Vertex* quadOverlay = &overlay[(width / tileSize * Y + X) * 4];
 
-  quadTiles[0].texCoords = sf::Vector2f(idEdit * tileSize, 0);
-  quadTiles[1].texCoords = sf::Vector2f(idEdit * tileSize + tileSize, 0);
-  quadTiles[2].texCoords = sf::Vector2f(idEdit * tileSize + tileSize, tileSize);
-  quadTiles[3].texCoords = sf::Vector2f(idEdit * tileSize, tileSize);
+		quadTiles[0].texCoords = sf::Vector2f(idEdit * tileSize, 0);
+		quadTiles[1].texCoords = sf::Vector2f(idEdit * tileSize + tileSize, 0);
+		quadTiles[2].texCoords = sf::Vector2f(idEdit * tileSize + tileSize, tileSize);
+		quadTiles[3].texCoords = sf::Vector2f(idEdit * tileSize, tileSize);
+		std::cout << healthEdit << std::endl;
+		quadOverlay[0].texCoords = sf::Vector2f(healthEdit * tileSize, 0);
+		quadOverlay[1].texCoords = sf::Vector2f(healthEdit * tileSize + tileSize, 0);
+		quadOverlay[2].texCoords =
+			sf::Vector2f(healthEdit * tileSize + tileSize, tileSize);
+		quadOverlay[3].texCoords = sf::Vector2f(healthEdit * tileSize, tileSize);
 
-  quadOverlay[0].texCoords = sf::Vector2f(healthEdit * tileSize, 0);
-  quadOverlay[1].texCoords = sf::Vector2f(healthEdit * tileSize + tileSize, 0);
-  quadOverlay[2].texCoords =
-      sf::Vector2f(healthEdit * tileSize + tileSize, tileSize);
-  quadOverlay[3].texCoords = sf::Vector2f(healthEdit * tileSize, tileSize);
+		currentHealth[Y][X] = healthEdit;
+		solidBool[Y][X] = solEdit;
 
-  currentHealth[Y][X] = healthEdit;
-  solidBool[Y][X] = solEdit;
+		canvas.clear(sf::Color(255, 255, 255, 0)); //update
+		canvas.draw(tiles, &tileTexture);
+		canvasOverlay.clear(sf::Color(255, 255, 255, 0));
+		canvasOverlay.draw(overlay, &overlayTexture);
+	
 }
 
 void TileMap::drawToolWindow(int winX, int winY) {
@@ -429,22 +484,39 @@ void TileMap::drawToolWindow(int winX, int winY) {
   // tool menu
   tools.draw(toolsMenu, &tileTexture);
   tools.draw(overlaysMenu, &overlayTexture);
+  if (!pl1EditPlaced) {
+	  tools.draw(pl1Edit);
+  }
+  if (!pl2EditPlaced) {
+	  tools.draw(pl2Edit);
+  }
+ 
+
+  
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
     int x = sf::Mouse::getPosition(tools).x;
     int y = sf::Mouse::getPosition(tools).y;
+
+	//clicks
     if (x >= toolsMenu[3].position.x && x <= toolsMenu[1].position.x) {
       if (y >= toolsMenu[1].position.y && y <= toolsMenu[3].position.y) {
         idEdit = 0;
         healthEdit = 4;
         solEdit = false;
+
+		pl1EditPlaced = false;
+		pl2EditPlaced = false;
       }
     }
     if (x >= toolsMenu[3 + 4].position.x && x <= toolsMenu[1 + 4].position.x) {
       if (y >= toolsMenu[1 + 4].position.y &&
           y <= toolsMenu[3 + 4].position.y) {
         idEdit = 1;
-        healthEdit = 4;
+        healthEdit = 3;
         solEdit = true;
+
+		pl1EditPlaced = false;
+		pl2EditPlaced = false;
       }
     }
     if (x >= toolsMenu[3 + 8].position.x && x <= toolsMenu[1 + 8].position.x) {
@@ -453,6 +525,9 @@ void TileMap::drawToolWindow(int winX, int winY) {
         idEdit = 2;
         healthEdit = 4;
         solEdit = true;
+
+		pl1EditPlaced = false;
+		pl2EditPlaced = false;
       }
     }
     if (x >= toolsMenu[3 + 12].position.x &&
@@ -462,6 +537,9 @@ void TileMap::drawToolWindow(int winX, int winY) {
         idEdit = 0;
         healthEdit = 5;
         solEdit = false;
+
+		pl1EditPlaced = false;
+		pl2EditPlaced = false;
       }
     }
 
@@ -470,6 +548,9 @@ void TileMap::drawToolWindow(int winX, int winY) {
         idEdit = 1;
         healthEdit = 0;
         solEdit = true;
+
+		pl1EditPlaced = false;
+		pl2EditPlaced = false;
       }
     }
     if (x >= overlaysMenu[3 + 4].position.x &&
@@ -479,6 +560,9 @@ void TileMap::drawToolWindow(int winX, int winY) {
         idEdit = 1;
         healthEdit = 1;
         solEdit = true;
+
+		pl1EditPlaced = false;
+		pl2EditPlaced = false;
       }
     }
     if (x >= overlaysMenu[3 + 8].position.x &&
@@ -488,9 +572,47 @@ void TileMap::drawToolWindow(int winX, int winY) {
         idEdit = 1;
         healthEdit = 2;
         solEdit = true;
+
+		pl1EditPlaced = false;
+		pl2EditPlaced = false;
       }
     }
-  }
 
+	if (x >= pl2Edit.getPosition().x &&
+		x <= pl2Edit.getPosition().x+pl2Edit.getLocalBounds().width) {
+		if (y >= pl2Edit.getPosition().y &&
+			y <= pl2Edit.getPosition().y+ pl2Edit.getLocalBounds().height) {
+			pl2EditPlaced = true;
+			pl1EditPlaced = false;
+		}
+	}
+
+	if (x >= pl1Edit.getPosition().x &&
+		x <= pl1Edit.getPosition().x + pl1Edit.getLocalBounds().width) {
+		if (y >= pl1Edit.getPosition().y &&
+			y <= pl1Edit.getPosition().y + pl1Edit.getLocalBounds().height) {
+			pl1EditPlaced = true;
+			pl2EditPlaced = false;
+		}
+	}
+  }
+ 
   tools.display();
+}
+
+bool TileMap::checkTile(sf::FloatRect bullet)
+{
+	for (int i = (bullet.top) / tileSize;
+		i <= ((bullet.top+bullet.height)/ tileSize); i++) {
+		for (int j = (bullet.left) / tileSize;
+			j <= ((bullet.left + bullet.width) / tileSize); j++) {
+			if (this->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
+				if (currentHealth[i][j]<4) {
+					this->changeCurrentHealth(j * tileSize, i * tileSize, -1);
+				}
+				return true;
+			}
+		}
+	}
+	return false;
 }
