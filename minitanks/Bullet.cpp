@@ -1,7 +1,7 @@
 #include "Bullet.h"
 #include <iostream>
 
-Bullet::Bullet(sf::Vector2f position, int direction, const float speed,
+Bullet::Bullet(sf::Vector2f position, int direction, float speed,
                bool isSuper) {
   this->speed = speed;
   this->direction = direction;
@@ -24,22 +24,22 @@ void Bullet::updateBullet() { bulletSprite.move(moveDir); }
 void Bullet::rotateSprite() {
   switch (direction) {
   case 0: {
-    moveDir = {0, -speed};
+    moveDir = {0.f, -speed};
     break;
   }
   case 1: {
     bulletSprite.rotate(90);
-    moveDir = {speed, 0};
+    moveDir = {speed, 0.f};
     break;
   }
   case 2: {
     bulletSprite.rotate(180);
-    moveDir = {0, speed};
+    moveDir = {0.f, speed};
     break;
   }
   case 3: {
     bulletSprite.rotate(270);
-    moveDir = {-speed, 0};
+    moveDir = {-speed, 0.f};
     break;
   }
   }

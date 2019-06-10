@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 class Bullet {
-protected:
+private:
   float speed;
   int direction;
   bool isSuper;

@@ -1,25 +1,24 @@
 #include "CollisionChecker.h"
 
 std::vector<Bullet> vec;
+
 void checkCollisionTiles(TileMap &map, std::vector<Bullet> &vecBullets) {
-	int indexI = 0;
+  int indexI = 0;
   for (auto &i : vecBullets) {
-     bool hit = map.checkTile(i.getGlobalBounds());
-	 if (hit) {
-		 i.~Bullet();
-		 vecBullets[indexI] = vecBullets.back();
-		 vecBullets.pop_back();
-	 }
-	 indexI++;
+    bool hit = map.checkTile(i.getGlobalBounds());
+    if (hit) {
+      i.~Bullet();
+      vecBullets[indexI] = vecBullets.back();
+      vecBullets.pop_back();
+    }
+    indexI++;
   }
   vec = vecBullets;
 }
 
-
-
-std::vector<Entity> checkCollisionEntities(std::vector<Bullet> &vecBullets,
-                                           std::vector<Entity> &vecEnt,
-                                           sf::Sound &hit) {
+std::vector<Enemy> checkCollisionEntities(std::vector<Bullet> &vecBullets,
+                                          std::vector<Enemy> &vecEnt,
+                                          sf::Sound &hit) {
   int indexI = 0;
   int indexK = 0;
   for (auto &k : vecEnt) {
@@ -34,8 +33,8 @@ std::vector<Entity> checkCollisionEntities(std::vector<Bullet> &vecBullets,
 
         k.setCurrentHealth(k.getCurrentHealth() - 1);
         if (k.getCurrentHealth() <= 0) {
-          k.~Entity();
-          std::vector<Entity>::iterator it2 = vecEnt.begin() + indexK;
+          k.~Enemy();
+          std::vector<Enemy>::iterator it2 = vecEnt.begin() + indexK;
           vecEnt.erase(it2);
           break;
         }
@@ -47,6 +46,72 @@ std::vector<Entity> checkCollisionEntities(std::vector<Bullet> &vecBullets,
   }
   vec = vecBullets;
   return vecEnt;
+}
+
+void checkCollisionPlayers2(std::vector<Bullet>& vecBullets, Player& pl1,  Player& pl2,
+	sf::Sound& hit) {
+	int indexI = 0;
+
+	for (auto& i : vecBullets) {
+
+		if (i.getGlobalBounds().intersects(pl1.getGlobalBounds())) {
+			i.~Bullet();
+			hit.play();
+			vecBullets[indexI] = vecBullets.back();
+			vecBullets.pop_back();
+
+			pl1.setCurrentHealth(pl1.getCurrentHealth() - 1);
+			if (pl1.getCurrentHealth() <= 0) {
+				pl1.setPosition(sf::Vector2f(336.f, 672.f));
+				pl1.setCurrentHealth(3);
+			}
+		}
+		indexI++;
+	}
+	indexI = 0;
+
+	for (auto& i : vecBullets) {
+
+		if (i.getGlobalBounds().intersects(pl2.getGlobalBounds())) {
+			i.~Bullet();
+			hit.play();
+			vecBullets[indexI] = vecBullets.back();
+			vecBullets.pop_back();
+
+			pl2.setCurrentHealth(pl2.getCurrentHealth() - 1);
+			if (pl2.getCurrentHealth() <= 0) {
+				pl2.setPosition(sf::Vector2f(336.f, 672.f));
+				pl2.setCurrentHealth(3);
+			}
+		}
+		indexI++;
+	}
+
+}
+
+void checkCollisionPlayers1(std::vector<Bullet> &vecBullets, Player &pl1,
+                           sf::Sound &hit) {
+  int indexI = 0;
+
+  for (auto &i : vecBullets) {
+
+    if (i.getGlobalBounds().intersects(pl1.getGlobalBounds())) {
+      i.~Bullet();
+      hit.play();
+      vecBullets[indexI] = vecBullets.back();
+      vecBullets.pop_back();
+
+	  pl1.setCurrentHealth(pl1.getCurrentHealth() - 1);
+      if (pl1.getCurrentHealth() <= 0) {
+		  pl1.setPosition(sf::Vector2f(336.f, 672.f));
+		  pl1.setCurrentHealth(3);
+      }
+    }
+    indexI++;
+  }
+  indexI = 0;
+
+  
 }
 
 std::vector<Bullet> getVector() { return vec; }

@@ -21,7 +21,7 @@ public:
 	bool checkCollisionOfPoint(int xPoint, int yPoint);
 	bool getEditMode();
 	void setEditMode(bool mode);
-	void editMap(sf::RenderWindow &mWindow);
+	void editMap(sf::RenderWindow& mWindow);
 	void setExitEditMode(bool ex);
 	void initMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode, int plauersNum);
 	void draw(sf::RenderWindow& window);
@@ -30,11 +30,19 @@ public:
 	int pl1X, pl1Y, pl2X, pl2Y;
 	int height, width;
 	bool checkTile(sf::FloatRect bullet);
+	sf::Sprite allieBase, enemyBase;
+	bool win = false, fail = false;
 private:
+	bool enemyBasePresent = false, allieBasePresent = false;
 	sf::RenderTexture canvas, canvasOverlay, canvasPlayers;
+	sf::Texture aliesB;
+	sf::Texture enemyB;
 	sf::Sprite pl1Edit, pl2Edit, mapPl1, mapPl2;
-	bool pl1EditPlaced=false, pl2EditPlaced=false;
+	sf::Sprite allieBaseEdit, enemyBaseEdit;
+	bool pl1EditPlaced = false, pl2EditPlaced = false, allieBasePlaced = false, enemyBasePlaced = false;
 	sf::Texture pl1Text, pl2Text;
+	sf::Texture allieBaseEditTex;
+	sf::Texture enemyBaseEditTex;
 	sf::Sprite mainSprite, overlaySprite, playersSprite;
 	sf::RenderWindow tools;
 	sf::VertexArray tiles, overlay, toolsMenu, overlaysMenu;
@@ -53,11 +61,11 @@ private:
 	int curHealth;
 	bool solid, firstLayer;
 	bool editMode, exitEditMode;
-	int previousX=0, previousY=0;
+	int previousX = 0, previousY = 0;
 	int playersNum;
 	std::string fromFile;
 
-	
+
 
 	std::vector<std::vector<bool>> solidBool;
 	std::vector<std::vector<int>> currentHealth;

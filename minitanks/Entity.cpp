@@ -121,23 +121,23 @@ sf::Vector2f Entity::getFacePosition() {
   switch (dir) {
   case 0: {
     return sf::Vector2f(entitySprite.getPosition().x - 7,
-                        entitySprite.getPosition().y - 40);
+                        entitySprite.getPosition().y - 50);
     break;
   }
   case 1: {
     return sf::Vector2f(entitySprite.getPosition().x +
-                            entitySprite.getGlobalBounds().width + 8,
+                            entitySprite.getGlobalBounds().width + 15,
                         entitySprite.getPosition().y - 7);
     break;
   }
   case 2: {
     return sf::Vector2f(entitySprite.getPosition().x + 7,
                         entitySprite.getPosition().y +
-                            entitySprite.getGlobalBounds().height + 8);
+                            entitySprite.getGlobalBounds().height + 15);
     break;
   }
   case 3: {
-    return sf::Vector2f(entitySprite.getPosition().x - 40,
+    return sf::Vector2f(entitySprite.getPosition().x - 50,
                         entitySprite.getPosition().y + 7);
     break;
   }

@@ -110,6 +110,31 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int
 			continue;
 
 		}
+		else if (buf.substr(0, 9) == "allieBase") {
+			buf = buf.substr(10);
+			int xB = tileSize * std::stoi(readValue(buf));
+			buf = buf.substr(last + 1);
+			int yB = tileSize * std::stoi(readValue(buf));
+
+			aliesB.loadFromFile("assets/mybase.png");
+			allieBase.setTexture(aliesB);
+			allieBase.setPosition(xB + widgetWidth, yB );
+			allieBasePresent = true;
+			continue;
+
+		}
+		else if (buf.substr(0, 9) == "enemyBase") {
+			buf = buf.substr(10);
+			int xB = tileSize * std::stoi(readValue(buf));
+			buf = buf.substr(last + 1);
+			int yB = tileSize * std::stoi(readValue(buf));
+			enemyB.loadFromFile("assets/enemybase.png");
+			enemyBase.setTexture(enemyB);
+			enemyBase.setPosition(xB+widgetWidth, yB );
+			enemyBasePresent = true;
+			continue;
+
+		}
 		if (buf == "end")
 			break;
 
@@ -194,7 +219,7 @@ bool TileMap::checkCollisionOfPoint(int xPoint, int yPoint) {
 	xPoint = std::floor(xPoint / tileSize);
 	yPoint = std::floor(yPoint / tileSize);
 	if (solidBool[yPoint][xPoint]) {
-		// std::cout << "true" << std::endl;
+		std::cout << "true" << std::endl;
 		return true;
 	}
 	// std::cout << "false" << std::endl;
@@ -205,6 +230,12 @@ void TileMap::draw(sf::RenderWindow & window) { // override function of drawing
 	if (firstLayer) {
 		mainSprite.setTexture(canvas.getTexture());
 		window.draw(mainSprite);
+		if (allieBasePresent) {
+			window.draw(allieBase);
+		}
+		if (allieBasePresent) {
+			window.draw(enemyBase);
+		}
 
 	}
 	else {
@@ -215,6 +246,8 @@ void TileMap::draw(sf::RenderWindow & window) { // override function of drawing
 	if (editMode) {
 		window.draw(mapPl2);
 		window.draw(mapPl1);
+		window.draw(allieBase);
+		window.draw(enemyBase);
 	}
 
 
@@ -230,11 +263,11 @@ void TileMap::changeCurrentHealth(int xPoint, int yPoint, int delta) {
 
 	xPoint = std::floor(xPoint / tileSize);
 	yPoint = std::floor(yPoint / tileSize);
-	curHealth = currentHealth[xPoint][yPoint] + delta;
+	curHealth = currentHealth[yPoint][xPoint] + delta;
 	if (curHealth < 0) { // if the brick is destroyed, set the texture of ground
 		curHealth = 4; // curHealth = 4 means that this tile could not be destroyed
-		currentHealth[xPoint][yPoint] = curHealth;
-		sf::Vertex* quadTiles = &tiles[xPoint * yPoint * 4];
+	//	currentHealth[yPoint][xPoint] = curHealth;
+		sf::Vertex* quadTiles = &tiles[(xPoint + yPoint * width / tileSize) * 4];
 
 		quadTiles[0].texCoords = sf::Vector2f(0, 0);
 		quadTiles[1].texCoords = sf::Vector2f(tileSize, 0);
@@ -243,11 +276,11 @@ void TileMap::changeCurrentHealth(int xPoint, int yPoint, int delta) {
 
 		solidBool[yPoint][xPoint] =
 			false; // set this tile available for player(not solid)
-		return;
-	}
-	currentHealth[xPoint][yPoint] = curHealth;
 
-	sf::Vertex* quadOverlay = &overlay[(xPoint + yPoint * height / tileSize) * 4];
+	}
+	currentHealth[yPoint][xPoint] = curHealth;
+
+	sf::Vertex* quadOverlay = &overlay[(xPoint + yPoint * width / tileSize) * 4];
 	quadOverlay[0].texCoords = sf::Vector2f(curHealth * tileSize, 0);
 	quadOverlay[1].texCoords = sf::Vector2f(curHealth * tileSize + tileSize, 0);
 	quadOverlay[2].texCoords =
@@ -360,6 +393,16 @@ void TileMap::openEditWindow() {
 	pl2Edit.setTexture(pl2Text);
 	pl2Edit.setScale(0.8, 0.8);
 	pl2Edit.setPosition(toolsWidth - 2 * pl1Edit.getLocalBounds().width - (2 * indent), indent);
+
+
+	allieBaseEditTex.loadFromFile("assets/mybase.png");
+	allieBaseEdit.setTexture(allieBaseEditTex);
+	allieBaseEdit.setPosition(toolsWidth - 2 * pl1Edit.getLocalBounds().width - allieBaseEdit.getLocalBounds().width - (3 * indent), indent);
+
+
+	enemyBaseEditTex.loadFromFile("assets/enemybase.png");
+	enemyBaseEdit.setTexture(enemyBaseEditTex);
+	enemyBaseEdit.setPosition(toolsWidth - 2 * pl1Edit.getLocalBounds().width - 2 * allieBaseEdit.getLocalBounds().width - (4 * indent), indent);
 }
 
 bool TileMap::getEditMode() { return editMode; }
@@ -408,6 +451,18 @@ void TileMap::editMap(sf::RenderWindow & mWindow) {
 		toFile.append(std::to_string(int(mapPl2.getGlobalBounds().top / tileSize)));
 		toFile.append(",)\n");
 
+		toFile.append("allieBase(");
+		toFile.append(std::to_string(int((allieBase.getGlobalBounds().left - widgetWidth) / tileSize)));
+		toFile.append(",");
+		toFile.append(std::to_string(int(allieBase.getGlobalBounds().top / tileSize)));
+		toFile.append(",)\n");
+
+		toFile.append("enemyBase(");
+		toFile.append(std::to_string(int((enemyBase.getGlobalBounds().left - widgetWidth) / tileSize)));
+		toFile.append(",");
+		toFile.append(std::to_string(int(enemyBase.getGlobalBounds().top / tileSize)));
+		toFile.append(",)\n");
+
 		toFile.append("end");
 		saveFile(toFile);
 	}
@@ -432,6 +487,18 @@ void TileMap::editMap(sf::RenderWindow & mWindow) {
 				mapPl1.setTexture(pl1Text);
 				mapPl1.setScale(0.8, 0.8);
 				mapPl1.setPosition(previousX * tileSize + widgetWidth, previousY * tileSize);
+			}
+		}
+		else if (allieBasePlaced) {
+			if (previousY >= 0) {
+				allieBase.setTexture(allieBaseEditTex);
+				allieBase.setPosition(previousX * tileSize + widgetWidth, previousY * tileSize);
+			}
+		}
+		else if (enemyBasePlaced) {
+			if (previousY >= 0) {
+				enemyBase.setTexture(enemyBaseEditTex);
+				enemyBase.setPosition(previousX * tileSize + widgetWidth, previousY * tileSize);
 			}
 		}
 		else {
@@ -496,6 +563,12 @@ void TileMap::drawToolWindow(int winX, int winY) {
 	if (!pl2EditPlaced) {
 		tools.draw(pl2Edit);
 	}
+	if (!allieBasePlaced) {
+		tools.draw(allieBaseEdit);
+	}
+	if (!enemyBasePlaced) {
+		tools.draw(enemyBaseEdit);
+	}
 
 
 
@@ -512,6 +585,8 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 				pl1EditPlaced = false;
 				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
 			}
 		}
 		if (x >= toolsMenu[3 + 4].position.x && x <= toolsMenu[1 + 4].position.x) {
@@ -523,6 +598,8 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 				pl1EditPlaced = false;
 				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
 			}
 		}
 		if (x >= toolsMenu[3 + 8].position.x && x <= toolsMenu[1 + 8].position.x) {
@@ -534,6 +611,8 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 				pl1EditPlaced = false;
 				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
 			}
 		}
 		if (x >= toolsMenu[3 + 12].position.x &&
@@ -546,6 +625,8 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 				pl1EditPlaced = false;
 				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
 			}
 		}
 
@@ -557,6 +638,8 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 				pl1EditPlaced = false;
 				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
 			}
 		}
 		if (x >= overlaysMenu[3 + 4].position.x &&
@@ -569,6 +652,8 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 				pl1EditPlaced = false;
 				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
 			}
 		}
 		if (x >= overlaysMenu[3 + 8].position.x &&
@@ -581,6 +666,8 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 				pl1EditPlaced = false;
 				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
 			}
 		}
 
@@ -590,6 +677,8 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				y <= pl2Edit.getPosition().y + pl2Edit.getLocalBounds().height) {
 				pl2EditPlaced = true;
 				pl1EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
 			}
 		}
 
@@ -599,6 +688,33 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				y <= pl1Edit.getPosition().y + pl1Edit.getLocalBounds().height) {
 				pl1EditPlaced = true;
 				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
+			}
+		}
+
+
+		if (x >= allieBaseEdit.getPosition().x &&
+			x <= allieBaseEdit.getPosition().x + allieBaseEdit.getLocalBounds().width) {
+			if (y >= allieBaseEdit.getPosition().y &&
+				y <= allieBaseEdit.getPosition().y + allieBaseEdit.getLocalBounds().height) {
+				pl1EditPlaced = false;
+				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = true;
+			}
+		}
+
+
+
+		if (x >= enemyBaseEdit.getPosition().x &&
+			x <= enemyBaseEdit.getPosition().x + enemyBaseEdit.getLocalBounds().width) {
+			if (y >= enemyBaseEdit.getPosition().y &&
+				y <= enemyBaseEdit.getPosition().y + enemyBaseEdit.getLocalBounds().height) {
+				pl1EditPlaced = false;
+				pl2EditPlaced = false;
+				enemyBasePlaced = true;
+				allieBasePlaced = false;
 			}
 		}
 	}
@@ -608,17 +724,38 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 bool TileMap::checkTile(sf::FloatRect bullet)
 {
-	for (int i = (bullet.top) / tileSize;
-		i <= ((bullet.top + bullet.height) / tileSize); i++) {
-		for (int j = (bullet.left) / tileSize;
-			j <= ((bullet.left + bullet.width) / tileSize); j++) {
-			if (this->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
-				if (currentHealth[i][j] < 4) {
-					this->changeCurrentHealth(j * tileSize, i * tileSize, -1);
+
+	if (bullet.top<5 || bullet.top + 26 > height - 5 || bullet.left - widgetWidth<5 || bullet.left - widgetWidth + 26>width - 5) {
+		if (bullet.top<0 || bullet.top > height || bullet.left - widgetWidth<0 || bullet.left - widgetWidth>width) {
+
+			return true;
+		}
+	}
+	else {
+		//std::cout << enemyBase.getGlobalBounds().left <<","<< enemyBase.getGlobalBounds().top << std::endl;
+		std::cout << win << std::endl;
+		for (int i = (int(bullet.top)) / tileSize;
+			i <= ((int(bullet.top) + int(bullet.height)) / tileSize); i++) {
+			for (int j = (int(bullet.left - widgetWidth)) / tileSize;
+				j <= ((int(bullet.left - widgetWidth) + int(bullet.width)) / tileSize); j++) {
+
+				if ((j * tileSize == int(enemyBase.getGlobalBounds().left - widgetWidth)) && (i * tileSize == int(enemyBase.getGlobalBounds().top))) {
+					win = true;
 				}
-				return true;
+				else if (j * tileSize == int(allieBase.getGlobalBounds().left - widgetWidth) && i * tileSize == int(allieBase.getGlobalBounds().top)) {
+					fail = true;
+				}
+
+				if (this->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
+
+					if (currentHealth[i][j] < 4) {
+						this->changeCurrentHealth(j * tileSize, i * tileSize, -1);
+					}
+					return true;
+				}
 			}
 		}
 	}
 	return false;
+
 }
