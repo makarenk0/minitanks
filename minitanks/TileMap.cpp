@@ -118,7 +118,7 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int
 
 			aliesB.loadFromFile("assets/mybase.png");
 			allieBase.setTexture(aliesB);
-			allieBase.setPosition(xB + widgetWidth, yB );
+			allieBase.setPosition(xB, yB);
 			allieBasePresent = true;
 			continue;
 
@@ -130,8 +130,21 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int
 			int yB = tileSize * std::stoi(readValue(buf));
 			enemyB.loadFromFile("assets/enemybase.png");
 			enemyBase.setTexture(enemyB);
-			enemyBase.setPosition(xB+widgetWidth, yB );
+			enemyBase.setPosition(xB, yB);
 			enemyBasePresent = true;
+			continue;
+
+		}
+		else if (buf.substr(0, 5) == "enemy") {
+
+			buf = buf.substr(6);
+			int enemyX = tileSize * std::stoi(readValue(buf));
+			buf = buf.substr(last + 1);
+			int enemyY = tileSize * std::stoi(readValue(buf));
+			enemiesCords[counterE].x = enemyX;
+			enemiesCords[counterE].y = enemyY;
+
+			counterE++;
 			continue;
 
 		}
@@ -248,6 +261,10 @@ void TileMap::draw(sf::RenderWindow & window) { // override function of drawing
 		window.draw(mapPl1);
 		window.draw(allieBase);
 		window.draw(enemyBase);
+		for (auto& i : enemiesEditMap) {
+			window.draw(i);
+		}
+
 	}
 
 
@@ -346,7 +363,8 @@ void TileMap::openEditWindow() {
 	// init graphic part of menu
 	toolsMenu.resize(amountOfTools * 4);
 	overlaysMenu.resize(amountOfTools * 4);
-
+	counterE = 0;
+	enemiesCords.resize(1);
 	toolsMenu.setPrimitiveType(sf::Quads);
 	overlaysMenu.setPrimitiveType(sf::Quads);
 	int indent = 20; // 20 px between buttons
@@ -403,6 +421,10 @@ void TileMap::openEditWindow() {
 	enemyBaseEditTex.loadFromFile("assets/enemybase.png");
 	enemyBaseEdit.setTexture(enemyBaseEditTex);
 	enemyBaseEdit.setPosition(toolsWidth - 2 * pl1Edit.getLocalBounds().width - 2 * allieBaseEdit.getLocalBounds().width - (4 * indent), indent);
+
+	enemy.loadFromFile("assets/enemy.png");
+	enemySprite.setTexture(enemy);
+	enemySprite.setPosition(toolsWidth - 3 * pl1Edit.getLocalBounds().width - 2 * allieBaseEdit.getLocalBounds().width - (5 * indent), indent);
 }
 
 bool TileMap::getEditMode() { return editMode; }
@@ -445,6 +467,19 @@ void TileMap::editMap(sf::RenderWindow & mWindow) {
 		toFile.append(std::to_string(int(mapPl1.getGlobalBounds().top / tileSize)));
 		toFile.append(",)\n");
 
+		toFile.append("p2(");
+		toFile.append(std::to_string(int((mapPl2.getGlobalBounds().left - widgetWidth) / tileSize)));
+		toFile.append(",");
+		toFile.append(std::to_string(int(mapPl2.getGlobalBounds().top / tileSize)));
+		toFile.append(",)\n");
+
+		for (int i = 0; i < counterE; i++) {
+			toFile.append("enemy(");
+			toFile.append(std::to_string(int((enemiesCords[i].x - widgetWidth) / tileSize)));
+			toFile.append(",");
+			toFile.append(std::to_string(int((enemiesCords[i].y) / tileSize)));
+			toFile.append(",)\n");
+		}
 		toFile.append("p2(");
 		toFile.append(std::to_string(int((mapPl2.getGlobalBounds().left - widgetWidth) / tileSize)));
 		toFile.append(",");
@@ -499,6 +534,19 @@ void TileMap::editMap(sf::RenderWindow & mWindow) {
 			if (previousY >= 0) {
 				enemyBase.setTexture(enemyBaseEditTex);
 				enemyBase.setPosition(previousX * tileSize + widgetWidth, previousY * tileSize);
+			}
+		}
+		else if (setEnemies) {
+			if (previousY >= 0) {
+
+				enemySprEdit.setTexture(enemy);
+				enemySprEdit.setPosition(previousX * tileSize + widgetWidth, previousY * tileSize);
+				enemiesEditMap.push_back(sf::Sprite(enemySprEdit));
+				enemiesCords[counterE].x = previousX * tileSize + widgetWidth;
+				enemiesCords[counterE].y = previousY * tileSize;
+				counterE++;
+				enemiesCords.resize(counterE + 1);
+
 			}
 		}
 		else {
@@ -569,7 +617,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 	if (!enemyBasePlaced) {
 		tools.draw(enemyBaseEdit);
 	}
-
+	tools.draw(enemySprite);
 
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -587,6 +635,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = false;
+				setEnemies = false;
 			}
 		}
 		if (x >= toolsMenu[3 + 4].position.x && x <= toolsMenu[1 + 4].position.x) {
@@ -600,6 +649,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = false;
+				setEnemies = false;
 			}
 		}
 		if (x >= toolsMenu[3 + 8].position.x && x <= toolsMenu[1 + 8].position.x) {
@@ -613,6 +663,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = false;
+				setEnemies = false;
 			}
 		}
 		if (x >= toolsMenu[3 + 12].position.x &&
@@ -627,6 +678,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = false;
+				setEnemies = false;
 			}
 		}
 
@@ -640,6 +692,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = false;
+				setEnemies = false;
 			}
 		}
 		if (x >= overlaysMenu[3 + 4].position.x &&
@@ -654,6 +707,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = false;
+				setEnemies = false;
 			}
 		}
 		if (x >= overlaysMenu[3 + 8].position.x &&
@@ -668,6 +722,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = false;
+				setEnemies = false;
 			}
 		}
 
@@ -679,6 +734,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl1EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = false;
+				setEnemies = false;
 			}
 		}
 
@@ -690,6 +746,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = false;
+				setEnemies = false;
 			}
 		}
 
@@ -702,6 +759,7 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = false;
 				allieBasePlaced = true;
+				setEnemies = false;
 			}
 		}
 
@@ -715,6 +773,19 @@ void TileMap::drawToolWindow(int winX, int winY) {
 				pl2EditPlaced = false;
 				enemyBasePlaced = true;
 				allieBasePlaced = false;
+				setEnemies = false;
+			}
+		}
+
+		if (x >= enemySprite.getPosition().x &&
+			x <= enemySprite.getPosition().x + enemySprite.getLocalBounds().width) {
+			if (y >= enemySprite.getPosition().y &&
+				y <= enemySprite.getPosition().y + enemySprite.getLocalBounds().height) {
+				pl1EditPlaced = false;
+				pl2EditPlaced = false;
+				enemyBasePlaced = false;
+				allieBasePlaced = false;
+				setEnemies = true;
 			}
 		}
 	}

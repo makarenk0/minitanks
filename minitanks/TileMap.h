@@ -32,14 +32,18 @@ public:
 	bool checkTile(sf::FloatRect bullet);
 	sf::Sprite allieBase, enemyBase;
 	bool win = false, fail = false;
+	std::vector<sf::Vector2f> enemiesCords;
 private:
+	std::vector<sf::Sprite> enemiesEditMap;
+	int counterE = 0;
 	bool enemyBasePresent = false, allieBasePresent = false;
 	sf::RenderTexture canvas, canvasOverlay, canvasPlayers;
 	sf::Texture aliesB;
 	sf::Texture enemyB;
+	sf::Texture enemy;
 	sf::Sprite pl1Edit, pl2Edit, mapPl1, mapPl2;
-	sf::Sprite allieBaseEdit, enemyBaseEdit;
-	bool pl1EditPlaced = false, pl2EditPlaced = false, allieBasePlaced = false, enemyBasePlaced = false;
+	sf::Sprite allieBaseEdit, enemyBaseEdit, enemySprite, enemySprEdit;
+	bool pl1EditPlaced = false, pl2EditPlaced = false, allieBasePlaced = false, enemyBasePlaced = false, setEnemies;
 	sf::Texture pl1Text, pl2Text;
 	sf::Texture allieBaseEditTex;
 	sf::Texture enemyBaseEditTex;
