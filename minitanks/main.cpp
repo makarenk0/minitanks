@@ -93,7 +93,7 @@ int main() {
               map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
                           widgetWidth, false, false, 1);
               pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
-                             playerSize, 2, 1, cellWidth, &map, 3, true);
+                             playerSize, 0, 2, cellWidth, &map, 3, true);
               enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 1,
                                2, cellWidth, &map, 2);
               enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 3,
@@ -106,9 +106,15 @@ int main() {
               map.initMap("example_map", cellWidth, mapWidth, mapHeight,
                           widgetWidth, false, false, 2);
               pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
-                             playerSize, 2, 1, cellWidth, &map, 3, true);
+                             playerSize, 0, 2, cellWidth, &map, 3, true);
               pl2.initPlayer("Player2.png", map.pl2X, map.pl2Y, playerSize,
-                             playerSize, 2, 1, cellWidth, &map, 3, false);
+                             playerSize, 0, 2, cellWidth, &map, 3, false);
+			  enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 1,
+				  2, cellWidth, &map, 2);
+			  enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 3,
+				  2, cellWidth, &map, 2);
+			  vecEntities.push_back(enemy1);
+			  vecEntities.push_back(enemy2);
 
               renderMode = 3;
               ost.stop();
@@ -147,12 +153,14 @@ int main() {
           } else if (event.key.code == sf::Keyboard::Escape) {
             ost.play();
             renderMode = 0;
+			vecEntities.clear();
+			continue;
           }
 		  break;
         }
         }
       }
-
+	  enemy1.changeMoveDirection(2);
       mWindow.clear();
       map.setFirstLayer(true); // draw first layer
       map.draw(mWindow);
@@ -168,7 +176,9 @@ int main() {
 
       vecBullet = getVector();
       for (auto &i : vecEntities) {
+		  i.updateEnemy();
         i.draw(mWindow);
+
       }
       for (auto &i : vecBullet) {
         i.updateBullet();
@@ -181,6 +191,20 @@ int main() {
       p1Widget.updateHealth(pl1.getCurrentHealth());
       p1Widget.draw(mWindow);
       mWindow.display();
+	  if (map.fail) {
+		  vecBullet.clear();
+		  map.fail = false;
+		  map.win = false;
+		  ost.play();
+		  renderMode = 5;
+	  }
+	  else if (map.win) {
+		  vecBullet.clear();
+		  map.win = false;
+		  map.fail = false;
+		  ost.play();
+		  renderMode = 4;
+	  }
 
     } else if (renderMode == 3) { // game(2 players)
       sf::Event event;
@@ -196,11 +220,13 @@ int main() {
                              bulletSpeed, false);
             newBullet.setTexture(bulletTex);
             vecBullet.push_back(newBullet);
+			pl1.minusAmmo();
           } else if (event.key.code == sf::Keyboard::RControl) {
             Bullet newBullet(pl2.getFacePosition(), pl2.getDirection(),
                              bulletSpeed, false);
             newBullet.setTexture(bulletTex);
             vecBullet.push_back(newBullet);
+			pl2.minusAmmo();
           } else if (event.key.code == sf::Keyboard::Escape) {
             ost.play();
             renderMode = 0;

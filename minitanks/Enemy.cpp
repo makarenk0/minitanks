@@ -11,42 +11,44 @@ void Enemy::initEnemy(std::string file, int x, int y, int w, int h, int dir,
 }
 
 void Enemy::updateEnemy() {
-
+	if (this->frontBlocked) {
+		if (dir >= 3)
+			dir = 0;
+		else
+			dir++;
+	}
   if (map->getEditMode()) {
     delete this;
   }
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-	  dir = 3;
-	  speed = 2;
-	  entitySprite.setRotation(270);
-	  //	std::cout << x << "," << y<<std::endl;
+  if (dir == 3) {
+
+    speed = 3;
+    entitySprite.setRotation(270);
   }
 
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-	  dir = 1;
-	  speed = 2;
-	  entitySprite.setRotation(90);
-	  //	std::cout << x << "," << y << std::endl;
+  if (dir == 1) {
+
+    speed = 3;
+    entitySprite.setRotation(90);
+    //	std::cout << x << "," << y << std::endl;
   }
 
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-	  dir = 0;
-	  speed = 2;
-	  entitySprite.setRotation(0);
-	  //	std::cout << x << "," << y << std::endl;
+  if (dir == 0) {
+
+    speed = 3;
+    entitySprite.setRotation(0);
+    //	std::cout << x << "," << y << std::endl;
   }
 
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-	  dir = 2;
-	  speed = 2;
-	  entitySprite.setRotation(180);
-	  //	std::cout << x << "," << y << std::endl;
+  if (dir == 2) {
+
+    speed = 3;
+    entitySprite.setRotation(180);
+    //	std::cout << x << "," << y << std::endl;
   }
   update();
 }
 
 void Enemy::draw(sf::RenderWindow &window) { window.draw(entitySprite); }
 
-void Enemy::changeMoveDirection(int newDir) {
-	dir = newDir;
-}
+void Enemy::changeMoveDirection(int newDir) { dir = newDir; }

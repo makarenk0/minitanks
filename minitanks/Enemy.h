@@ -3,7 +3,7 @@
 #include "TileMap.h"
 class Enemy : public Entity {
 private:
-	void changeMoveDirection(int newDir);
+	
 public:
   Enemy();
   Enemy(std::string file, int x, int y, int w, int h, int dir, int speed,
@@ -12,5 +12,5 @@ public:
                  int speed, int tileSize, TileMap *map, int maxHealth);
   void updateEnemy();
   void draw(sf::RenderWindow &window);
-  
+  void changeMoveDirection(int newDir);
 };

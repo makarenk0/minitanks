@@ -19,6 +19,7 @@ public:
   void draw(sf::RenderWindow &window);
   int getCurrentHealth();
   void setCurrentHealth(int newHealth);
+  bool frontBlocked;
 
 protected:
   int rangeBetweenTiles = 2;

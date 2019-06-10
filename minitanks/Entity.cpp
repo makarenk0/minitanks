@@ -72,22 +72,27 @@ void Entity::setSpeed(int speed) { this->speed = speed; }
 
 void Entity::interactMap() {
 	//map bounds
+	frontBlocked = false;
 	if (y<(h/2)) {
 	
 	y = (h/2);
 		entitySprite.setPosition(widgetWidth + x, y);
+		frontBlocked = true;
 	}
 	if (y > map->height-(h / 2)) {
 		y = map->height - (h / 2);
 		entitySprite.setPosition(widgetWidth + x, y);
+		frontBlocked = true;
 	}
 	if (x < (w / 2)) {
 		x = w / 2;
      	entitySprite.setPosition(widgetWidth + x, y);
+		frontBlocked = true;
 	}
 	if (x > map->width-(w / 2)) {
 		x = map->width - (w / 2);
 		entitySprite.setPosition(widgetWidth + x, y);
+		frontBlocked = true;
 	}
 	//tile bounds
   for (int i = (y - (h / 2) + rangeBetweenTiles) / tileSize;
@@ -95,7 +100,9 @@ void Entity::interactMap() {
     for (int j = (x - (w / 2) + rangeBetweenTiles) / tileSize;
          j <= ((x + (w / 2) - rangeBetweenTiles) / tileSize); j++) {
       if (map->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
+		  frontBlocked = true;
         if (dy > 0) {
+
           y = i * tileSize - h / 2 - 1 + rangeBetweenTiles;
           entitySprite.setPosition(widgetWidth + x, y);
         }
@@ -111,7 +118,8 @@ void Entity::interactMap() {
           x = j * tileSize + tileSize + w / 2 - rangeBetweenTiles;
           entitySprite.setPosition(widgetWidth + x, y);
         }
-      }
+      }else { frontBlocked = false; }
+	  
     }
   }
 }
