@@ -23,7 +23,7 @@ public:
 	void setEditMode(bool mode);
 	void editMap(sf::RenderWindow& mWindow);
 	void setExitEditMode(bool ex);
-	void initMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode, int plauersNum);
+	bool initMap(std::string FILE, int tileSize, int width, int height, int widgetWidth, bool randomMap, bool editMode, int plauersNum);
 	void draw(sf::RenderWindow& window);
 	void setFirstLayer(bool set);
 	int widgetWidth;

@@ -9,7 +9,7 @@ TileMap::TileMap(std::string FILE, int tileSize, int width, int height, int widg
 	initMap(FILE, tileSize, width, height, widgetWidth, randomMap, editMode, playersNum);
 }
 
-void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int widgetWidth,
+bool TileMap::initMap(std::string FILE, int tileSize, int width, int height, int widgetWidth,
 	bool randomMap, bool editMode, int playersNum) {
 	this->widgetWidth = widgetWidth;
 	this->playersNum = playersNum;
@@ -55,8 +55,10 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int
 			}
 		}
 		else {
-			file = std::ifstream("maps/" + fileName + ".bcm");
 			fromFile = openFile();
+			if (fromFile == "NULL") {
+				return false;
+			}
 		}
 	}
 
@@ -219,7 +221,7 @@ void TileMap::initMap(std::string FILE, int tileSize, int width, int height, int
 
 	canvas.draw(tiles, &tileTexture);
 	canvasOverlay.draw(overlay, &overlayTexture);
-
+	return true;
 }
 
 
@@ -232,7 +234,7 @@ bool TileMap::checkCollisionOfPoint(int xPoint, int yPoint) {
 	xPoint = std::floor(xPoint / tileSize);
 	yPoint = std::floor(yPoint / tileSize);
 	if (solidBool[yPoint][xPoint]) {
-		std::cout << "true" << std::endl;
+		//std::cout << "true" << std::endl;
 		return true;
 	}
 	// std::cout << "false" << std::endl;

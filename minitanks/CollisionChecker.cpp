@@ -86,7 +86,7 @@ void checkCollisionPlayers2(std::vector<Bullet>& vecBullets, Player& pl1,  Playe
 		}
 		indexI++;
 	}
-
+	vec = vecBullets;
 }
 
 void checkCollisionPlayers1(std::vector<Bullet> &vecBullets, Player &pl1,
@@ -111,7 +111,7 @@ void checkCollisionPlayers1(std::vector<Bullet> &vecBullets, Player &pl1,
   }
   indexI = 0;
 
-  
+  vec = vecBullets;
 }
 
 std::vector<Bullet> getVector() { return vec; }

@@ -12,6 +12,8 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
@@ -28,6 +30,7 @@
 int renderMode = 0;
 const float bulletSpeed = 5.f;
 int buf;
+long unsigned int er = 0;
 
 std::vector<Bullet> vecBullet;
 std::vector<Enemy> vecEntities;
@@ -48,15 +51,15 @@ sf::SoundBuffer buffer1, buffer2;
 sf::Sound ost, shoot;
 sf::SoundBuffer hitBuffer;
 sf::Sound hit;
-Enemy enemy1, enemy2;
+Enemy enemy1, enemy2, enemy3;
 
 void initSound();
 void setRenderMode(int newMode);
 
 int main() {
-
+  srand(time(0));
   initSound();
-  sf::Clock clock,clock2;
+  sf::Clock clock1, clock2, clock3;
   mWindow.setFramerateLimit(FPS);
 
   sf::Texture bulletTex;
@@ -90,32 +93,39 @@ int main() {
             menu.nextOption();
           else if (event.key.code == sf::Keyboard::Return) {
             if (menu.getCurrentOption() == 0) {
-              map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
-                          widgetWidth, false, false, 1);
+              if (!map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
+                               widgetWidth, false, false, 1))
+                break;
               pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
                              playerSize, 0, 2, cellWidth, &map, 3, true);
-              enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 1,
+              enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 0,
                                2, cellWidth, &map, 2);
-              enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 3,
+              enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 2,
                                2, cellWidth, &map, 2);
-              vecEntities.push_back(enemy1);
+              enemy3.initEnemy("Enemy.png", 300, 550, playerSize, playerSize, 3,
+                               2, cellWidth, &map, 2);
               vecEntities.push_back(enemy2);
+              vecEntities.push_back(enemy1);
+              vecEntities.push_back(enemy3);
               renderMode = 2;
               ost.stop();
             } else if (menu.getCurrentOption() == 1) {
-              map.initMap("example_map", cellWidth, mapWidth, mapHeight,
-                          widgetWidth, false, false, 2);
+              if (!map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
+                               widgetWidth, false, false, 2))
+                break;
               pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
                              playerSize, 0, 2, cellWidth, &map, 3, true);
               pl2.initPlayer("Player2.png", map.pl2X, map.pl2Y, playerSize,
                              playerSize, 0, 2, cellWidth, &map, 3, false);
-			  enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 0,
-				  2, cellWidth, &map, 2);
-			  enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 0,
-				  2, cellWidth, &map, 2);
-			  vecEntities.push_back(enemy1);
-			  vecEntities.push_back(enemy2);
-
+              enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 0,
+                               2, cellWidth, &map, 2);
+              enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 2,
+                               2, cellWidth, &map, 2);
+              enemy3.initEnemy("Enemy.png", 300, 550, playerSize, playerSize, 3,
+                               2, cellWidth, &map, 2);
+              vecEntities.push_back(enemy2);
+              vecEntities.push_back(enemy1);
+              vecEntities.push_back(enemy3);
               renderMode = 3;
               ost.stop();
             } else {
@@ -143,7 +153,7 @@ int main() {
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Space && pl1.getAmmoCount() > 0) {
-            clock.restart();
+            clock1.restart();
             shoot.play();
             Bullet newBullet(pl1.getFacePosition(), pl1.getDirection(),
                              bulletSpeed, false);
@@ -153,10 +163,10 @@ int main() {
           } else if (event.key.code == sf::Keyboard::Escape) {
             ost.play();
             renderMode = 0;
-			vecEntities.clear();
-			continue;
+            vecEntities.clear();
+            continue;
           }
-		  break;
+          break;
         }
         }
       }
@@ -164,7 +174,7 @@ int main() {
       map.setFirstLayer(true); // draw first layer
       map.draw(mWindow);
       pl1.updatePlayer(
-          clock); // player between ground and some(bushes) overlays
+          clock1); // player between ground and some(bushes) overlays
       pl1.draw(mWindow);
 
       checkCollisionPlayers1(vecBullet, pl1, hit);
@@ -175,10 +185,10 @@ int main() {
 
       vecBullet = getVector();
       for (auto &i : vecEntities) {
-		  i.updateEnemy(clock2);
+        i.updateEnemy(er);
         i.draw(mWindow);
-
       }
+
       for (auto &i : vecBullet) {
         i.updateBullet();
         i.draw(mWindow);
@@ -190,21 +200,35 @@ int main() {
       p1Widget.updateHealth(pl1.getCurrentHealth());
       p1Widget.draw(mWindow);
       mWindow.display();
-	  if (map.fail) {
-		  vecBullet.clear();
-		  map.fail = false;
-		  map.win = false;
-		  ost.play();
-		  renderMode = 5;
-	  }
-	  else if (map.win) {
-		  vecBullet.clear();
-		  map.win = false;
-		  map.fail = false;
-		  ost.play();
-		  renderMode = 4;
-	  }
+      if (map.fail) {
+        vecBullet.clear();
+        map.fail = false;
+        map.win = false;
+        ost.play();
+        renderMode = 5;
+      } else if (map.win) {
+        vecBullet.clear();
+        map.win = false;
+        map.fail = false;
+        ost.play();
+        renderMode = 4;
+      }
+      if (er % 240 == 0) {
 
+        for (auto &i : vecEntities) {
+
+          if (rand() % 2) {
+            Bullet newBullet(i.getFacePosition(), i.getDirection(), bulletSpeed,
+                             false);
+            newBullet.setTexture(bulletTex);
+            vecBullet.push_back(newBullet);
+          }
+        }
+      }
+
+      er++;
+      if (er > 429496729)
+        er = 0;
     } else if (renderMode == 3) { // game(2 players)
       sf::Event event;
       while (mWindow.pollEvent(event)) {
@@ -214,25 +238,28 @@ int main() {
           break;
         }
         case sf::Event::KeyPressed: {
-          if (event.key.code == sf::Keyboard::Space) {
+          if (event.key.code == sf::Keyboard::Space && pl1.getAmmoCount() > 0) {
+            clock1.restart();
             Bullet newBullet(pl1.getFacePosition(), pl1.getDirection(),
                              bulletSpeed, false);
             newBullet.setTexture(bulletTex);
             vecBullet.push_back(newBullet);
-			pl1.minusAmmo();
-          } else if (event.key.code == sf::Keyboard::RControl) {
+            pl1.minusAmmo();
+          } else if (event.key.code == sf::Keyboard::RControl &&
+                     pl2.getAmmoCount() > 0) {
+            clock2.restart();
             Bullet newBullet(pl2.getFacePosition(), pl2.getDirection(),
                              bulletSpeed, false);
             newBullet.setTexture(bulletTex);
             vecBullet.push_back(newBullet);
-			pl2.minusAmmo();
+            pl2.minusAmmo();
           } else if (event.key.code == sf::Keyboard::Escape) {
             ost.play();
             renderMode = 0;
-			vecEntities.clear();
-			continue;
+            vecEntities.clear();
+            continue;
           }
-		  break;
+          break;
         }
         }
       }
@@ -243,8 +270,8 @@ int main() {
       map.draw(mWindow);
 
       pl1.updatePlayer(
-          clock); // player between ground and some(bushes) overlays
-      pl2.updatePlayer(clock);
+          clock1); // player between ground and some(bushes) overlays
+      pl2.updatePlayer(clock2);
       pl1.draw(mWindow);
       pl2.draw(mWindow);
 
@@ -255,11 +282,10 @@ int main() {
       checkCollisionTiles(map, vecBullet);
 
       vecBullet = getVector();
-	  for (auto& i : vecEntities) {
-		  i.updateEnemy(clock2);
-		  i.draw(mWindow);
-
-	  }
+      for (auto &i : vecEntities) {
+        i.updateEnemy(er);
+        i.draw(mWindow);
+      }
       for (auto &i : vecBullet) {
         i.updateBullet();
         i.draw(mWindow);
@@ -274,20 +300,35 @@ int main() {
       p2Widget.updateHealth(pl2.getCurrentHealth());
       p2Widget.draw(mWindow);
       mWindow.display();
-	  if (map.fail) {
-		  vecBullet.clear();
-		  map.fail = false;
-		  map.win = false;
-		  ost.play();
-		  renderMode = 5;
+      if (map.fail) {
+        vecBullet.clear();
+        map.fail = false;
+        map.win = false;
+        ost.play();
+        renderMode = 5;
+      } else if (map.win) {
+        vecBullet.clear();
+        map.win = false;
+        map.fail = false;
+        ost.play();
+        renderMode = 4;
+      }
+	  if (er % 240 == 0) {
+
+		  for (auto& i : vecEntities) {
+
+			  if (rand() % 2) {
+				  Bullet newBullet(i.getFacePosition(), i.getDirection(), bulletSpeed,
+					  false);
+				  newBullet.setTexture(bulletTex);
+				  vecBullet.push_back(newBullet);
+			  }
+		  }
 	  }
-	  else if (map.win) {
-		  vecBullet.clear();
-		  map.win = false;
-		  map.fail = false;
-		  ost.play();
-		  renderMode = 4;
-	  }
+
+	  er++;
+	  if (er > 429496729)
+		  er = 0;
     } else if (renderMode == 1) { // editor is active
       map.editMap(mWindow);
       if (sf::Keyboard::isKeyPressed(
@@ -352,6 +393,7 @@ int main() {
       }
     }
   }
+  return 0;
 }
 
 void setRenderMode(int newMode) { renderMode = newMode; }

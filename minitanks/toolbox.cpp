@@ -19,7 +19,7 @@ std::string openFile() {
   char const *fileAddress = tinyfd_openFileDialog(
       "Open map", "\\map_default.bcm", 2, filterPatterns, NULL, 0);
   if (fileAddress == NULL || fileAddress == "cancel") {
-
+	  return std::string("NULL");
   } else {
 	  std::string output;
 	  std::ifstream nameFileout;

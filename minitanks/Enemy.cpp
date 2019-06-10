@@ -8,49 +8,56 @@ Enemy::Enemy(std::string file, int x, int y, int w, int h, int dir, int speed,
 void Enemy::initEnemy(std::string file, int x, int y, int w, int h, int dir,
                       int speed, int tileSize, TileMap *map, int maxHealth) {
   initEntity(x, y, w, h, dir, file, speed, tileSize, map, maxHealth);
+  srand(time(0));
 }
 
-void Enemy::updateEnemy(sf::Clock &clock) {
-	sf::Time elapsed2 = clock.getElapsedTime();
-	if (elapsed2.asMilliseconds() > 2000.f) {
-		if (frontBlocked) {
-			if (dir >= 3)
-				dir = 0;
-			else
-				dir++;
-		}
-		clock.restart();
-	}
+void Enemy::updateEnemy(unsigned long int er) {
+  if (er % 50 == 0) {
+
+    if (frontBlocked) {
+		randomizer = rand() % 3;
+      if (randomizer==0) {
+        dir++;
+      } else if(randomizer == 1){
+        dir--;
+	  }
+	  else if (randomizer == 2) {
+		  dir += 2;
+	  }
+	  dir = dir % 4;
+    }
+  }
   if (map->getEditMode()) {
     delete this;
   }
-  if (dir == 3) {
+
+  if (this->dir == 3) {
 
     speed = 3;
     entitySprite.setRotation(270);
   }
 
-  if (dir == 1) {
+  if (this->dir == 1) {
 
     speed = 3;
     entitySprite.setRotation(90);
     //	std::cout << x << "," << y << std::endl;
   }
 
-  if (dir == 0) {
+  if (this->dir == 0) {
 
     speed = 3;
     entitySprite.setRotation(0);
     //	std::cout << x << "," << y << std::endl;
   }
 
-  if (dir == 2) {
+  if (this->dir == 2) {
 
     speed = 3;
     entitySprite.setRotation(180);
     //	std::cout << x << "," << y << std::endl;
   }
-  update();
+  this->update();
 }
 
 void Enemy::draw(sf::RenderWindow &window) { window.draw(entitySprite); }

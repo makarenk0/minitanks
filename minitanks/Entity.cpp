@@ -19,6 +19,27 @@ Entity::Entity(int x, int y, int w, int h, int dir, std::string file, int speed,
   entitySprite.setOrigin((w / 2), (h / 2));
   entitySprite.setPosition(x + widgetWidth, y);
   entitySprite.scale(0.8f, 0.8f);
+  switch (dir) {
+  case 0: {
+
+	  break;
+  }
+  case 1: {
+	  entitySprite.rotate(90);
+
+	  break;
+  }
+  case 2: {
+	  entitySprite.rotate(180);
+
+	  break;
+  }
+  case 3: {
+	  entitySprite.rotate(270);
+
+	  break;
+  }
+  }
 }
 
 void Entity::update() {
@@ -66,6 +87,27 @@ void Entity::update() {
 	entitySprite.setOrigin((w / 2), (h / 2));
 	entitySprite.setScale(0.8, 0.8);
 	entitySprite.setPosition(x + widgetWidth, y);
+	switch (dir) {
+	case 0: {
+
+		break;
+	}
+	case 1: {
+		entitySprite.rotate(90);
+
+		break;
+	}
+	case 2: {
+		entitySprite.rotate(180);
+
+		break;
+	}
+	case 3: {
+		entitySprite.rotate(270);
+
+		break;
+	}
+	}
 }
 
 void Entity::setSpeed(int speed) { this->speed = speed; }
@@ -76,22 +118,22 @@ void Entity::interactMap() {
 	if (y<(h/2)) {
 	y = (h/2);
 		entitySprite.setPosition(widgetWidth + x, y);
-		frontBlocked = true;
+		collisions++;
 	}
 	if (y > map->height-(h / 2)) {
 		y = map->height - (h / 2);
 		entitySprite.setPosition(widgetWidth + x, y);
-		frontBlocked = true;
+		collisions++;
 	}
 	if (x < (w / 2)) {
 		x = w / 2;
      	entitySprite.setPosition(widgetWidth + x, y);
-		frontBlocked = true;
+		collisions++;
 	}
 	if (x > map->width-(w / 2)) {
 		x = map->width - (w / 2);
 		entitySprite.setPosition(widgetWidth + x, y);
-		frontBlocked = true;
+		collisions++;
 	}
 	//tile bounds
   for (int i = (y - (h / 2) + rangeBetweenTiles) / tileSize;
@@ -99,7 +141,7 @@ void Entity::interactMap() {
     for (int j = (x - (w / 2) + rangeBetweenTiles) / tileSize;
          j <= ((x + (w / 2) - rangeBetweenTiles) / tileSize); j++) {
       if (map->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
-		  frontBlocked = true;
+		  collisions++;
         if (dy > 0) {
 
           y = i * tileSize - h / 2 - 1 + rangeBetweenTiles;
@@ -117,9 +159,17 @@ void Entity::interactMap() {
           x = j * tileSize + tileSize + w / 2 - rangeBetweenTiles;
           entitySprite.setPosition(widgetWidth + x, y);
         }
-      }else { frontBlocked = false; }
+      }
 	  
     }
+  }
+  if (collisions == 0) {
+	  frontBlocked = false;
+
+  }
+  else {
+	  frontBlocked = true;
+	  collisions = 0;
   }
 }
 
