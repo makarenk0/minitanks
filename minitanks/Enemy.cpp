@@ -10,12 +10,16 @@ void Enemy::initEnemy(std::string file, int x, int y, int w, int h, int dir,
   initEntity(x, y, w, h, dir, file, speed, tileSize, map, maxHealth);
 }
 
-void Enemy::updateEnemy() {
-	if (this->frontBlocked) {
-		if (dir >= 3)
-			dir = 0;
-		else
-			dir++;
+void Enemy::updateEnemy(sf::Clock &clock) {
+	sf::Time elapsed2 = clock.getElapsedTime();
+	if (elapsed2.asMilliseconds() > 2000.f) {
+		if (frontBlocked) {
+			if (dir >= 3)
+				dir = 0;
+			else
+				dir++;
+		}
+		clock.restart();
 	}
   if (map->getEditMode()) {
     delete this;

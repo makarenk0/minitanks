@@ -56,7 +56,7 @@ void setRenderMode(int newMode);
 int main() {
 
   initSound();
-  sf::Clock clock;
+  sf::Clock clock,clock2;
   mWindow.setFramerateLimit(FPS);
 
   sf::Texture bulletTex;
@@ -109,9 +109,9 @@ int main() {
                              playerSize, 0, 2, cellWidth, &map, 3, true);
               pl2.initPlayer("Player2.png", map.pl2X, map.pl2Y, playerSize,
                              playerSize, 0, 2, cellWidth, &map, 3, false);
-			  enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 1,
+			  enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 0,
 				  2, cellWidth, &map, 2);
-			  enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 3,
+			  enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 0,
 				  2, cellWidth, &map, 2);
 			  vecEntities.push_back(enemy1);
 			  vecEntities.push_back(enemy2);
@@ -160,7 +160,6 @@ int main() {
         }
         }
       }
-	  enemy1.changeMoveDirection(2);
       mWindow.clear();
       map.setFirstLayer(true); // draw first layer
       map.draw(mWindow);
@@ -176,7 +175,7 @@ int main() {
 
       vecBullet = getVector();
       for (auto &i : vecEntities) {
-		  i.updateEnemy();
+		  i.updateEnemy(clock2);
         i.draw(mWindow);
 
       }
@@ -230,6 +229,8 @@ int main() {
           } else if (event.key.code == sf::Keyboard::Escape) {
             ost.play();
             renderMode = 0;
+			vecEntities.clear();
+			continue;
           }
 		  break;
         }
@@ -254,9 +255,11 @@ int main() {
       checkCollisionTiles(map, vecBullet);
 
       vecBullet = getVector();
-      for (auto &i : vecEntities) {
-        i.draw(mWindow);
-      }
+	  for (auto& i : vecEntities) {
+		  i.updateEnemy(clock2);
+		  i.draw(mWindow);
+
+	  }
       for (auto &i : vecBullet) {
         i.updateBullet();
         i.draw(mWindow);

@@ -72,9 +72,8 @@ void Entity::setSpeed(int speed) { this->speed = speed; }
 
 void Entity::interactMap() {
 	//map bounds
-	frontBlocked = false;
+
 	if (y<(h/2)) {
-	
 	y = (h/2);
 		entitySprite.setPosition(widgetWidth + x, y);
 		frontBlocked = true;
