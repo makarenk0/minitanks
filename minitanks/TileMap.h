@@ -32,8 +32,10 @@ public:
 	bool checkTile(sf::FloatRect bullet);
 	sf::Sprite allieBase, enemyBase;
 	bool win = false, fail = false;
-	std::vector<sf::Vector2f> enemiesCords;
+	std::vector<sf::Vector2f> &getEnemiesCords();
+
 private:
+	std::vector<sf::Vector2f> enemiesCords;
 	std::vector<sf::Sprite> enemiesEditMap;
 	int counterE = 0;
 	bool enemyBasePresent = false, allieBasePresent = false;
@@ -43,7 +45,9 @@ private:
 	sf::Texture enemy;
 	sf::Sprite pl1Edit, pl2Edit, mapPl1, mapPl2;
 	sf::Sprite allieBaseEdit, enemyBaseEdit, enemySprite, enemySprEdit;
+
 	bool pl1EditPlaced = false, pl2EditPlaced = false, allieBasePlaced = false, enemyBasePlaced = false, setEnemies;
+
 	sf::Texture pl1Text, pl2Text;
 	sf::Texture allieBaseEditTex;
 	sf::Texture enemyBaseEditTex;
@@ -52,8 +56,9 @@ private:
 	sf::VertexArray tiles, overlay, toolsMenu, overlaysMenu;
 	sf::Texture tileTexture, overlayTexture;
 	int tileSize;
-	int toolsWidth, amountOfTools = 4;
+	int toolsWidth, amountOfTools = 5;
 	int toolsHeight = 80;
+	bool bul;
 	std::ifstream file;
 	std::string buf;
 	std::string fileName;

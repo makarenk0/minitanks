@@ -30,7 +30,7 @@
 int renderMode = 0;
 const float bulletSpeed = 5.f;
 int buf;
-long unsigned int er = 0;
+long unsigned int BehaviourCounter = 0;
 
 std::vector<Bullet> vecBullet;
 std::vector<Enemy> vecEntities;
@@ -51,28 +51,26 @@ sf::SoundBuffer buffer1, buffer2;
 sf::Sound ost, shoot;
 sf::SoundBuffer hitBuffer;
 sf::Sound hit;
-Enemy enemy1, enemy2, enemy3;
+sf::Texture bulletTex, enemyTex;
 
 void initSound();
 void setRenderMode(int newMode);
-
+void pause();
+void initEnemies();
 int main() {
   srand(time(0));
   initSound();
   sf::Clock clock1, clock2, clock3;
   mWindow.setFramerateLimit(FPS);
 
-  sf::Texture bulletTex;
+
   if (!bulletTex.loadFromFile("assets\\bullet.png"))
+    std::cout << "error loading bullet" << std::endl;
+  if (!enemyTex.loadFromFile("assets\\Enemy.png"))
     std::cout << "error loading bullet" << std::endl;
 
   mWindow.setFramerateLimit(FPS);
-  p1Widget.updateHealth(3);
-  p2Widget.updateHealth(3);
-  p1Widget.updateBullet(2);
-  p2Widget.updateBullet(2);
-  p1Widget.speedActive(false);
-  p2Widget.speedActive(false);
+
   // ost.play();
   while (mWindow.isOpen()) {
     if (renderMode == 0) {
@@ -81,6 +79,8 @@ int main() {
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
+          mWindow.~RenderWindow();
+          return 0;
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Equal)
@@ -98,15 +98,7 @@ int main() {
                 break;
               pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
                              playerSize, 0, 2, cellWidth, &map, 3, true);
-              enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 0,
-                               2, cellWidth, &map, 2);
-              enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 2,
-                               2, cellWidth, &map, 2);
-              enemy3.initEnemy("Enemy.png", 300, 550, playerSize, playerSize, 3,
-                               2, cellWidth, &map, 2);
-              vecEntities.push_back(enemy2);
-              vecEntities.push_back(enemy1);
-              vecEntities.push_back(enemy3);
+			  initEnemies();
               renderMode = 2;
               ost.stop();
             } else if (menu.getCurrentOption() == 1) {
@@ -117,15 +109,7 @@ int main() {
                              playerSize, 0, 2, cellWidth, &map, 3, true);
               pl2.initPlayer("Player2.png", map.pl2X, map.pl2Y, playerSize,
                              playerSize, 0, 2, cellWidth, &map, 3, false);
-              enemy1.initEnemy("Enemy.png", 200, 200, playerSize, playerSize, 0,
-                               2, cellWidth, &map, 2);
-              enemy2.initEnemy("Enemy.png", 440, 550, playerSize, playerSize, 2,
-                               2, cellWidth, &map, 2);
-              enemy3.initEnemy("Enemy.png", 300, 550, playerSize, playerSize, 3,
-                               2, cellWidth, &map, 2);
-              vecEntities.push_back(enemy2);
-              vecEntities.push_back(enemy1);
-              vecEntities.push_back(enemy3);
+			  initEnemies();
               renderMode = 3;
               ost.stop();
             } else {
@@ -150,6 +134,8 @@ int main() {
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
+          mWindow.~RenderWindow();
+          return 0;
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Space && pl1.getAmmoCount() > 0) {
@@ -164,8 +150,10 @@ int main() {
             ost.play();
             renderMode = 0;
             vecEntities.clear();
+            p1Widget.updateScore(0);
             continue;
-          }
+          } else if (event.key.code == sf::Keyboard::P)
+            pause();
           break;
         }
         }
@@ -179,13 +167,14 @@ int main() {
 
       checkCollisionPlayers1(vecBullet, pl1, hit);
 
-      vecEntities = checkCollisionEntities(vecBullet, vecEntities, hit);
+      vecEntities =
+          checkCollisionEntities(vecBullet, vecEntities, hit, p1Widget);
       vecBullet = getVector();
       checkCollisionTiles(map, vecBullet);
 
       vecBullet = getVector();
       for (auto &i : vecEntities) {
-        i.updateEnemy(er);
+        i.updateEnemy(BehaviourCounter);
         i.draw(mWindow);
       }
 
@@ -213,7 +202,7 @@ int main() {
         ost.play();
         renderMode = 4;
       }
-      if (er % 240 == 0) {
+      if (BehaviourCounter % 240 == 0) {
 
         for (auto &i : vecEntities) {
 
@@ -226,16 +215,17 @@ int main() {
         }
       }
 
-      er++;
-      if (er > 429496729)
-        er = 0;
+      BehaviourCounter++;
+      if (BehaviourCounter > 429496729)
+        BehaviourCounter = 0;
     } else if (renderMode == 3) { // game(2 players)
       sf::Event event;
       while (mWindow.pollEvent(event)) {
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
-          break;
+          mWindow.~RenderWindow();
+          return 0;
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Space && pl1.getAmmoCount() > 0) {
@@ -254,11 +244,14 @@ int main() {
             vecBullet.push_back(newBullet);
             pl2.minusAmmo();
           } else if (event.key.code == sf::Keyboard::Escape) {
+            p1Widget.updateScore(0);
+            p2Widget.updateScore(0);
             ost.play();
             renderMode = 0;
             vecEntities.clear();
             continue;
-          }
+          } else if (event.key.code == sf::Keyboard::P)
+            pause();
           break;
         }
         }
@@ -277,13 +270,14 @@ int main() {
 
       checkCollisionPlayers2(vecBullet, pl1, pl2, hit);
 
-      vecEntities = checkCollisionEntities(vecBullet, vecEntities, hit);
+      vecEntities =
+          checkCollisionEntities(vecBullet, vecEntities, hit, p1Widget);
       vecBullet = getVector();
       checkCollisionTiles(map, vecBullet);
 
       vecBullet = getVector();
       for (auto &i : vecEntities) {
-        i.updateEnemy(er);
+        i.updateEnemy(BehaviourCounter);
         i.draw(mWindow);
       }
       for (auto &i : vecBullet) {
@@ -313,22 +307,22 @@ int main() {
         ost.play();
         renderMode = 4;
       }
-	  if (er % 240 == 0) {
+      if (BehaviourCounter % 240 == 0) {
 
-		  for (auto& i : vecEntities) {
+        for (auto &i : vecEntities) {
 
-			  if (rand() % 2) {
-				  Bullet newBullet(i.getFacePosition(), i.getDirection(), bulletSpeed,
-					  false);
-				  newBullet.setTexture(bulletTex);
-				  vecBullet.push_back(newBullet);
-			  }
-		  }
-	  }
+          if (rand() % 2) {
+            Bullet newBullet(i.getFacePosition(), i.getDirection(), bulletSpeed,
+                             false);
+            newBullet.setTexture(bulletTex);
+            vecBullet.push_back(newBullet);
+          }
+        }
+      }
 
-	  er++;
-	  if (er > 429496729)
-		  er = 0;
+      BehaviourCounter++;
+      if (BehaviourCounter > 429496729)
+        BehaviourCounter = 0;
     } else if (renderMode == 1) { // editor is active
       map.editMap(mWindow);
       if (sf::Keyboard::isKeyPressed(
@@ -343,7 +337,8 @@ int main() {
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
-          break;
+          mWindow.~RenderWindow();
+          return 0;
         }
         }
       }
@@ -362,7 +357,8 @@ int main() {
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
-          break;
+          mWindow.~RenderWindow();
+          return 0;
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Escape) {
@@ -381,7 +377,8 @@ int main() {
         switch (event.type) {
         case sf::Event::Closed: {
           mWindow.close();
-          break;
+          mWindow.~RenderWindow();
+          return 0;
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Escape) {
@@ -407,4 +404,23 @@ void initSound() {
   ost.setBuffer(buffer1);
   ost.setLoop(true);
   ost.setVolume(70);
+}
+
+void pause() {
+  while (true) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::U)) {
+      break;
+    }
+  }
+}
+
+void initEnemies() {
+
+	for (auto& i : map.getEnemiesCords()) {
+		Enemy newEnemy;
+		newEnemy.initEnemy("Enemy.png", i.x, i.y, playerSize, playerSize, rand()%4,
+			2, cellWidth, &map, 2);
+		newEnemy.setEnemyTexture(enemyTex);
+		vecEntities.push_back(newEnemy);
+	}
 }

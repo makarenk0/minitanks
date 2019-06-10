@@ -19,7 +19,9 @@ public:
   sf::FloatRect getGlobalBounds();
   void draw(sf::RenderWindow &window);
   int getCurrentHealth();
-  void setCurrentHealth(int newHealth);
+  void setCurrentHealth();
+  void resetHealth();
+  void setEnemyTexture(sf::Texture& text);
   bool frontBlocked;
   int collisions = 0;
 protected:

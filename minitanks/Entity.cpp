@@ -211,8 +211,18 @@ sf::FloatRect Entity::getGlobalBounds() {
 void Entity::draw(sf::RenderWindow &window) { window.draw(entitySprite); }
 
 int Entity::getCurrentHealth() { return currentHealth; }
-void Entity::setCurrentHealth(int newHealth) { currentHealth = newHealth; }
 
+void Entity::setCurrentHealth() { currentHealth -= 1; }
+
+void Entity::resetHealth() {
+	currentHealth = 3;
+}
 Entity::~Entity() {}
+
 Entity::Entity() {}
+
+void Entity::setEnemyTexture(sf::Texture& text)
+{
+	entitySprite.setTexture(text);
+}
 

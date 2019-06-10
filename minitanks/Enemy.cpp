@@ -11,8 +11,8 @@ void Enemy::initEnemy(std::string file, int x, int y, int w, int h, int dir,
   srand(time(0));
 }
 
-void Enemy::updateEnemy(unsigned long int er) {
-  if (er % 50 == 0) {
+void Enemy::updateEnemy(unsigned long int BehaviourCounter) {
+  if (BehaviourCounter % 50 == 0) {
 
     if (frontBlocked) {
 		randomizer = rand() % 3;
@@ -31,27 +31,27 @@ void Enemy::updateEnemy(unsigned long int er) {
     delete this;
   }
 
-  if (this->dir == 3) {
+  if (dir == 3) {
 
     speed = 3;
     entitySprite.setRotation(270);
   }
 
-  if (this->dir == 1) {
+  if (dir == 1) {
 
     speed = 3;
     entitySprite.setRotation(90);
     //	std::cout << x << "," << y << std::endl;
   }
 
-  if (this->dir == 0) {
+  if (dir == 0) {
 
     speed = 3;
     entitySprite.setRotation(0);
     //	std::cout << x << "," << y << std::endl;
   }
 
-  if (this->dir == 2) {
+  if (dir == 2) {
 
     speed = 3;
     entitySprite.setRotation(180);

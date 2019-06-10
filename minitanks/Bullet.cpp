@@ -2,7 +2,7 @@
 #include <iostream>
 
 Bullet::Bullet(sf::Vector2f position, int direction, float speed,
-               bool isSuper) {
+               bool ally) {
   this->speed = speed;
   this->direction = direction;
   this->isSuper = isSuper;
