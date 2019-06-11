@@ -31,6 +31,7 @@ int renderMode = 0;
 const float bulletSpeed = 5.f;
 int buf;
 long unsigned int BehaviourCounter = 0;
+int difficulty = 1;
 
 std::vector<Bullet> vecBullet;
 std::vector<Enemy> vecEntities;
@@ -201,8 +202,9 @@ int main() {
         map.fail = false;
         ost.play();
         renderMode = 4;
+		difficulty++;
       }
-      if (BehaviourCounter % 240 == 0) {
+      if (BehaviourCounter % 100/ difficulty == 0) {
 
         for (auto &i : vecEntities) {
 
@@ -308,8 +310,9 @@ int main() {
         map.fail = false;
         ost.play();
         renderMode = 4;
+		difficulty++;
       }
-      if (BehaviourCounter % 2 == 0) {
+      if (BehaviourCounter % 100/ difficulty == 0) {
 
         for (auto &i : vecEntities) {
 

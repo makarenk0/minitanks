@@ -811,11 +811,11 @@ void TileMap::drawToolWindow(int winX, int winY) {
 
 bool TileMap::checkTile(sf::FloatRect bullet,bool real) {
 	if (real) {
-		if (bullet.top < 5 || bullet.top + 26 > height - 5 ||
+		if (bullet.top < 5 || bullet.top + 26 > height ||
 			bullet.left - widgetWidth < 5 ||
-			bullet.left - widgetWidth + 26 > width - 5) {
+			bullet.left - widgetWidth + 26 > width-5) {
 			if (bullet.top < 0 || bullet.top > height ||
-				bullet.left - widgetWidth < 0 || bullet.left - widgetWidth > width) {
+				bullet.left - widgetWidth < 0 || bullet.left - widgetWidth > width-5) {
 
 				return true;
 			}
