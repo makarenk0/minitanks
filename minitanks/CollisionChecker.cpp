@@ -71,7 +71,7 @@ void checkCollisionPlayers2(std::vector<Bullet> &vecBullets, Player &pl1,
   for (auto &i : vecBullets) {
 
     if (i.getGlobalBounds().intersects(pl2.getGlobalBounds()) && i.getReal()) {
-		i.setReal(false);
+      i.setReal(false);
       hit.play();
 
       pl2.setCurrentHealth();
@@ -94,7 +94,7 @@ void checkCollisionPlayers1(std::vector<Bullet> &vecBullets, Player &pl1,
   for (auto &i : vecBullets) {
 
     if (i.getGlobalBounds().intersects(pl1.getGlobalBounds()) && i.getReal()) {
-		i.setReal(false);
+      i.setReal(false);
       hit.play();
 
       pl1.setCurrentHealth();

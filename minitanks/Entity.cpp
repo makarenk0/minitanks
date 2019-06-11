@@ -22,22 +22,22 @@ Entity::Entity(int x, int y, int w, int h, int dir, std::string file, int speed,
   switch (dir) {
   case 0: {
 
-	  break;
+    break;
   }
   case 1: {
-	  entitySprite.rotate(90);
+    entitySprite.rotate(90);
 
-	  break;
+    break;
   }
   case 2: {
-	  entitySprite.rotate(180);
+    entitySprite.rotate(180);
 
-	  break;
+    break;
   }
   case 3: {
-	  entitySprite.rotate(270);
+    entitySprite.rotate(270);
 
-	  break;
+    break;
   }
   }
 }
@@ -69,79 +69,78 @@ void Entity::update() {
   interactMap();
 }
 
+void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file,
+                        int speed, int tileSize, TileMap *map, int maxHealth) {
+  widgetWidth = map->widgetWidth;
+  this->x = x;
+  this->y = y;
+  this->w = w * 0.8;
+  this->h = h * 0.8;
+  this->speed = speed;
+  this->tileSize = tileSize;
+  this->dir = dir;
+  this->map = map;
+  this->currentHealth = maxHealth;
+  entityTexture.loadFromFile("assets/" + file);
+  entitySprite.setTexture(entityTexture);
+  entitySprite.setOrigin((w / 2), (h / 2));
+  entitySprite.setScale(0.8, 0.8);
+  entitySprite.setPosition(x + widgetWidth, y);
+  switch (dir) {
+  case 0: {
 
-	void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file,
-		int speed, int tileSize, TileMap* map, int maxHealth) {
-	widgetWidth = map->widgetWidth;
-	this->x = x;
-	this->y = y;
-	this->w = w * 0.8;
-	this->h = h * 0.8;
-	this->speed = speed;
-	this->tileSize = tileSize;
-	this->dir = dir;
-	this->map = map;
-	this->currentHealth = maxHealth;
-	entityTexture.loadFromFile("assets/" + file);
-	entitySprite.setTexture(entityTexture);
-	entitySprite.setOrigin((w / 2), (h / 2));
-	entitySprite.setScale(0.8, 0.8);
-	entitySprite.setPosition(x + widgetWidth, y);
-	switch (dir) {
-	case 0: {
+    break;
+  }
+  case 1: {
+    entitySprite.rotate(90);
 
-		break;
-	}
-	case 1: {
-		entitySprite.rotate(90);
+    break;
+  }
+  case 2: {
+    entitySprite.rotate(180);
 
-		break;
-	}
-	case 2: {
-		entitySprite.rotate(180);
+    break;
+  }
+  case 3: {
+    entitySprite.rotate(270);
 
-		break;
-	}
-	case 3: {
-		entitySprite.rotate(270);
-
-		break;
-	}
-	}
+    break;
+  }
+  }
 }
 
 void Entity::setSpeed(int speed) { this->speed = speed; }
 
 void Entity::interactMap() {
-	//map bounds
+  // map bounds
 
-	if (y<(h/2)) {
-	y = (h/2);
-		entitySprite.setPosition(widgetWidth + x, y);
-		collisions++;
-	}
-	if (y > map->height-(h / 2)) {
-		y = map->height - (h / 2);
-		entitySprite.setPosition(widgetWidth + x, y);
-		collisions++;
-	}
-	if (x < (w / 2)) {
-		x = w / 2;
-     	entitySprite.setPosition(widgetWidth + x, y);
-		collisions++;
-	}
-	if (x > map->width-(w / 2)) {
-		x = map->width - (w / 2);
-		entitySprite.setPosition(widgetWidth + x, y);
-		collisions++;
-	}
-	//tile bounds
+  if (y < (h / 2)) {
+    y = (h / 2);
+    entitySprite.setPosition(widgetWidth + x, y);
+    collisions++;
+  }
+  if (y > map->height - (h / 2)) {
+    y = map->height - (h / 2);
+    entitySprite.setPosition(widgetWidth + x, y);
+    collisions++;
+  }
+  if (x < (w / 2)) {
+    x = w / 2;
+    entitySprite.setPosition(widgetWidth + x, y);
+    collisions++;
+  }
+  if (x > map->width - (w / 2)) {
+    x = map->width - (w / 2);
+    entitySprite.setPosition(widgetWidth + x, y);
+    collisions++;
+  }
+  // tile bounds
   for (int i = (y - (h / 2) + rangeBetweenTiles) / tileSize;
        i <= ((y + (h / 2) - rangeBetweenTiles) / tileSize); i++) {
     for (int j = (x - (w / 2) + rangeBetweenTiles) / tileSize;
          j <= ((x + (w / 2) - rangeBetweenTiles) / tileSize); j++) {
       if (map->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
-		  collisions++;
+        collisions++;
         if (dy > 0) {
 
           y = i * tileSize - h / 2 - 1 + rangeBetweenTiles;
@@ -160,16 +159,14 @@ void Entity::interactMap() {
           entitySprite.setPosition(widgetWidth + x, y);
         }
       }
-	  
     }
   }
   if (collisions == 0) {
-	  frontBlocked = false;
+    frontBlocked = false;
 
-  }
-  else {
-	  frontBlocked = true;
-	  collisions = 0;
+  } else {
+    frontBlocked = true;
+    collisions = 0;
   }
 }
 
@@ -201,7 +198,6 @@ sf::Vector2f Entity::getFacePosition() {
   }
 }
 
-
 int Entity::getDirection() { return dir; }
 
 sf::FloatRect Entity::getGlobalBounds() {
@@ -214,15 +210,11 @@ int Entity::getCurrentHealth() { return currentHealth; }
 
 void Entity::setCurrentHealth() { currentHealth -= 1; }
 
-void Entity::resetHealth() {
-	currentHealth = 3;
-}
+void Entity::resetHealth() { currentHealth = 3; }
 Entity::~Entity() {}
 
 Entity::Entity() {}
 
-void Entity::setEnemyTexture(sf::Texture& text)
-{
-	entitySprite.setTexture(text);
+void Entity::setEnemyTexture(sf::Texture &text) {
+  entitySprite.setTexture(text);
 }
-

@@ -54,7 +54,6 @@ sf::Sound hit;
 sf::Texture bulletTex, enemyTex;
 
 void initSound();
-void setRenderMode(int newMode);
 void pause();
 void initEnemies();
 int main() {
@@ -70,8 +69,7 @@ int main() {
     std::cout << "error loading bullet" << std::endl;
 
   mWindow.setFramerateLimit(FPS);
-
-  // ost.play();
+  ost.play();
   while (mWindow.isOpen()) {
     if (renderMode == 0) {
       sf::Event event;
@@ -93,6 +91,7 @@ int main() {
             menu.nextOption();
           else if (event.key.code == sf::Keyboard::Return) {
             if (menu.getCurrentOption() == 0) {
+				vecBullet.clear();
               if (!map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
                                widgetWidth, false, false, 1))
                 break;
@@ -102,6 +101,7 @@ int main() {
               renderMode = 2;
               ost.stop();
             } else if (menu.getCurrentOption() == 1) {
+				vecBullet.clear();
               if (!map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
                                widgetWidth, false, false, 2))
                 break;
@@ -229,6 +229,7 @@ int main() {
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Space && pl1.getAmmoCount() > 0) {
+			  shoot.play();
             clock1.restart();
             Bullet newBullet(pl1.getFacePosition(), pl1.getDirection(),
                              bulletSpeed, true);
@@ -237,6 +238,7 @@ int main() {
             pl1.minusAmmo();
           } else if (event.key.code == sf::Keyboard::RControl &&
                      pl2.getAmmoCount() > 0) {
+			  shoot.play();
             clock2.restart();
             Bullet newBullet(pl2.getFacePosition(), pl2.getDirection(),
                              bulletSpeed, true);
@@ -307,7 +309,7 @@ int main() {
         ost.play();
         renderMode = 4;
       }
-      if (BehaviourCounter % 240 == 0) {
+      if (BehaviourCounter % 2 == 0) {
 
         for (auto &i : vecEntities) {
 

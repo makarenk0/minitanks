@@ -141,7 +141,7 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 
       counterE++;
 
-      std::cout << enemyX << "," << enemyY << std::endl;
+      //std::cout << enemyX << "," << enemyY << std::endl;
       continue;
     }
     if (buf == "end")
@@ -573,7 +573,7 @@ void TileMap::changeTile(int X, int Y) {
   quadTiles[1].texCoords = sf::Vector2f(idEdit * tileSize + tileSize, 0);
   quadTiles[2].texCoords = sf::Vector2f(idEdit * tileSize + tileSize, tileSize);
   quadTiles[3].texCoords = sf::Vector2f(idEdit * tileSize, tileSize);
-  std::cout << healthEdit << std::endl;
+  //std::cout << healthEdit << std::endl;
   quadOverlay[0].texCoords = sf::Vector2f(healthEdit * tileSize, 0);
   quadOverlay[1].texCoords = sf::Vector2f(healthEdit * tileSize + tileSize, 0);
   quadOverlay[2].texCoords =
