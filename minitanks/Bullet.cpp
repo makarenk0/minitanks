@@ -1,15 +1,11 @@
 #include "Bullet.h"
 #include <iostream>
 
-Bullet::Bullet(sf::Vector2f position, int direction, float speed, bool ally) {
+Bullet::Bullet(sf::Vector2f position, int direction, float speed, int whose) {
   this->speed = speed;
   this->direction = direction;
-  this->ally = ally;
   this->position = position;
-
-  // if (!bulletTexture.loadFromFile("assets\\bullet.png"))
-  //  std::cout << "error loading bullet" << std::endl;
-  // bulletSprite.setTexture(bulletTexture);
+  this->whose = whose; // 0 - enemy, 1 - playerOne, 2 - playerTwo
   rotateSprite();
   bulletSprite.setPosition(position);
 }
@@ -46,9 +42,7 @@ void Bullet::rotateSprite() {
 }
 
 void Bullet::draw(sf::RenderWindow &window) {
-  if (real) {
     window.draw(bulletSprite);
-  }
 }
 
 Bullet::~Bullet() {}
@@ -61,8 +55,9 @@ sf::FloatRect Bullet::getGlobalBounds() {
   return bulletSprite.getGlobalBounds();
 }
 
-bool Bullet::getAlly() { return ally; }
+int Bullet::getWhose()
+{
+	return whose;
+}
 
-bool Bullet::getReal() { return real; }
 
-void Bullet::setReal(bool real) { this->real = real; }

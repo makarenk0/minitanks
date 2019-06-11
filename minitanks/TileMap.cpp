@@ -115,7 +115,7 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 
       aliesB.loadFromFile("assets/mybase.png");
       allieBase.setTexture(aliesB);
-      allieBase.setPosition(xB+widgetWidth, yB);
+      allieBase.setPosition(xB + widgetWidth, yB);
       allieBasePresent = true;
       continue;
 
@@ -141,7 +141,7 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 
       counterE++;
 
-      //std::cout << enemyX << "," << enemyY << std::endl;
+      // std::cout << enemyX << "," << enemyY << std::endl;
       continue;
     }
     if (buf == "end")
@@ -573,7 +573,7 @@ void TileMap::changeTile(int X, int Y) {
   quadTiles[1].texCoords = sf::Vector2f(idEdit * tileSize + tileSize, 0);
   quadTiles[2].texCoords = sf::Vector2f(idEdit * tileSize + tileSize, tileSize);
   quadTiles[3].texCoords = sf::Vector2f(idEdit * tileSize, tileSize);
-  //std::cout << healthEdit << std::endl;
+  // std::cout << healthEdit << std::endl;
   quadOverlay[0].texCoords = sf::Vector2f(healthEdit * tileSize, 0);
   quadOverlay[1].texCoords = sf::Vector2f(healthEdit * tileSize + tileSize, 0);
   quadOverlay[2].texCoords =
@@ -809,50 +809,49 @@ void TileMap::drawToolWindow(int winX, int winY) {
   tools.display();
 }
 
-bool TileMap::checkTile(sf::FloatRect bullet,bool real) {
-	if (real) {
-		if (bullet.top < 5 || bullet.top + 26 > height ||
-			bullet.left - widgetWidth < 5 ||
-			bullet.left - widgetWidth + 26 > width-5) {
-			if (bullet.top < 0 || bullet.top > height ||
-				bullet.left - widgetWidth < 0 || bullet.left - widgetWidth > width-5) {
+bool TileMap::checkTile(sf::FloatRect bullet) {
 
-				return true;
-			}
-		}
-		else {
-			// std::cout << enemyBase.getGlobalBounds().left <<","<<
-			// enemyBase.getGlobalBounds().top << std::endl;
-			for (int i = (int(bullet.top)) / tileSize;
-				i <= ((int(bullet.top) + int(bullet.height)) / tileSize); i++) {
-				for (int j = (int(bullet.left - widgetWidth)) / tileSize;
-					j <=
-					((int(bullet.left - widgetWidth) + int(bullet.width)) / tileSize);
-					j++) {
+  if (bullet.top < 5 || bullet.top + 26 > height ||
+      bullet.left - widgetWidth < 5 ||
+      bullet.left - widgetWidth + 26 > width - 5) {
+    if (bullet.top < 0 || bullet.top > height ||
+        bullet.left - widgetWidth < 0 ||
+        bullet.left - widgetWidth > width - 5) {
 
-					if ((j * tileSize ==
-						int(enemyBase.getGlobalBounds().left - widgetWidth)) &&
-						(i * tileSize == int(enemyBase.getGlobalBounds().top))) {
-						win = true;
-					}
-					else if (j * tileSize ==
-						int(allieBase.getGlobalBounds().left - widgetWidth) &&
-						i * tileSize == int(allieBase.getGlobalBounds().top)) {
-						fail = true;
-					}
-					bul = true;
-					if (this->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
+      return true;
+    }
+  } else {
+    // std::cout << enemyBase.getGlobalBounds().left <<","<<
+    // enemyBase.getGlobalBounds().top << std::endl;
+    for (int i = (int(bullet.top)) / tileSize;
+         i <= ((int(bullet.top) + int(bullet.height)) / tileSize); i++) {
+      for (int j = (int(bullet.left - widgetWidth)) / tileSize;
+           j <=
+           ((int(bullet.left - widgetWidth) + int(bullet.width)) / tileSize);
+           j++) {
 
-						if (currentHealth[i][j] < 4) {
-							this->changeCurrentHealth(j * tileSize, i * tileSize, -1);
-						}
-						return true;
-					}
-					bul = false;
-				}
-			}
-		}
-	}
+        if ((j * tileSize ==
+             int(enemyBase.getGlobalBounds().left - widgetWidth)) &&
+            (i * tileSize == int(enemyBase.getGlobalBounds().top))) {
+          win = true;
+        } else if (j * tileSize ==
+                       int(allieBase.getGlobalBounds().left - widgetWidth) &&
+                   i * tileSize == int(allieBase.getGlobalBounds().top)) {
+          fail = true;
+        }
+        bul = true;
+        if (this->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
+
+          if (currentHealth[i][j] < 4) {
+            this->changeCurrentHealth(j * tileSize, i * tileSize, -1);
+          }
+          return true;
+        }
+        bul = false;
+      }
+    }
+  }
+
   return false;
 }
 

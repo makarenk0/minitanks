@@ -21,6 +21,6 @@ public:
   void updateHealth(int currentHealth);
   void updateScore(int score);
   void updateBullet(int currentBullets);
-  void speedActive(bool isActive);
+  //void speedActive(bool isActive);
   int getScore();
 };

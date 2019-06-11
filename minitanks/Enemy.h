@@ -10,6 +10,7 @@ private:
 
 public:
   Enemy();
+  ~Enemy();
   Enemy(std::string file, int x, int y, int w, int h, int dir, int speed,
         int tileSize, TileMap *map, int maxHealth);
   void initEnemy(std::string file, int x, int y, int w, int h, int dir,

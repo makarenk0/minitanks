@@ -19,7 +19,7 @@ public:
   sf::FloatRect getGlobalBounds();
   void draw(sf::RenderWindow &window);
   int getCurrentHealth();
-  void setCurrentHealth();
+  void decreaseHealth();
   void resetHealth();
   void setEnemyTexture(sf::Texture& text);
   bool frontBlocked;
@@ -28,6 +28,7 @@ protected:
   int rangeBetweenTiles = 2;
   int widgetWidth;
   int currentHealth;
+  int maxHealth;
   sf::Texture entityTexture;
   sf::Sprite entitySprite;
   TileMap *map;

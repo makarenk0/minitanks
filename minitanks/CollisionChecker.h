@@ -8,12 +8,11 @@
 #include "Widget.h"
 #include <vector>
 
-void checkCollisionTiles(TileMap &map, std::vector<Bullet> &vecBullets);
-std::vector<Enemy> checkCollisionEntities(std::vector<Bullet> &vecBullets,
-                                          std::vector<Enemy> &vecEnt,
-                                          sf::Sound &hit, Widget &widget);
-void checkCollisionPlayers2(std::vector<Bullet> &vecBullets, Player &pl1,
-                            Player &pl2, sf::Sound &hit);
-void checkCollisionPlayers1(std::vector<Bullet> &vecBullets, Player &pl1,
-                            sf::Sound &hit);
-std::vector<Bullet> getVector();
+bool checkCollisionTiles(TileMap &map, Bullet bullet);
+bool checkCollisionEnemies(Bullet bullet, std::vector<Enemy> &vecEnemies,
+                            sf::Sound &hit, Widget &pl1, Widget &pl2);
+//void checkCollisionPlayers2(std::vector<Bullet> &vecBullets, Player &pl1,
+//                            Player &pl2, sf::Sound &hit);
+bool checkCollisionPlayers1(Bullet bullet, Player& pl1, sf::Sound& hit);
+std::vector<Enemy> getEnemies();
+void setEnemies(std::vector<Enemy> &newVector);

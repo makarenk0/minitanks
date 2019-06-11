@@ -1,6 +1,11 @@
 #include "Enemy.h"
 
 Enemy::Enemy() {}
+
+Enemy::~Enemy() {
+
+}
+
 Enemy::Enemy(std::string file, int x, int y, int w, int h, int dir, int speed,
              int tileSize, TileMap *map, int maxHealth)
     : Entity(x, y, w, h, dir, file, speed, tileSize, map, maxHealth) {}
@@ -13,19 +18,21 @@ void Enemy::initEnemy(std::string file, int x, int y, int w, int h, int dir,
 
 void Enemy::updateEnemy(unsigned long int BehaviourCounter) {
   if (BehaviourCounter % 50 == 0) {
-
-    if (frontBlocked) {
-		randomizer = rand() % 3;
-      if (randomizer==0) {
-        dir++;
-      } else if(randomizer == 1){
-        dir--;
+	  if (rand() % 2) {
+		  if (frontBlocked) {
+			  randomizer = rand() % 3;
+			  if (randomizer == 0) {
+				  dir++;
+			  }
+			  else if (randomizer == 1) {
+				  dir--;
+			  }
+			  else if (randomizer == 2) {
+				  dir += 2;
+			  }
+			  dir = dir % 4;
+		  }
 	  }
-	  else if (randomizer == 2) {
-		  dir += 2;
-	  }
-	  dir = dir % 4;
-    }
   }
   if (map->getEditMode()) {
     delete this;
@@ -63,3 +70,4 @@ void Enemy::updateEnemy(unsigned long int BehaviourCounter) {
 void Enemy::draw(sf::RenderWindow &window) { window.draw(entitySprite); }
 
 void Enemy::changeMoveDirection(int newDir) { dir = newDir; }
+

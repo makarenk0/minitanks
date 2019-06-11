@@ -58,7 +58,7 @@ Widget::Widget(sf::Vector2f position, int width, int height, bool firstPlayer) {
   this->currentScore = 0;
   this->updateHealth(3);
   this->updateBullet(2);
-  this->speedActive(false);
+  //this->speedActive(false);
 }
 
 void Widget::draw(sf::RenderWindow &window) {
@@ -121,7 +121,7 @@ void Widget::updateHealth(int currentHealth) {
   }
 }
 void Widget::updateScore(int newScore) {
-  currentScore += newScore;
+  currentScore =  newScore;
   score.setString("SCORE " + std::to_string(currentScore));
 }
 
@@ -140,9 +140,9 @@ void Widget::updateBullet(int currentBullets) {
   }
 }
 
-void Widget::speedActive(bool isActive) {
-  if (isActive)
-    speedPU.setTexture(speed);
-  else
-    speedPU.setTexture(emptySpeed);
-}
+//void Widget::speedActive(bool isActive) {
+//  if (isActive)
+//    speedPU.setTexture(speed);
+//  else
+//    speedPU.setTexture(emptySpeed);
+//} 
