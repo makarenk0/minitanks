@@ -5,9 +5,10 @@ class Widget {
 private:
   sf::RectangleShape heartRect;
   sf::RenderTexture widgetCanvas;
-  sf::Texture background, fullHeart, emptyHeart, bullet, emptyBullet,speed,emptySpeed;
+  sf::Texture background, fullHeart, emptyHeart, bullet, emptyBullet, speed,
+      emptySpeed;
   sf::Sprite backgroundSprite, mainSprite, heart1, heart2, heart3, bullet1,
-      bullet2,speedPU;
+      bullet2, speedPU;
   sf::IntRect widgetBounds;
   sf::Text playerId, score;
   sf::Font font;
@@ -21,6 +22,7 @@ public:
   void updateHealth(int currentHealth);
   void updateScore(int score);
   void updateBullet(int currentBullets);
-  //void speedActive(bool isActive);
+  // void speedActive(bool isActive);
+  void update(int newBullets, int newHealth, sf::RenderWindow &window);
   int getScore();
 };

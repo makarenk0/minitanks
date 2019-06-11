@@ -7,7 +7,8 @@
 class Enemy : public Entity {
 private:
   int randomizer;
-
+  float enemySpeed;
+  int direction;
 public:
   Enemy();
   ~Enemy();

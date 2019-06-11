@@ -14,12 +14,60 @@ Entity::Entity(int x, int y, int w, int h, int dir, std::string file, int speed,
   this->map = map;
   this->maxHealth = maxHealth;
   this->currentHealth = maxHealth;
+  if (file != "ENEMY") {
+    entityTexture.loadFromFile("assets/" + file);
+    entitySprite.setTexture(entityTexture);
+  }
 
-  entityTexture.loadFromFile("assets/" + file);
-  entitySprite.setTexture(entityTexture);
   entitySprite.setOrigin((w / 2), (h / 2));
   entitySprite.setPosition(x + widgetWidth, y);
   entitySprite.scale(0.8f, 0.8f);
+
+  switch (dir) {
+  case 0: {
+
+    break;
+  }
+  case 1: {
+    entitySprite.rotate(90);
+
+    break;
+  }
+  case 2: {
+    entitySprite.rotate(180);
+
+    break;
+  }
+  case 3: {
+    entitySprite.rotate(270);
+
+    break;
+  }
+  }
+}
+
+void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file,
+                        int speed, int tileSize, TileMap *map, int maxHealth) {
+  widgetWidth = map->widgetWidth;
+  this->x = x;
+  this->y = y;
+  this->w = w * 0.8f;
+  this->h = h * 0.8f;
+  this->speed = speed;
+  this->tileSize = tileSize;
+  this->dir = dir;
+  this->map = map;
+  this->maxHealth = maxHealth;
+  this->currentHealth = maxHealth;
+
+  if (file != "ENEMY") {
+    entityTexture.loadFromFile("assets/" + file);
+    entitySprite.setTexture(entityTexture);
+  }
+  entitySprite.setOrigin((w / 2), (h / 2));
+  entitySprite.setPosition(x + widgetWidth, y);
+  entitySprite.scale(0.8f, 0.8f);
+
   switch (dir) {
   case 0: {
 
@@ -68,48 +116,6 @@ void Entity::update() {
   y += dy;
   speed = 0;
   interactMap();
-}
-
-void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file,
-                        int speed, int tileSize, TileMap *map, int maxHealth) {
-	widgetWidth = map->widgetWidth;
-	this->x = x;
-	this->y = y;
-	this->w = w * 0.8f;
-	this->h = h * 0.8f;
-	this->speed = speed;
-	this->tileSize = tileSize;
-	this->dir = dir;
-	this->map = map;
-	this->maxHealth = maxHealth;
-	this->currentHealth = maxHealth;
-
-	entityTexture.loadFromFile("assets/" + file);
-	entitySprite.setTexture(entityTexture);
-	entitySprite.setOrigin((w / 2), (h / 2));
-	entitySprite.setPosition(x + widgetWidth, y);
-	entitySprite.scale(0.8f, 0.8f);
-	switch (dir) {
-	case 0: {
-
-		break;
-	}
-	case 1: {
-		entitySprite.rotate(90);
-
-		break;
-	}
-	case 2: {
-		entitySprite.rotate(180);
-
-		break;
-	}
-	case 3: {
-		entitySprite.rotate(270);
-
-		break;
-	}
-	}
 }
 
 void Entity::setSpeed(int speed) { this->speed = speed; }
@@ -218,6 +224,6 @@ Entity::~Entity() {}
 
 Entity::Entity() {}
 
-void Entity::setEnemyTexture(sf::Texture &text) {
-  entitySprite.setTexture(text);
+void Entity::setEnemyTexture(sf::Texture &tex) {
+  entitySprite.setTexture(tex);
 }

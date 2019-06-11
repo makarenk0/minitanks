@@ -41,58 +41,19 @@ bool checkCollisionEnemies(Bullet bullet, std::vector<Enemy> &vecEnemies,
     return false;
 }
 
-bool checkCollisionPlayers1(Bullet bullet, Player &pl1, sf::Sound &hit) {
+bool checkCollisionPlayer(Bullet bullet, Player &player, sf::Sound &hit) {
 
-  if (bullet.getGlobalBounds().intersects(pl1.getGlobalBounds())) {
+  if (bullet.getGlobalBounds().intersects(player.getGlobalBounds())) {
     hit.play();
-    pl1.decreaseHealth();
-    if (pl1.getCurrentHealth() <= 0) {
-      pl1.setPosition(respawnPoint);
-      pl1.resetHealth();
+	player.decreaseHealth();
+    if (player.getCurrentHealth() <= 0) {
+		player.setPosition(respawnPoint);
+	  player.resetHealth();
     }
     return true;
   }
   return false;
 }
-
-/*void checkCollisionPlayers2(std::vector<Bullet> &vecBullets, Player &pl1,
-                            Player &pl2, sf::Sound &hit) {
-
-  vec = vecBullets;
-  int indexI = 0;
-
-  for (auto &i : vecBullets) {
-
-    if (i.getGlobalBounds().intersects(pl1.getGlobalBounds()) && i.getReal()) {
-      i.setReal(false);
-      hit.play();
-
-      pl1.setCurrentHealth();
-      if (pl1.getCurrentHealth() <= 0) {
-        pl1.setPosition(sf::Vector2f(432.f, 700.f));
-        pl1.resetHealth();
-      }
-    }
-    indexI++;
-  }
-  indexI = 0;
-
-  for (auto &i : vecBullets) {
-
-    if (i.getGlobalBounds().intersects(pl2.getGlobalBounds()) && i.getReal()) {
-      i.setReal(false);
-      hit.play();
-
-      pl2.setCurrentHealth();
-      if (pl2.getCurrentHealth() <= 0) {
-        pl2.setPosition(sf::Vector2f(432.f, 700.f));
-        pl2.resetHealth();
-      }
-    }
-    indexI++;
-  }
-  vec = vecBullets;
-}*/
 
 std::vector<Enemy> getEnemies() { return vecEnemiesBuffer; }
 
