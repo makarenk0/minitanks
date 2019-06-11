@@ -1,12 +1,20 @@
 #pragma once
 #include "Entity.h"
 #include "TileMap.h"
-class Player : public Entity, public sf::Drawable
-{
+class Player : public Entity {
 public:
-	Player(std::string file,  int x, int y, int w, int h, int dir, int speed, int tileSize, TileMap* map);
-	void updatePlayer();
-private:
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-};
+  Player();
+  Player(std::string file, int x, int y, int w, int h, int dir, int speed,
+         int tileSize, TileMap *map, int maxHealth, bool playerOne);
+  void initPlayer(std::string file, int x, int y, int w, int h, int dir,
+                  int speed, int tileSize, TileMap *map, int maxHealth,
+                  bool playerOne);
+  void updatePlayer(sf::Clock &clock);
+  int getAmmoCount();
+  void minusAmmo();
+  void setPosition(sf::Vector2f position);
 
+private:
+  int ammoCount = 2;
+  bool playerOne;
+};

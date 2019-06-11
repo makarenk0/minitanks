@@ -139,19 +139,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Endscreen.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="CollisionChecker.cpp" />
     <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="tinyfiledialogs.c" />
     <ClCompile Include="toolbox.cpp" />
     <ClCompile Include="Widget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="CollisionChecker.h" />
+    <ClInclude Include="Endscreen.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TileMap.h" />
+    <ClInclude Include="tinyfiledialogs.h" />
     <ClInclude Include="toolbox.h" />
     <ClInclude Include="Widget.h" />
   </ItemGroup>

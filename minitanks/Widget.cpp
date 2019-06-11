@@ -3,6 +3,7 @@
 #include <iostream>
 
 Widget::Widget(sf::Vector2f position, int width, int height, bool firstPlayer) {
+
   // creating widget bounds (box containter)
   widgetBounds = {0, 0, width, height};
   // loading background sprite from REPEATED texture
@@ -52,7 +53,12 @@ Widget::Widget(sf::Vector2f position, int width, int height, bool firstPlayer) {
   mainSprite.setPosition(position);
   // initialising text on widget
   initText(width, height, firstPlayer);
-  mainSprite.getGlobalBounds()
+  mainSprite.getGlobalBounds();
+  mainSprite.getGlobalBounds();
+  this->currentScore = 0;
+  this->updateHealth(3);
+  this->updateBullet(2);
+  this->speedActive(false);
 }
 
 void Widget::draw(sf::RenderWindow &window) {
@@ -115,13 +121,11 @@ void Widget::updateHealth(int currentHealth) {
   }
 }
 void Widget::updateScore(int newScore) {
-	currentScore = newScore;
+  currentScore += newScore;
   score.setString("SCORE " + std::to_string(currentScore));
 }
 
-void Widget::getScore() {
-	return currentScore;
-}
+int Widget::getScore() { return currentScore; }
 
 void Widget::updateBullet(int currentBullets) {
   if (currentBullets >= 2) {
@@ -137,10 +141,8 @@ void Widget::updateBullet(int currentBullets) {
 }
 
 void Widget::speedActive(bool isActive) {
-	if (isActive)
-		speedPU.setTexture(speed);
-	else
-		speedPU.setTexture(emptySpeed);
+  if (isActive)
+    speedPU.setTexture(speed);
+  else
+    speedPU.setTexture(emptySpeed);
 }
-
-Widget::~Widget() {}
