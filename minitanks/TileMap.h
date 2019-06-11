@@ -29,7 +29,7 @@ public:
 	int widgetWidth;
 	int pl1X, pl1Y, pl2X, pl2Y;
 	int height, width;
-	bool checkTile(sf::FloatRect bullet);
+	bool checkTile(sf::FloatRect bullet,bool real);
 	sf::Sprite allieBase, enemyBase;
 	bool win = false, fail = false;
 	std::vector<sf::Vector2f> &getEnemiesCords();

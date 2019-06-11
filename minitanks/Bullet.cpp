@@ -5,7 +5,7 @@ Bullet::Bullet(sf::Vector2f position, int direction, float speed,
                bool ally) {
   this->speed = speed;
   this->direction = direction;
-  this->isSuper = isSuper;
+  this->ally = ally;
   this->position = position;
 
   //if (!bulletTexture.loadFromFile("assets\\bullet.png"))
@@ -46,7 +46,11 @@ void Bullet::rotateSprite() {
   bulletSprite.scale(0.7f, 0.7f);
 }
 
-void Bullet::draw(sf::RenderWindow &window) { window.draw(bulletSprite); }
+void Bullet::draw(sf::RenderWindow &window) { 
+	if (real) {
+		window.draw(bulletSprite);
+	}
+}
 
 Bullet::~Bullet() {}
 
@@ -56,4 +60,16 @@ void Bullet::setTexture(sf::Texture& texture) {
 
 sf::FloatRect Bullet::getGlobalBounds() {
 	return bulletSprite.getGlobalBounds();
+}
+
+bool Bullet::getAlly(){
+	return ally;
+}
+
+bool Bullet::getReal() {
+	return real;
+}
+
+void Bullet::setReal(bool real) {
+	this->real = real;
 }

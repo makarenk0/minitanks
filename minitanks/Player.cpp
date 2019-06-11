@@ -25,28 +25,28 @@ void Player::updatePlayer(sf::Clock& clock) {
 	if (playerOne) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			dir = 3;
-			speed = 2;
+			speed = 3;
 			entitySprite.setRotation(270);
 			//	std::cout << x << "," << y<<std::endl;
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 			dir = 1;
-			speed = 2;
+			speed = 3;
 			entitySprite.setRotation(90);
 			//	std::cout << x << "," << y << std::endl;
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 			dir = 0;
-			speed = 2;
+			speed = 3;
 			entitySprite.setRotation(0);
 			//	std::cout << x << "," << y << std::endl;
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 			dir = 2;
-			speed = 2;
+			speed = 3;
 			entitySprite.setRotation(180);
 			//	std::cout << x << "," << y << std::endl;
 		}
@@ -54,28 +54,28 @@ void Player::updatePlayer(sf::Clock& clock) {
 	else if (!playerOne){
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 			dir = 3;
-			speed = 2;
+			speed = 3;
 			entitySprite.setRotation(270);
 			//	std::cout << x << "," << y<<std::endl;
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 			dir = 1;
-			speed = 2;
+			speed = 3;
 			entitySprite.setRotation(90);
 			//	std::cout << x << "," << y << std::endl;
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 			dir = 0;
-			speed = 2;
+			speed = 3;
 			entitySprite.setRotation(0);
 			//	std::cout << x << "," << y << std::endl;
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 			dir = 2;
-			speed = 2;
+			speed = 3;
 			entitySprite.setRotation(180);
 			//	std::cout << x << "," << y << std::endl;
 		}

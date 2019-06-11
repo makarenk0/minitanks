@@ -142,7 +142,7 @@ int main() {
             clock1.restart();
             shoot.play();
             Bullet newBullet(pl1.getFacePosition(), pl1.getDirection(),
-                             bulletSpeed, false);
+                             bulletSpeed, true);
             newBullet.setTexture(bulletTex);
             vecBullet.push_back(newBullet);
             pl1.minusAmmo();
@@ -231,7 +231,7 @@ int main() {
           if (event.key.code == sf::Keyboard::Space && pl1.getAmmoCount() > 0) {
             clock1.restart();
             Bullet newBullet(pl1.getFacePosition(), pl1.getDirection(),
-                             bulletSpeed, false);
+                             bulletSpeed, true);
             newBullet.setTexture(bulletTex);
             vecBullet.push_back(newBullet);
             pl1.minusAmmo();
@@ -239,7 +239,7 @@ int main() {
                      pl2.getAmmoCount() > 0) {
             clock2.restart();
             Bullet newBullet(pl2.getFacePosition(), pl2.getDirection(),
-                             bulletSpeed, false);
+                             bulletSpeed, true);
             newBullet.setTexture(bulletTex);
             vecBullet.push_back(newBullet);
             pl2.minusAmmo();
@@ -272,7 +272,7 @@ int main() {
 
       vecEntities =
           checkCollisionEntities(vecBullet, vecEntities, hit, p1Widget);
-      vecBullet = getVector();
+     vecBullet = getVector();
       checkCollisionTiles(map, vecBullet);
 
       vecBullet = getVector();
@@ -362,6 +362,7 @@ int main() {
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Escape) {
+			  vecEntities.clear();
             ost.play();
             renderMode = 0;
           }
@@ -382,6 +383,7 @@ int main() {
         }
         case sf::Event::KeyPressed: {
           if (event.key.code == sf::Keyboard::Escape) {
+			  vecEntities.clear();
             ost.play();
             renderMode = 0;
           }
@@ -394,6 +396,7 @@ int main() {
 }
 
 void setRenderMode(int newMode) { renderMode = newMode; }
+
 void initSound() {
   hitBuffer.loadFromFile("assets\\broke_armor.wav");
   hit.setBuffer(hitBuffer);

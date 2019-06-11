@@ -5,11 +5,9 @@ std::vector<Bullet> vec;
 void checkCollisionTiles(TileMap &map, std::vector<Bullet> &vecBullets) {
   int indexI = 0;
   for (auto &i : vecBullets) {
-    bool hit = map.checkTile(i.getGlobalBounds());
+    bool hit = map.checkTile(i.getGlobalBounds(), i.getReal());
     if (hit) {
-      i.~Bullet();
-      vecBullets[indexI] = vecBullets.back();
-      vecBullets.pop_back();
+      i.setReal(false);
     }
     indexI++;
   }
@@ -19,24 +17,23 @@ void checkCollisionTiles(TileMap &map, std::vector<Bullet> &vecBullets) {
 std::vector<Enemy> checkCollisionEntities(std::vector<Bullet> &vecBullets,
                                           std::vector<Enemy> &vecEnt,
                                           sf::Sound &hit, Widget &widget) {
+
   int indexI = 0;
   int indexK = 0;
   for (auto &k : vecEnt) {
 
     for (auto &i : vecBullets) {
 
-      if (i.getGlobalBounds().intersects(k.getGlobalBounds())) {
-        i.~Bullet();
+      if (i.getGlobalBounds().intersects(k.getGlobalBounds()) && i.getAlly() &&
+          i.getReal()) {
+        i.setReal(false);
         hit.play();
-        vecBullets[indexI] = vecBullets.back();
-        vecBullets.pop_back();
-
         k.setCurrentHealth();
         if (k.getCurrentHealth() <= 0) {
           k.~Enemy();
           std::vector<Enemy>::iterator it2 = vecEnt.begin() + indexK;
           vecEnt.erase(it2);
-		  widget.updateScore(1000);
+          widget.updateScore(1000);
           break;
         }
       }
@@ -51,20 +48,20 @@ std::vector<Enemy> checkCollisionEntities(std::vector<Bullet> &vecBullets,
 
 void checkCollisionPlayers2(std::vector<Bullet> &vecBullets, Player &pl1,
                             Player &pl2, sf::Sound &hit) {
+
+  vec = vecBullets;
   int indexI = 0;
 
   for (auto &i : vecBullets) {
 
-    if (i.getGlobalBounds().intersects(pl1.getGlobalBounds())) {
-      i.~Bullet();
+    if (i.getGlobalBounds().intersects(pl1.getGlobalBounds()) && i.getReal()) {
+      i.setReal(false);
       hit.play();
-      vecBullets[indexI] = vecBullets.back();
-      vecBullets.pop_back();
 
       pl1.setCurrentHealth();
       if (pl1.getCurrentHealth() <= 0) {
-        pl1.setPosition(sf::Vector2f(336.f, 672.f));
-		pl1.resetHealth();
+        pl1.setPosition(sf::Vector2f(432.f, 700.f));
+        pl1.resetHealth();
       }
     }
     indexI++;
@@ -73,16 +70,14 @@ void checkCollisionPlayers2(std::vector<Bullet> &vecBullets, Player &pl1,
 
   for (auto &i : vecBullets) {
 
-    if (i.getGlobalBounds().intersects(pl2.getGlobalBounds())) {
-      i.~Bullet();
+    if (i.getGlobalBounds().intersects(pl2.getGlobalBounds()) && i.getReal()) {
+		i.setReal(false);
       hit.play();
-      vecBullets[indexI] = vecBullets.back();
-      vecBullets.pop_back();
 
       pl2.setCurrentHealth();
       if (pl2.getCurrentHealth() <= 0) {
-        pl2.setPosition(sf::Vector2f(336.f, 672.f));
-		pl2.resetHealth();
+        pl2.setPosition(sf::Vector2f(432.f, 700.f));
+        pl2.resetHealth();
       }
     }
     indexI++;
@@ -92,15 +87,15 @@ void checkCollisionPlayers2(std::vector<Bullet> &vecBullets, Player &pl1,
 
 void checkCollisionPlayers1(std::vector<Bullet> &vecBullets, Player &pl1,
                             sf::Sound &hit) {
+
+  vec = vecBullets;
   int indexI = 0;
 
   for (auto &i : vecBullets) {
 
-    if (i.getGlobalBounds().intersects(pl1.getGlobalBounds())) {
-      i.~Bullet();
+    if (i.getGlobalBounds().intersects(pl1.getGlobalBounds()) && i.getReal()) {
+		i.setReal(false);
       hit.play();
-      vecBullets[indexI] = vecBullets.back();
-      vecBullets.pop_back();
 
       pl1.setCurrentHealth();
       if (pl1.getCurrentHealth() <= 0) {

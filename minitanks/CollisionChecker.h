@@ -18,3 +18,5 @@ void checkCollisionPlayers1(std::vector<Bullet>& vecBullets, Player& pl1,
 	sf::Sound& hit);
 std::vector<Bullet> getVector();
 
+
+

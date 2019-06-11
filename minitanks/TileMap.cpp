@@ -809,47 +809,50 @@ void TileMap::drawToolWindow(int winX, int winY) {
   tools.display();
 }
 
-bool TileMap::checkTile(sf::FloatRect bullet) {
+bool TileMap::checkTile(sf::FloatRect bullet,bool real) {
+	if (real) {
+		if (bullet.top < 5 || bullet.top + 26 > height - 5 ||
+			bullet.left - widgetWidth < 5 ||
+			bullet.left - widgetWidth + 26 > width - 5) {
+			if (bullet.top < 0 || bullet.top > height ||
+				bullet.left - widgetWidth < 0 || bullet.left - widgetWidth > width) {
 
-  if (bullet.top < 5 || bullet.top + 26 > height - 5 ||
-      bullet.left - widgetWidth < 5 ||
-      bullet.left - widgetWidth + 26 > width - 5) {
-    if (bullet.top < 0 || bullet.top > height ||
-        bullet.left - widgetWidth < 0 || bullet.left - widgetWidth > width) {
+				return true;
+			}
+		}
+		else {
+			// std::cout << enemyBase.getGlobalBounds().left <<","<<
+			// enemyBase.getGlobalBounds().top << std::endl;
+			for (int i = (int(bullet.top)) / tileSize;
+				i <= ((int(bullet.top) + int(bullet.height)) / tileSize); i++) {
+				for (int j = (int(bullet.left - widgetWidth)) / tileSize;
+					j <=
+					((int(bullet.left - widgetWidth) + int(bullet.width)) / tileSize);
+					j++) {
 
-      return true;
-    }
-  } else {
-    // std::cout << enemyBase.getGlobalBounds().left <<","<<
-    // enemyBase.getGlobalBounds().top << std::endl;
-    for (int i = (int(bullet.top)) / tileSize;
-         i <= ((int(bullet.top) + int(bullet.height)) / tileSize); i++) {
-      for (int j = (int(bullet.left - widgetWidth)) / tileSize;
-           j <=
-           ((int(bullet.left - widgetWidth) + int(bullet.width)) / tileSize);
-           j++) {
+					if ((j * tileSize ==
+						int(enemyBase.getGlobalBounds().left - widgetWidth)) &&
+						(i * tileSize == int(enemyBase.getGlobalBounds().top))) {
+						win = true;
+					}
+					else if (j * tileSize ==
+						int(allieBase.getGlobalBounds().left - widgetWidth) &&
+						i * tileSize == int(allieBase.getGlobalBounds().top)) {
+						fail = true;
+					}
+					bul = true;
+					if (this->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
 
-        if ((j * tileSize ==
-             int(enemyBase.getGlobalBounds().left - widgetWidth)) &&
-            (i * tileSize == int(enemyBase.getGlobalBounds().top))) {
-          win = true;
-        } else if (j * tileSize ==
-                       int(allieBase.getGlobalBounds().left - widgetWidth) &&
-                   i * tileSize == int(allieBase.getGlobalBounds().top)) {
-          fail = true;
-        }
-        bul = true;
-        if (this->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
-
-          if (currentHealth[i][j] < 4) {
-            this->changeCurrentHealth(j * tileSize, i * tileSize, -1);
-          }
-          return true;
-        }
-        bul = false;
-      }
-    }
-  }
+						if (currentHealth[i][j] < 4) {
+							this->changeCurrentHealth(j * tileSize, i * tileSize, -1);
+						}
+						return true;
+					}
+					bul = false;
+				}
+			}
+		}
+	}
   return false;
 }
 
