@@ -83,14 +83,17 @@ int main() {
           return 0;
         }
         case sf::Event::KeyPressed: {
-          if (event.key.code == sf::Keyboard::Equal)
-            ost.setVolume(ost.getVolume() + 10.f);
-          else if (event.key.code == sf::Keyboard::Hyphen)
-            ost.setVolume(ost.getVolume() - 10.f);
-          else if (event.key.code == sf::Keyboard::Up)
-            menu.previousOption();
-          else if (event.key.code == sf::Keyboard::Down)
-            menu.nextOption();
+			if (event.key.code == sf::Keyboard::Equal)
+				ost.setVolume(ost.getVolume() + 10.f);
+			else if (event.key.code == sf::Keyboard::Hyphen)
+				ost.setVolume(ost.getVolume() - 10.f);
+			else if (event.key.code == sf::Keyboard::Up)
+				menu.previousOption();
+			else if (event.key.code == sf::Keyboard::Down)
+				menu.nextOption();
+			else if (event.key.code == sf::Keyboard::M) {
+					 ost.pause();
+			}
           else if (event.key.code == sf::Keyboard::Return) {
             if (menu.getCurrentOption() == 0) {
               vecBullets.clear();
@@ -287,17 +290,6 @@ int main() {
       pl1.draw(mWindow);
       pl2.draw(mWindow);
 
-	  if (BehaviourCounter % 100 / difficulty == 0) {
-		  for (auto& i : vecEnemies) {
-			  if (frameRandom % 2) {
-				  Bullet newBullet(i.getFacePosition(), i.getDirection(), bulletSpeed,
-					  0);
-				  newBullet.setTexture(bulletTex);
-				  vecBullets.push_back(newBullet);
-			  }
-		  }
-	  }
-
       for (auto &i : vecEnemies) {
         i.updateEnemy(BehaviourCounter);
         i.draw(mWindow);
@@ -420,13 +412,13 @@ void setRenderMode(int newMode) { renderMode = newMode; }
 void initSound() {
   hitBuffer.loadFromFile("assets\\broke_armor.wav");
   hit.setBuffer(hitBuffer);
-  hit.setVolume(70);
+  hit.setVolume(70.f);
   buffer1.loadFromFile("assets\\mainOST.ogg");
   buffer2.loadFromFile("assets\\flaunch.wav");
   shoot.setBuffer(buffer2);
   ost.setBuffer(buffer1);
   ost.setLoop(true);
-  ost.setVolume(70);
+  ost.setVolume(70.f);
 }
 
 void pause() {
@@ -439,12 +431,12 @@ void pause() {
 
 void initEnemies() {
 	srand(time(0));
-	int flexRandom = 0;
+	int numerizer = 0;
   for (auto &i : map.getEnemiesCords()) {
-	  flexRandom++;
+	  numerizer++;
     Enemy newEnemy;
 	newEnemy.initEnemy("ENEMY", i.x, i.y, playerSize, playerSize,
-		flexRandom % 4, enemySpeed, cellWidth, &map, enemyMaxHealth);
+		numerizer % 4, enemySpeed, cellWidth, &map, enemyMaxHealth);
     newEnemy.setEnemyTexture(enemyTex);
     vecEnemies.push_back(newEnemy);
   }

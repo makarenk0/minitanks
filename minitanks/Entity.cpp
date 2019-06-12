@@ -66,7 +66,7 @@ void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file,
   }
   entitySprite.setOrigin((w / 2), (h / 2));
   entitySprite.setPosition(x + widgetWidth, y);
-  entitySprite.scale(0.8f, 0.8f);
+  entitySprite.setScale(0.8f, 0.8f);
 
   switch (dir) {
   case 0: {
