@@ -809,8 +809,8 @@ void TileMap::drawToolWindow(int winX, int winY) {
   tools.display();
 }
 
-bool TileMap::checkTile(sf::FloatRect bullet,bool real) {
-	if (real) {
+bool TileMap::checkTile(sf::FloatRect bullet) {
+	
 		if (bullet.top < 5 || bullet.top + 26 > height ||
 			bullet.left - widgetWidth < 5 ||
 			bullet.left - widgetWidth + 26 > width-5) {
@@ -851,7 +851,7 @@ bool TileMap::checkTile(sf::FloatRect bullet,bool real) {
 					bul = false;
 				}
 			}
-		}
+		
 	}
   return false;
 }

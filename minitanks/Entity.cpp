@@ -208,7 +208,7 @@ void Entity::draw(sf::RenderWindow &window) { window.draw(entitySprite); }
 
 int Entity::getCurrentHealth() { return currentHealth; }
 
-void Entity::setCurrentHealth() { currentHealth -= 1; }
+void Entity::setCurrentHealth() { currentHealth--; }
 
 void Entity::resetHealth() { currentHealth = 3; }
 Entity::~Entity() {}

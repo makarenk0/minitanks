@@ -4,14 +4,17 @@ std::vector<Bullet> vec;
 
 void checkCollisionTiles(TileMap &map, std::vector<Bullet> &vecBullets) {
   int indexI = 0;
+  vec.clear();
   for (auto &i : vecBullets) {
-    bool hit = map.checkTile(i.getGlobalBounds(), i.getReal());
-    if (hit) {
-      i.setReal(false);
-    }
+    bool hit = map.checkTile(i.getGlobalBounds());
+	if (!hit) {
+		vec.push_back(i);
+	}
+	
     indexI++;
   }
-  vec = vecBullets;
+
+ 
 }
 
 std::vector<Enemy> checkCollisionEntities(std::vector<Bullet> &vecBullets,

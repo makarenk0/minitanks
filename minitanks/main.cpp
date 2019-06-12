@@ -31,7 +31,7 @@ int renderMode = 0;
 const float bulletSpeed = 5.f;
 int buf;
 long unsigned int BehaviourCounter = 0;
-int difficulty = 1;
+int difficulty = 3;
 
 std::vector<Bullet> vecBullet;
 std::vector<Enemy> vecEntities;
@@ -178,11 +178,14 @@ int main() {
         i.updateEnemy(BehaviourCounter);
         i.draw(mWindow);
       }
-
+	  int m = 0;
       for (auto &i : vecBullet) {
+		  
         i.updateBullet();
         i.draw(mWindow);
+		m++;
       }
+	//  std::cout << m << std::endl;
 
       map.setFirstLayer(false); // draw overlay
       map.draw(mWindow);
