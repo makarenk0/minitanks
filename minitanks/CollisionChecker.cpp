@@ -9,7 +9,7 @@ bool checkCollisionTiles(TileMap &map, Bullet bullet) {
 }
 
 bool checkCollisionEnemies(Bullet bullet, std::vector<Enemy> &vecEnemies,
-                           sf::Sound &hit, Widget &pl1, Widget &pl2) {
+                           sf::Sound &hit, Widget &pl1widget, Widget &pl2widget) {
   vecEnemiesBuffer.clear();
   accumulator = 0;
 
@@ -21,10 +21,10 @@ bool checkCollisionEnemies(Bullet bullet, std::vector<Enemy> &vecEnemies,
       i.decreaseHealth();
       if (i.getCurrentHealth() <= 0) {
 		  i.~Enemy();
-        if (bullet.getWhose()) {
-          pl1.updateScore(pl1.getScore() + 1000);
-        } else {
-          pl2.updateScore(pl2.getScore() + 1000);
+        if (bullet.getWhose() == 1) {
+			pl1widget.updateScore(pl1widget.getScore() + 1000);
+        } else if (bullet.getWhose() == 2){
+			pl2widget.updateScore(pl2widget.getScore() + 1000);
         }
       } else {
         vecEnemiesBuffer.push_back(i);
