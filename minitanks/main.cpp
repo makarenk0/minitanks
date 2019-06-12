@@ -290,10 +290,10 @@ int main() {
       pl1.draw(mWindow);
       pl2.draw(mWindow);
 
-      for (auto &i : vecEnemies) {
-        i.updateEnemy(BehaviourCounter);
-        i.draw(mWindow);
-      }
+	  for (auto& i : vecEnemies) {
+		  i.updateEnemy(BehaviourCounter);
+		  i.draw(mWindow);
+	  }
 
       if (BehaviourCounter % (100 / difficulty) == 0) {
         for (auto &i : vecEnemies) {
@@ -305,6 +305,8 @@ int main() {
           }
         }
       }
+
+
       // TUT ESHE NORMALNO, PERVAYA ITERACIYA PASHET
       vecBulletBuffer.clear();
       for (auto &i : vecBullets) {

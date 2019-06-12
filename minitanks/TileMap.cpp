@@ -821,8 +821,6 @@ bool TileMap::checkTile(sf::FloatRect bullet) {
       return true;
     }
   } else {
-    // std::cout << enemyBase.getGlobalBounds().left <<","<<
-    // enemyBase.getGlobalBounds().top << std::endl;
     for (int i = (int(bullet.top)) / tileSize;
          i <= ((int(bullet.top) + int(bullet.height)) / tileSize); i++) {
       for (int j = (int(bullet.left - widgetWidth)) / tileSize;

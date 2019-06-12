@@ -19,7 +19,6 @@ void Enemy::initEnemy(std::string file, int x, int y, int w, int h, int dir,
 void Enemy::updateEnemy(unsigned long int BehaviourCounter) {
   if (BehaviourCounter % 50 == 0) {
     if (rand() % 2) {
-      if (frontBlocked) {
         randomizer = rand() % 3;
         if (randomizer == 0) {
 			direction++;
@@ -29,7 +28,7 @@ void Enemy::updateEnemy(unsigned long int BehaviourCounter) {
 			direction += 2;
         }
 		direction = direction % 4;
-      }
+      
     }
   }
 
@@ -60,5 +59,3 @@ void Enemy::updateEnemy(unsigned long int BehaviourCounter) {
 }
 
 void Enemy::draw(sf::RenderWindow &window) { window.draw(entitySprite); }
-
-void Enemy::changeMoveDirection(int newDir) { dir = newDir; }
