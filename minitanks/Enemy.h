@@ -6,9 +6,9 @@
 
 class Enemy : public Entity {
 private:
-  int randomizer;
+
   float enemySpeed;
-  int direction;
+
 public:
   Enemy();
   ~Enemy();
@@ -18,5 +18,4 @@ public:
                  int speed, int tileSize, TileMap *map, int maxHealth);
   void updateEnemy(unsigned long int er);
   void draw(sf::RenderWindow &window);
-  void changeMoveDirection(int newDir);
 };

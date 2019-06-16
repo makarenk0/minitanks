@@ -120,6 +120,7 @@ int main() {
                              playerSize, 0, 2, cellWidth, &map, playerMaxHealth,
                              false);
               initEnemies();
+			  setEnemies(vecEnemies);
               renderMode = 3;
               ost.stop();
             } else {
