@@ -2,7 +2,7 @@
 #define offset 130
 
 void MainMenu::nextOption() {
-	if (currentOption < 2) {
+	if (currentOption < numOptions) {
 		
 		currentOption++;
 		cursor.setPosition(cursor.getPosition() + sf::Vector2f(0, offset));
@@ -13,7 +13,7 @@ void MainMenu::nextOption() {
 }
 
 void MainMenu::previousOption() {
-	if (currentOption > 0 ) {
+	if (currentOption > 0) {
 		
 		currentOption--;
 		cursor.setPosition(cursor.getPosition() - sf::Vector2f(0, offset));
@@ -22,7 +22,8 @@ void MainMenu::previousOption() {
 	}
 }
 
-MainMenu::MainMenu(sf::Vector2f position, sf::Vector2i size) {
+MainMenu::MainMenu(sf::Vector2f position, sf::Vector2i size, int numOptions) {
+	this->numOptions = numOptions;
 	//canvas creation
 	canvas.create(size.x, size.y);
 	canvas.clear({ 0,0,0,255 });
@@ -31,11 +32,17 @@ MainMenu::MainMenu(sf::Vector2f position, sf::Vector2i size) {
 	//TITLE
 	titleTexture.loadFromFile("assets\\Title.png");
 	titleSprite.setTexture(titleTexture);
-	titleSprite.setPosition(0, size.y / 10);
+	titleSprite.setPosition(24, size.y / 10);
 	//authors
-	authorsTex.loadFromFile("assets\\Authors.png");
+	srand(time(0));
+	if (!(rand() % 10)) {
+		authorsTex.loadFromFile("assets\\AuthorsEasterEgg.png");
+	}
+	else {
+		authorsTex.loadFromFile("assets\\Authors.png");
+	}
 	authorsSprite.setTexture(authorsTex);
-	authorsSprite.setPosition(size.x * 2 / 3-50.f, size.y *9/ 10);
+	authorsSprite.setPosition(size.x * 2 / 3-75.f, size.y *9/ 10);
 	authorsSprite.scale(0.8f, 0.8f);
 	//option init
 	if (!font.loadFromFile("assets\\ARCADECLASSIC.TTF"))
@@ -52,9 +59,9 @@ MainMenu::MainMenu(sf::Vector2f position, sf::Vector2i size) {
 	option1.setString("1 PLAYER");
 	option2.setString("2 PLAYERS");
 	option3.setString("MAP EDITOR");
-	option1.setPosition(canvas.getSize().x   / 3, canvas.getSize().y * 4 / 12+100);
-	option2.setPosition(canvas.getSize().x  / 3, canvas.getSize().y * 6 / 12 + 100);
-	option3.setPosition(canvas.getSize().x  / 3, canvas.getSize().y * 8 / 12 + 100);
+	option1.setPosition((canvas.getSize().x  / 3)+24, canvas.getSize().y * 4 / 12+100);
+	option2.setPosition((canvas.getSize().x  / 3)+24, canvas.getSize().y * 6 / 12 + 100);
+	option3.setPosition((canvas.getSize().x  / 3)+24, canvas.getSize().y * 8 / 12 + 100);
 	//cursor init
 	cursorTex.loadFromFile("assets\\Player.png");
 	cursor.setTexture(cursorTex);
@@ -62,6 +69,52 @@ MainMenu::MainMenu(sf::Vector2f position, sf::Vector2i size) {
 	redraw();
 
 	
+	buffer.loadFromFile("assets\\select.wav");
+	sound.setBuffer(buffer);
+}
+
+MainMenu::MainMenu(sf::Vector2f position, sf::Vector2i size,int numOptions, bool subMenu) {
+	this->numOptions = numOptions;
+	//canvas creation
+	canvas.create(size.x, size.y);
+	canvas.clear({ 0,0,0,255 });
+	mainSprite.setTexture(canvas.getTexture(), false);
+	mainSprite.setPosition(position);
+	//authors
+	if (!(rand() % 10)) {
+		authorsTex.loadFromFile("assets\\AuthorsEasterEgg.png");
+	}
+	else {
+		authorsTex.loadFromFile("assets\\Authors.png");
+	}
+	authorsSprite.setTexture(authorsTex);
+	authorsSprite.setPosition(size.x * 2 / 3 - 75.f, size.y * 9 / 10);
+	authorsSprite.scale(0.8f, 0.8f);
+	//option init
+	if (!font.loadFromFile("assets\\ARCADECLASSIC.TTF"))
+		std::cout << "font load error" << std::endl;
+	option1.setFont(font);
+	option2.setFont(font);
+	
+	option1.setFillColor(sf::Color::White);
+	option2.setFillColor(sf::Color::White);
+
+	option1.setCharacterSize(50);
+	option2.setCharacterSize(50);
+
+	option1.setString("New map");
+	option2.setString("Edit map");
+
+	option1.setPosition(2*canvas.getSize().x / 5, canvas.getSize().y * 3 / 12 + 100);
+	option2.setPosition(2*canvas.getSize().x / 5, canvas.getSize().y * 5 / 12 + 100);
+
+	//cursor init
+	cursorTex.loadFromFile("assets\\Player.png");
+	cursor.setTexture(cursorTex);
+	cursor.setPosition(option1.getPosition() - sf::Vector2f(75, -10));
+	redraw();
+
+
 	buffer.loadFromFile("assets\\select.wav");
 	sound.setBuffer(buffer);
 }

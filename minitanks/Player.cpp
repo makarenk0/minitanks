@@ -87,6 +87,8 @@ void Player::minusAmmo() { ammoCount--; }
 
 void Player::setPosition(sf::Vector2f position) {
   entitySprite.setPosition(position + sf::Vector2f(widgetWidth, 0));
-  x = position.x + widgetWidth;
+  x = position.x;
   y = position.y;
+  std::cout << x << std::endl;
+  std::cout << y << std::endl;
 }

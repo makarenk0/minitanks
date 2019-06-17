@@ -1,116 +1,64 @@
 #include "CollisionChecker.h"
 
-std::vector<Bullet> vec;
+std::vector<Enemy> vecEnemiesBuffer;
+int accumulator;
+const sf::Vector2f respawnPoint = sf::Vector2f(336.f, 672.f);
 
-void checkCollisionTiles(TileMap &map, std::vector<Bullet> &vecBullets) {
-  int indexI = 0;
-  vec.clear();
-  for (auto &i : vecBullets) {
-    bool hit = map.checkTile(i.getGlobalBounds());
-	if (!hit) {
-		vec.push_back(i);
-	}
-	
-    indexI++;
-  }
 
- 
+bool checkCollisionTiles(TileMap &map, Bullet bullet) {
+    return map.checkTile(bullet.getGlobalBounds());
+
 }
 
-std::vector<Enemy> checkCollisionEntities(std::vector<Bullet> &vecBullets,
-                                          std::vector<Enemy> &vecEnt,
-                                          sf::Sound &hit, Widget &widget) {
+bool checkCollisionEnemies(Bullet bullet, std::vector<Enemy> &vecEnemies,
+                           sf::Sound &hit, Widget &pl1widget, Widget &pl2widget) {
+  vecEnemiesBuffer.clear();
+  accumulator = 0;
 
-  int indexI = 0;
-  int indexK = 0;
-  for (auto &k : vecEnt) {
+  for (auto &i : vecEnemies) {
 
-    for (auto &i : vecBullets) {
-
-      if (i.getGlobalBounds().intersects(k.getGlobalBounds()) && i.getAlly() &&
-          i.getReal()) {
-        i.setReal(false);
-        hit.play();
-        k.setCurrentHealth();
-        if (k.getCurrentHealth() <= 0) {
-          k.~Enemy();
-          std::vector<Enemy>::iterator it2 = vecEnt.begin() + indexK;
-          vecEnt.erase(it2);
-          widget.updateScore(1000);
-          break;
+    if (bullet.getGlobalBounds().intersects(i.getGlobalBounds()) &&
+        bullet.getWhose() != 0) {
+      hit.play();
+      i.decreaseHealth();
+      if (i.getCurrentHealth() <= 0) {
+		  i.~Enemy();
+        if (bullet.getWhose() == 1) {
+			pl1widget.updateScore(pl1widget.getScore() + 1000);
+        } else if (bullet.getWhose() == 2){
+			pl2widget.updateScore(pl2widget.getScore() + 1000);
         }
+      } else {
+        vecEnemiesBuffer.push_back(i);
       }
-      indexI++;
+      accumulator++;
+    } else {
+      vecEnemiesBuffer.push_back(i);
+	  
     }
-    indexI = 0;
-    indexK++;
   }
-  vec = vecBullets;
-  return vecEnt;
+  if (accumulator != 0)
+    return true;
+  else
+    return false;
 }
 
-void checkCollisionPlayers2(std::vector<Bullet> &vecBullets, Player &pl1,
-                            Player &pl2, sf::Sound &hit) {
+bool checkCollisionPlayer(Bullet bullet, Player &player, sf::Sound &hit) {
 
-  vec = vecBullets;
-  int indexI = 0;
-
-  for (auto &i : vecBullets) {
-
-    if (i.getGlobalBounds().intersects(pl1.getGlobalBounds()) && i.getReal()) {
-      i.setReal(false);
-      hit.play();
-
-      pl1.setCurrentHealth();
-      if (pl1.getCurrentHealth() <= 0) {
-        pl1.setPosition(sf::Vector2f(432.f, 700.f));
-        pl1.resetHealth();
-      }
+  if (bullet.getGlobalBounds().intersects(player.getGlobalBounds())) {
+    hit.play();
+	player.decreaseHealth();
+    if (player.getCurrentHealth() <= 0) {
+		player.setPosition(respawnPoint);
+	  player.resetHealth();
     }
-    indexI++;
+    return true;
   }
-  indexI = 0;
-
-  for (auto &i : vecBullets) {
-
-    if (i.getGlobalBounds().intersects(pl2.getGlobalBounds()) && i.getReal()) {
-      i.setReal(false);
-      hit.play();
-
-      pl2.setCurrentHealth();
-      if (pl2.getCurrentHealth() <= 0) {
-        pl2.setPosition(sf::Vector2f(432.f, 700.f));
-        pl2.resetHealth();
-      }
-    }
-    indexI++;
-  }
-  vec = vecBullets;
+  return false;
 }
 
-void checkCollisionPlayers1(std::vector<Bullet> &vecBullets, Player &pl1,
-                            sf::Sound &hit) {
+std::vector<Enemy> getEnemies() { return vecEnemiesBuffer; }
 
-  vec = vecBullets;
-  int indexI = 0;
-
-  for (auto &i : vecBullets) {
-
-    if (i.getGlobalBounds().intersects(pl1.getGlobalBounds()) && i.getReal()) {
-      i.setReal(false);
-      hit.play();
-
-      pl1.setCurrentHealth();
-      if (pl1.getCurrentHealth() <= 0) {
-        pl1.setPosition(sf::Vector2f(336.f, 672.f));
-        pl1.resetHealth();
-      }
-    }
-    indexI++;
-  }
-  indexI = 0;
-
-  vec = vecBullets;
+void setEnemies(std::vector<Enemy> &newVector) {
+	vecEnemiesBuffer = newVector;
 }
-
-std::vector<Bullet> getVector() { return vec; }

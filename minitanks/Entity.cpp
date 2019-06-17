@@ -1,45 +1,94 @@
 #include "Entity.h"
 
 Entity::Entity(int x, int y, int w, int h, int dir, std::string file, int speed,
-               int tileSize, TileMap *map, int currentHealth) {
+	int tileSize, TileMap* map, int maxHealth) {
 
-  widgetWidth = map->widgetWidth;
-  this->x = x;
-  this->y = y;
-  this->w = w * 0.8f;
-  this->h = h * 0.8f;
-  this->speed = speed;
-  this->tileSize = tileSize;
-  this->dir = dir;
-  this->map = map;
-  this->currentHealth = currentHealth;
+	widgetWidth = map->widgetWidth;
+	this->x = x;
+	this->y = y;
+	this->w = w * 0.8f;
+	this->h = h * 0.8f;
+	this->speed = speed;
+	this->tileSize = tileSize;
+	this->dir = dir;
+	this->map = map;
+	this->maxHealth = maxHealth;
+	this->currentHealth = maxHealth;
+	if (file != "ENEMY") {
+		entityTexture.loadFromFile("assets/" + file);
+		entitySprite.setTexture(entityTexture);
+	}
 
-  entityTexture.loadFromFile("assets/" + file);
-  entitySprite.setTexture(entityTexture);
-  entitySprite.setOrigin((w / 2), (h / 2));
-  entitySprite.setPosition(x + widgetWidth, y);
-  entitySprite.scale(0.8f, 0.8f);
-  switch (dir) {
-  case 0: {
+	entitySprite.setOrigin((w / 2), (h / 2));
+	entitySprite.setPosition(x + widgetWidth, y);
+	entitySprite.scale(0.8f, 0.8f);
 
-    break;
-  }
-  case 1: {
-    entitySprite.rotate(90);
+	switch (dir) {
+	case 0: {
 
-    break;
-  }
-  case 2: {
-    entitySprite.rotate(180);
+		break;
+	}
+	case 1: {
+		entitySprite.rotate(90);
 
-    break;
-  }
-  case 3: {
-    entitySprite.rotate(270);
+		break;
+	}
+	case 2: {
+		entitySprite.rotate(180);
 
-    break;
-  }
-  }
+		break;
+	}
+	case 3: {
+		entitySprite.rotate(270);
+
+		break;
+	}
+	}
+}
+
+void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file,
+	int speed, int tileSize, TileMap * map, int maxHealth) {
+	widgetWidth = map->widgetWidth;
+	this->x = x;
+	this->y = y;
+	this->w = w * 0.8f;
+	this->h = h * 0.8f;
+	this->speed = speed;
+	this->tileSize = tileSize;
+	this->dir = dir;
+	this->map = map;
+	this->maxHealth = maxHealth;
+	this->currentHealth = maxHealth;
+
+	if (file != "ENEMY") {
+		entityTexture.loadFromFile("assets/" + file);
+		entitySprite.setTexture(entityTexture);
+	}
+	entitySprite.setOrigin((w / 2), (h / 2));
+	entitySprite.setPosition(x + widgetWidth, y);
+	entitySprite.setScale(0.8f, 0.8f);
+
+	switch (dir) {
+	case 0: {
+
+		break;
+	}
+	case 1: {
+		entitySprite.rotate(90);
+
+		break;
+	}
+	case 2: {
+		entitySprite.rotate(180);
+
+		break;
+	}
+	case 3: {
+		entitySprite.rotate(270);
+
+		break;
+	}
+	}
 }
 
 void Entity::update() {
@@ -62,56 +111,19 @@ void Entity::update() {
     dy = 0;
     break;
   }
+ 
   entitySprite.move(dx, dy);
   x += dx;
   y += dy;
   speed = 0;
+  
   interactMap();
-}
-
-void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file,
-                        int speed, int tileSize, TileMap *map, int maxHealth) {
-  widgetWidth = map->widgetWidth;
-  this->x = x;
-  this->y = y;
-  this->w = w * 0.8;
-  this->h = h * 0.8;
-  this->speed = speed;
-  this->tileSize = tileSize;
-  this->dir = dir;
-  this->map = map;
-  this->currentHealth = maxHealth;
-  entityTexture.loadFromFile("assets/" + file);
-  entitySprite.setTexture(entityTexture);
-  entitySprite.setOrigin((w / 2), (h / 2));
-  entitySprite.setScale(0.8, 0.8);
-  entitySprite.setPosition(x + widgetWidth, y);
-  switch (dir) {
-  case 0: {
-
-    break;
-  }
-  case 1: {
-    entitySprite.rotate(90);
-
-    break;
-  }
-  case 2: {
-    entitySprite.rotate(180);
-
-    break;
-  }
-  case 3: {
-    entitySprite.rotate(270);
-
-    break;
-  }
-  }
 }
 
 void Entity::setSpeed(int speed) { this->speed = speed; }
 
 void Entity::interactMap() {
+
   // map bounds
 
   if (y < (h / 2)) {
@@ -139,15 +151,15 @@ void Entity::interactMap() {
        i <= ((y + (h / 2) - rangeBetweenTiles) / tileSize); i++) {
     for (int j = (x - (w / 2) + rangeBetweenTiles) / tileSize;
          j <= ((x + (w / 2) - rangeBetweenTiles) / tileSize); j++) {
-      if (map->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
+      if (map->checkCollisionOfPoint(j * tileSize, i * tileSize, false)) {
         collisions++;
         if (dy > 0) {
 
-          y = i * tileSize - h / 2 - 1 + rangeBetweenTiles;
+          y = i * tileSize - h / 2 - 1 + rangeBetweenTiles-1;
           entitySprite.setPosition(widgetWidth + x, y);
         }
         if (dy < 0) {
-          y = (i * tileSize) + tileSize + h / 2 - rangeBetweenTiles;
+          y = (i * tileSize) + tileSize + h / 2 - rangeBetweenTiles+1;
           entitySprite.setPosition(widgetWidth + x, y);
         }
         if (dx > 0) {
@@ -172,49 +184,54 @@ void Entity::interactMap() {
 
 sf::Vector2f Entity::getFacePosition() {
 
-  switch (dir) {
-  case 0: {
-    return sf::Vector2f(entitySprite.getPosition().x - 7,
-                        entitySprite.getPosition().y - 50);
-    break;
-  }
-  case 1: {
-    return sf::Vector2f(entitySprite.getPosition().x +
-                            entitySprite.getGlobalBounds().width + 15,
-                        entitySprite.getPosition().y - 7);
-    break;
-  }
-  case 2: {
-    return sf::Vector2f(entitySprite.getPosition().x + 7,
-                        entitySprite.getPosition().y +
-                            entitySprite.getGlobalBounds().height + 15);
-    break;
-  }
-  case 3: {
-    return sf::Vector2f(entitySprite.getPosition().x - 50,
-                        entitySprite.getPosition().y + 7);
-    break;
-  }
-  }
+	switch (dir) {
+	case 0: {
+		return sf::Vector2f(entitySprite.getPosition().x - 7,
+			entitySprite.getPosition().y - 50);
+		break;
+	}
+	case 1: {
+		return sf::Vector2f(entitySprite.getPosition().x +
+			entitySprite.getGlobalBounds().width + 15,
+			entitySprite.getPosition().y - 7);
+		break;
+	}
+	case 2: {
+		return sf::Vector2f(entitySprite.getPosition().x + 7,
+			entitySprite.getPosition().y +
+			entitySprite.getGlobalBounds().height + 15);
+		break;
+	}
+	case 3: {
+		return sf::Vector2f(entitySprite.getPosition().x - 50,
+			entitySprite.getPosition().y + 7);
+		break;
+	}
+	}
 }
 
 int Entity::getDirection() { return dir; }
 
 sf::FloatRect Entity::getGlobalBounds() {
-  return entitySprite.getGlobalBounds();
+	return entitySprite.getGlobalBounds();
 }
 
-void Entity::draw(sf::RenderWindow &window) { window.draw(entitySprite); }
+void Entity::draw(sf::RenderWindow & window) { window.draw(entitySprite); }
 
 int Entity::getCurrentHealth() { return currentHealth; }
 
-void Entity::setCurrentHealth() { currentHealth--; }
+void Entity::decreaseHealth() { currentHealth -= 1; }
 
-void Entity::resetHealth() { currentHealth = 3; }
+
+void Entity::resetHealth() { currentHealth = maxHealth; }
 Entity::~Entity() {}
 
 Entity::Entity() {}
 
-void Entity::setEnemyTexture(sf::Texture &text) {
-  entitySprite.setTexture(text);
+void Entity::setEnemyTexture(sf::Texture & tex) {
+	entitySprite.setTexture(tex);
+}
+
+void Entity::turnEntity(int side) {
+	
 }

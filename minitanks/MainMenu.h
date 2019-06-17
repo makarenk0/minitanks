@@ -14,9 +14,11 @@ private:
 	sf::Font font;
 	int currentOption = 0;
 	void redraw();
+	int numOptions;
 
 public:
-	MainMenu(sf::Vector2f position,sf::Vector2i size);
+	MainMenu(sf::Vector2f position,sf::Vector2i size, int numOptions);
+	MainMenu(sf::Vector2f position, sf::Vector2i size, int numOptions, bool subMenu);
 	void draw(sf::RenderWindow& window);
 	void nextOption();
 	void previousOption();
