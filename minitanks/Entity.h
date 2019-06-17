@@ -33,4 +33,5 @@ protected:
   sf::Sprite entitySprite;
   TileMap *map;
   void interactMap();
+  void turnEntity(int side);
 };

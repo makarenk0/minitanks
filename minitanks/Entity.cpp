@@ -92,7 +92,6 @@ void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file,
 }
 
 void Entity::update() {
-
   switch (dir) {
   case 0:
     dx = 0;
@@ -111,10 +110,12 @@ void Entity::update() {
     dy = 0;
     break;
   }
+ 
   entitySprite.move(dx, dy);
   x += dx;
   y += dy;
   speed = 0;
+  
   interactMap();
 }
 
@@ -148,15 +149,15 @@ void Entity::interactMap() {
        i <= ((y + (h / 2) - rangeBetweenTiles) / tileSize); i++) {
     for (int j = (x - (w / 2) + rangeBetweenTiles) / tileSize;
          j <= ((x + (w / 2) - rangeBetweenTiles) / tileSize); j++) {
-      if (map->checkCollisionOfPoint(j * tileSize, i * tileSize)) {
+      if (map->checkCollisionOfPoint(j * tileSize, i * tileSize, false)) {
         collisions++;
         if (dy > 0) {
 
-          y = i * tileSize - h / 2 - 1 + rangeBetweenTiles;
+          y = i * tileSize - h / 2 - 1 + rangeBetweenTiles-1;
           entitySprite.setPosition(widgetWidth + x, y);
         }
         if (dy < 0) {
-          y = (i * tileSize) + tileSize + h / 2 - rangeBetweenTiles;
+          y = (i * tileSize) + tileSize + h / 2 - rangeBetweenTiles+1;
           entitySprite.setPosition(widgetWidth + x, y);
         }
         if (dx > 0) {
@@ -226,4 +227,8 @@ Entity::Entity() {}
 
 void Entity::setEnemyTexture(sf::Texture &tex) {
   entitySprite.setTexture(tex);
+}
+
+void Entity::turnEntity(int side) {
+	
 }
