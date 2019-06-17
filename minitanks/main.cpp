@@ -18,7 +18,7 @@
 #include <stdio.h>
 #define FPS 60
 #define mapHeight 768
-#define mapWidth 912
+#define mapWidth 960
 #define widgetWidth 192
 #define FPS 60
 #define cellWidth 48
@@ -35,6 +35,7 @@ int enemyMaxHealth = 2;
 const float enemySpeed = 3.f;
 bool won;
 int frameRandom;
+float mainTime;
 
 std::vector<Bullet> vecBullets;
 std::vector<Bullet> vecBulletBuffer;
@@ -43,7 +44,9 @@ std::vector<Enemy> vecEnemies;
 Widget p1Widget(sf::Vector2f(0, 0), widgetWidth, mapHeight, true);
 Widget p2Widget(sf::Vector2f(mapWidth + widgetWidth, 0), widgetWidth, mapHeight,
                 false);
-MainMenu menu(sf::Vector2f(widgetWidth, 0), sf::Vector2i(mapWidth, mapHeight));
+MainMenu menu(sf::Vector2f(widgetWidth, 0), sf::Vector2i(mapWidth, mapHeight), 2);
+MainMenu subMenu(sf::Vector2f(widgetWidth, 0), sf::Vector2i(mapWidth, mapHeight),1, true);
+
 sf::RenderWindow mWindow(sf::VideoMode(mapWidth + 2 * widgetWidth, mapHeight),
                          "Main window", sf::Style::Close | sf::Style::Titlebar);
 Endscreen win(true, mapHeight, mapWidth);
@@ -64,7 +67,7 @@ void initEnemies();
 int main() {
   srand(time(0));
   initSound();
-  sf::Clock clock1, clock2, clock3;
+  sf::Clock clock1, clock2, clock3, clockMain;
   mWindow.setFramerateLimit(FPS);
 
   if (!bulletTex.loadFromFile("assets\\bullet.png"))
@@ -98,7 +101,7 @@ int main() {
             if (menu.getCurrentOption() == 0) {
               vecBullets.clear();
               if (!map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
-                               widgetWidth, false, false, 1))
+                               widgetWidth, false, 1))
                 break;
               pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
                              playerSize, 0, 2, cellWidth, &map, playerMaxHealth,
@@ -111,7 +114,7 @@ int main() {
             } else if (menu.getCurrentOption() == 1) {
               vecBullets.clear();
               if (!map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
-                               widgetWidth, false, false, 2))
+                               widgetWidth, false, 2))
                 break;
               pl1.initPlayer("Player.png", map.pl1X, map.pl1Y, playerSize,
                              playerSize, 0, 2, cellWidth, &map, playerMaxHealth,
@@ -124,10 +127,8 @@ int main() {
               renderMode = 3;
               ost.stop();
             } else {
-              map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
-                          widgetWidth, false, true, 0);
-              renderMode = 1;
-              ost.stop();
+				
+				renderMode = 5;
             }
           }
           break;
@@ -139,8 +140,14 @@ int main() {
       p2Widget.draw(mWindow);
       menu.draw(mWindow);
       mWindow.display();
-    } else if (renderMode == 2) { // game
+    } else if (renderMode == 2) { // game 1 player
 		frameRandom = rand();
+
+		mainTime = clockMain.getElapsedTime().asMicroseconds(); //for animation
+		mainTime = mainTime / 1000;
+		clockMain.restart();
+		
+
       sf::Event event;
       while (mWindow.pollEvent(event)) {
         switch (event.type) {
@@ -174,14 +181,14 @@ int main() {
       mWindow.clear();
 
       map.setFirstLayer(true); // draw first layer
-      map.draw(mWindow);
+      map.draw(mWindow, mainTime);
 
       pl1.updatePlayer(
           clock1); // player between ground and some(bushes) overlays
       pl1.draw(mWindow);
 
       for (auto &i : vecEnemies) {
-        i.updateEnemy(BehaviourCounter);
+        i.updateEnemy(BehaviourCounter, pl1.x, pl1.y);
         i.draw(mWindow);
       }
 
@@ -210,13 +217,14 @@ int main() {
           shouldDestroy++;
         if (shouldDestroy == 0)
           vecBulletBuffer.push_back(i);
+		vecEnemies = getEnemies();
       }
 
-      vecEnemies = getEnemies();
+      
       vecBullets = vecBulletBuffer;
 
       map.setFirstLayer(false); // draw overlay
-      map.draw(mWindow);
+      map.draw(mWindow, mainTime);
       p1Widget.update(pl1.getAmmoCount(), pl1.getCurrentHealth(), mWindow);
       mWindow.display();
       if (map.fail) {
@@ -241,6 +249,11 @@ int main() {
     } else if (renderMode == 3) { // game(2 players)
 		frameRandom = rand();
       sf::Event event;
+
+	  mainTime = clockMain.getElapsedTime().asMicroseconds(); //for animation
+	  mainTime = mainTime / 1000;
+	  clockMain.restart();
+
       while (mWindow.pollEvent(event)) {
         switch (event.type) {
         case sf::Event::Closed: {
@@ -283,7 +296,7 @@ int main() {
       mWindow.clear();
 
       map.setFirstLayer(true); // draw first layer
-      map.draw(mWindow);
+      map.draw(mWindow, mainTime);
 
       pl1.updatePlayer(
           clock1); // player between ground and some(bushes) overlays
@@ -291,14 +304,16 @@ int main() {
       pl1.draw(mWindow);
       pl2.draw(mWindow);
 
-	  for (auto& i : vecEnemies) {
-		  i.updateEnemy(BehaviourCounter);
-		  i.draw(mWindow);
-	  }
+      for (auto &i : vecEnemies) {
+        i.updateEnemy(mainTime, pl1.x, pl1.y);
+        i.draw(mWindow);
+		
+      }
 
       if (BehaviourCounter % (100 / difficulty) == 0) {
+		  BehaviourCounter = 0;
         for (auto &i : vecEnemies) {
-          if (frameRandom % 2) {
+          if (rand() % 2) {
             Bullet newBullet(i.getFacePosition(), i.getDirection(), bulletSpeed,
                              0);
             newBullet.setTexture(bulletTex);
@@ -307,16 +322,18 @@ int main() {
         }
       }
 
-
+	  
       // TUT ESHE NORMALNO, PERVAYA ITERACIYA PASHET
       vecBulletBuffer.clear();
       for (auto &i : vecBullets) {
+		 
         i.updateBullet();
         i.draw(mWindow);
 
         int shouldDestroy = 0;
-        if (checkCollisionTiles(map, i))
-          shouldDestroy++;
+       
+		if (checkCollisionTiles(map, i))
+			shouldDestroy++;
         if (checkCollisionEnemies(i, vecEnemies, hit, p1Widget, p2Widget))
           shouldDestroy++;
         if (checkCollisionPlayer(i, pl1, hit))
@@ -325,13 +342,14 @@ int main() {
           shouldDestroy++;
         if (shouldDestroy == 0)
           vecBulletBuffer.push_back(i);
-      }
-
-      vecEnemies = getEnemies();
-      vecBullets = vecBulletBuffer;
+		vecEnemies = getEnemies();
+		
+      } 
+	  vecBullets = vecBulletBuffer;
+     
 
       map.setFirstLayer(false); // draw first layer
-      map.draw(mWindow);
+      map.draw(mWindow, mainTime);
 	  p1Widget.update(pl1.getAmmoCount(), pl1.getCurrentHealth(), mWindow);
 	  p2Widget.update(pl2.getAmmoCount(), pl2.getCurrentHealth(), mWindow);
       mWindow.display();
@@ -356,31 +374,89 @@ int main() {
 	  }
 
       BehaviourCounter++;
-    } else if (renderMode == 1) { // editor is active
-      map.editMap(mWindow);
-      if (sf::Keyboard::isKeyPressed(
-              sf::Keyboard::Escape)) { // this event is when user press "exit"
-                                       // from
-        renderMode = 0;
-        map.setExitEditMode(true);
-        map.editMap(mWindow);
-      }
-      sf::Event event;
-      while (mWindow.pollEvent(event)) {
-        switch (event.type) {
-        case sf::Event::Closed: {
-          mWindow.close();
-          mWindow.~RenderWindow();
-          return 0;
-        }
-        }
-      }
-      mWindow.clear();
-      map.setFirstLayer(true); // draw first layer
-      map.draw(mWindow);
-      map.setFirstLayer(false); // draw overlay
-      map.draw(mWindow);
-      mWindow.display();
+	}
+	else if (renderMode == 1) { // editor is active
+		map.editMap(mWindow);
+
+		mainTime = clockMain.getElapsedTime().asMicroseconds(); //for animation
+		mainTime = mainTime / 1000;
+		clockMain.restart();
+
+		if (sf::Keyboard::isKeyPressed(
+			sf::Keyboard::Escape)) { // this event is when user press "exit"
+									 // from
+			renderMode = 0;
+			map.setExitEditMode(true);
+			map.editMap(mWindow);
+		}
+		sf::Event event;
+		while (mWindow.pollEvent(event)) {
+			switch (event.type) {
+			case sf::Event::Closed: {
+				mWindow.close();
+				mWindow.~RenderWindow();
+				return 0;
+			}
+			}
+		}
+		mWindow.clear();
+		map.setFirstLayer(true); // draw first layer
+		map.draw(mWindow, mainTime);
+		map.setFirstLayer(false); // draw overlay
+		map.draw(mWindow, mainTime);
+		mWindow.display();
+	}
+	else if(renderMode == 5){
+	sf::Event event;
+	while (mWindow.pollEvent(event)) {
+		switch (event.type) {
+		case sf::Event::Closed: {
+			mWindow.close();
+			mWindow.~RenderWindow();
+			return 0;
+		}
+		case sf::Event::KeyPressed: {
+			if (event.key.code == sf::Keyboard::Equal)
+				ost.setVolume(ost.getVolume() + 10.f);
+			else if (event.key.code == sf::Keyboard::Escape)
+				renderMode = 0;
+			else if (event.key.code == sf::Keyboard::Hyphen)
+				ost.setVolume(ost.getVolume() - 10.f);
+			else if (event.key.code == sf::Keyboard::Up)
+				subMenu.previousOption();
+			else if (event.key.code == sf::Keyboard::Down)
+				subMenu.nextOption();
+			else if (event.key.code == sf::Keyboard::M) {
+				ost.pause();
+			}
+			else if (event.key.code == sf::Keyboard::Return) {
+				if (subMenu.getCurrentOption() == 0) {
+					map.setNemMap(true);
+					map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
+						widgetWidth, true, 0);
+					renderMode = 1;
+					ost.stop();
+				}
+				else if (subMenu.getCurrentOption() == 1) {
+					map.setNemMap(false);
+					map.initMap("empty_map", cellWidth, mapWidth, mapHeight,
+						widgetWidth, true, 0);
+					renderMode = 1;
+					ost.stop();
+				}
+				else {
+					
+				}
+			}
+			break;
+		}
+		}
+	}
+	mWindow.clear();
+	p1Widget.draw(mWindow);
+	p2Widget.draw(mWindow);
+	subMenu.draw(mWindow);
+	mWindow.display();
     } else if (renderMode == 4) { // end screen win
       mWindow.clear();
       if (won)
@@ -412,17 +488,17 @@ int main() {
 
 void setRenderMode(int newMode) { renderMode = newMode; }
 
-void initSound() {
-  hitBuffer.loadFromFile("assets\\broke_armor.wav");
+void initSound() { 
+ hitBuffer.loadFromFile("assets\\broke_armor.wav");
   hit.setBuffer(hitBuffer);
   hit.setVolume(70.f);
-  buffer1.loadFromFile("assets\\panzer.wav");
+  buffer1.loadFromFile("assets\\mainOST.ogg");
   buffer2.loadFromFile("assets\\flaunch.wav");
   shoot.setBuffer(buffer2);
   ost.setBuffer(buffer1);
   ost.setLoop(true);
   ost.setVolume(70.f);
-  ost.setPlayingOffset(sf::Time(sf::seconds(7.f)));
+
 }
 
 void pause() {
@@ -440,7 +516,7 @@ void initEnemies() {
 	  numerizer++;
     Enemy newEnemy;
 	newEnemy.initEnemy("ENEMY", i.x, i.y, playerSize, playerSize,
-		numerizer % 4, enemySpeed, cellWidth, &map, enemyMaxHealth);
+		0, enemySpeed, cellWidth, &map, enemyMaxHealth);
     newEnemy.setEnemyTexture(enemyTex);
     vecEnemies.push_back(newEnemy);
   }

@@ -93,91 +93,93 @@ void Entity::initEntity(int x, int y, int w, int h, int dir, std::string file,
 
 void Entity::update() {
 
-	switch (dir) {
-	case 0:
-		dx = 0;
-		dy = -speed;
-		break;
-	case 1:
-		dx = speed;
-		dy = 0;
-		break;
-	case 2:
-		dx = 0;
-		dy = speed;
-		break;
-	case 3:
-		dx = -speed;
-		dy = 0;
-		break;
-	}
-	speed = 0;
-	entitySprite.move(dx, dy);
-	x += dx;
-	y += dy;
-	interactMap();
+  switch (dir) {
+  case 0:
+    dx = 0;
+    dy = -speed;
+    break;
+  case 1:
+    dx = speed;
+    dy = 0;
+    break;
+  case 2:
+    dx = 0;
+    dy = speed;
+    break;
+  case 3:
+    dx = -speed;
+    dy = 0;
+    break;
+  }
+ 
+  entitySprite.move(dx, dy);
+  x += dx;
+  y += dy;
+  speed = 0;
+  
+  interactMap();
 }
 
 void Entity::setSpeed(int speed) { this->speed = speed; }
 
 void Entity::interactMap() {
-	// map bounds
 
-	if (y < (h / 2)) {
-		y = (h / 2);
-		entitySprite.setPosition(widgetWidth + x, y);
-		collisions++;
-	}
-	if (y > map->height - (h / 2)) {
-		y = map->height - (h / 2);
-		entitySprite.setPosition(widgetWidth + x, y);
-		collisions++;
-	}
-	if (x < (w / 2)) {
-		x = w / 2;
-		entitySprite.setPosition(widgetWidth + x, y);
-		collisions++;
-	}
-	if (x > map->width - (w / 2)) {
-		x = map->width - (w / 2);
-		entitySprite.setPosition(widgetWidth + x, y);
-		collisions++;
-	}
-	// tile bounds
-	for (int i = (y - (h / 2) + rangeBetweenTiles) / tileSize;
-		i <= ((y + (h / 2) - rangeBetweenTiles) / tileSize); i++) {
-		for (int j = (x - (w / 2) + rangeBetweenTiles) / tileSize;
-			j <= ((x + (w / 2) - rangeBetweenTiles) / tileSize); j++) {
-			if (map->checkCollisionOfPoint(j * tileSize, i * tileSize, false)) {
-				collisions++;
-				if (dy > 0) {
+  // map bounds
 
-					y = i * tileSize - h / 2 - 1 + rangeBetweenTiles;
-					entitySprite.setPosition(widgetWidth + x, y);
-				}
-				if (dy < 0) {
-					y = (i * tileSize) + tileSize + h / 2 - rangeBetweenTiles;
-					entitySprite.setPosition(widgetWidth + x, y);
-				}
-				if (dx > 0) {
-					x = j * tileSize - w / 2 - 1 + rangeBetweenTiles;
-					entitySprite.setPosition(widgetWidth + x, y);
-				}
-				if (dx < 0) {
-					x = j * tileSize + tileSize + w / 2 - rangeBetweenTiles;
-					entitySprite.setPosition(widgetWidth + x, y);
-				}
-			}
-		}
-	}
-	if (collisions == 0) {
-		frontBlocked = false;
+  if (y < (h / 2)) {
+    y = (h / 2);
+    entitySprite.setPosition(widgetWidth + x, y);
+    collisions++;
+  }
+  if (y > map->height - (h / 2)) {
+    y = map->height - (h / 2);
+    entitySprite.setPosition(widgetWidth + x, y);
+    collisions++;
+  }
+  if (x < (w / 2)) {
+    x = w / 2;
+    entitySprite.setPosition(widgetWidth + x, y);
+    collisions++;
+  }
+  if (x > map->width - (w / 2)) {
+    x = map->width - (w / 2);
+    entitySprite.setPosition(widgetWidth + x, y);
+    collisions++;
+  }
+  // tile bounds
+  for (int i = (y - (h / 2) + rangeBetweenTiles) / tileSize;
+       i <= ((y + (h / 2) - rangeBetweenTiles) / tileSize); i++) {
+    for (int j = (x - (w / 2) + rangeBetweenTiles) / tileSize;
+         j <= ((x + (w / 2) - rangeBetweenTiles) / tileSize); j++) {
+      if (map->checkCollisionOfPoint(j * tileSize, i * tileSize, false)) {
+        collisions++;
+        if (dy > 0) {
 
-	}
-	else {
-		frontBlocked = true;
-		collisions = 0;
-	}
+          y = i * tileSize - h / 2 - 1 + rangeBetweenTiles-1;
+          entitySprite.setPosition(widgetWidth + x, y);
+        }
+        if (dy < 0) {
+          y = (i * tileSize) + tileSize + h / 2 - rangeBetweenTiles+1;
+          entitySprite.setPosition(widgetWidth + x, y);
+        }
+        if (dx > 0) {
+          x = j * tileSize - w / 2 - 1 + rangeBetweenTiles;
+          entitySprite.setPosition(widgetWidth + x, y);
+        }
+        if (dx < 0) {
+          x = j * tileSize + tileSize + w / 2 - rangeBetweenTiles;
+          entitySprite.setPosition(widgetWidth + x, y);
+        }
+      }
+    }
+  }
+  if (collisions == 0) {
+    frontBlocked = false;
+
+  } else {
+    frontBlocked = true;
+    collisions = 0;
+  }
 }
 
 sf::Vector2f Entity::getFacePosition() {
@@ -227,4 +229,8 @@ Entity::Entity() {}
 
 void Entity::setEnemyTexture(sf::Texture & tex) {
 	entitySprite.setTexture(tex);
+}
+
+void Entity::turnEntity(int side) {
+	
 }

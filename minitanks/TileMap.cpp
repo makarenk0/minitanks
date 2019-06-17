@@ -2,15 +2,15 @@
 
 TileMap::TileMap() { playersNum = 0; }
 TileMap::TileMap(std::string FILE, int tileSize, int width, int height,
-	int widgetWidth, bool randomMap, bool editMode,
+	int widgetWidth, bool editMode,
 	int playersNum) {
 
-	initMap(FILE, tileSize, width, height, widgetWidth, randomMap, editMode,
+	initMap(FILE, tileSize, width, height, widgetWidth, editMode,
 		playersNum);
 }
 
 bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
-	int widgetWidth, bool randomMap, bool editMode,
+	int widgetWidth, bool editMode,
 	int playersNum) {
 	this->widgetWidth = widgetWidth;
 	this->playersNum = playersNum;
@@ -23,36 +23,35 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 	toolsWidth = width;
 	enemiesCords.clear();
 	canvas.create(width, height);
+	canvas.clear();
 	canvas.display();
 
 	canvasOverlay.create(width, height);
+	canvasOverlay.clear(sf::Color(255, 255, 255, 0));
 	canvasOverlay.display();
 
+
+	enemiesCords.clear();
+	tiles.clear();
+	overlay.clear();
+	fromFile = "";
 	if (editMode) {
+
 		exitEditMode = false;
 		openEditWindow();
-		generateMapEmpty();
-		file = std::ifstream("maps/" + fileName + ".bcm");
-		while (true) {
-			if (buf == "end") {
-				file.close();
-				break;
-			}
-			std::getline(file, buf);
-			fromFile.append(buf);
-		}
-	}
-	else {
-		if (randomMap) {
-			generateMapRandom();
-			file = std::ifstream("maps/" + fileName + ".txt");
+		enemyBase.setPosition((width / 2) + widgetWidth, 0);
+		allieBase.setPosition((width / 2) + widgetWidth, height - tileSize);
+		if (newMap) {
+
+			generateMapEmpty();
+			file = std::ifstream("maps/empty_map.bcm");
 			while (true) {
 				if (buf == "end") {
 					file.close();
 					break;
 				}
 				std::getline(file, buf);
-				fromFile += buf;
+				fromFile.append(buf);
 			}
 		}
 		else {
@@ -62,18 +61,31 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 			}
 		}
 	}
+	else {
+
+
+
+		fromFile = openFile();
+		if (fromFile == "NULL") {
+			return false;
+		}
+
+	}
 
 	tileTexture.loadFromFile("assets\\tiles.png");
 	overlayTexture.loadFromFile("assets\\overlays.png");
 
+	solidBool.clear();
 	solidBool = std::vector<std::vector<bool>>(
 		height / tileSize,
 		std::vector<bool>(width / tileSize, true)); // init vector with bools
+	currentHealth.clear();
 	currentHealth = std::vector<std::vector<int>>(
 		height / tileSize,
 		std::vector<int>(
 			width / tileSize,
 			0)); // init vector with currentHealth(by default health = 0)
+
 
 	tiles.setPrimitiveType(sf::Quads);
 	tiles.resize(width / tileSize * height / tileSize *
@@ -125,6 +137,7 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 
 		}
 		else if (buf.substr(0, 9) == "enemyBase") {
+
 			buf = buf.substr(10);
 			int xB = tileSize * std::stoi(readValue(buf));
 			buf = buf.substr(last + 1);
@@ -245,10 +258,52 @@ bool TileMap::checkCollisionOfPoint(int xPoint, int yPoint, bool bullet) {
 	return false;
 }
 
-void TileMap::draw(sf::RenderWindow & window) { // override function of drawing
+void TileMap::draw(sf::RenderWindow & window, float time) { // override function of drawing
+	currentFrame += 0.005 * time;
+	if (currentFrame > 3) {
+		currentFrame = 0;
+	}
 	if (firstLayer) {
+		if (floor(currentFrame) == 0) {
+			for (int i = 0; i < tiles.getVertexCount() / 4; i++) {
+				sf::Vertex* quadTiles = &tiles[i * 4];
+				if (quadTiles[1].texCoords.x == 5 * tileSize) {
+					quadTiles[0].texCoords = sf::Vector2f(4 * tileSize, 0);
+					quadTiles[1].texCoords = sf::Vector2f(5 * tileSize, 0);
+					quadTiles[2].texCoords = sf::Vector2f(5 * tileSize, tileSize);
+					quadTiles[3].texCoords = sf::Vector2f(4 * tileSize, tileSize);
+				}
+			}
+			canvas.draw(tiles, &tileTexture);
+		}
+		else if (floor(currentFrame) == 1) {
+			for (int i = 0; i < tiles.getVertexCount() / 4; i++) {
+				sf::Vertex* quadTiles = &tiles[i * 4];
+				if (quadTiles[1].texCoords.x == 5 * tileSize) {
+					quadTiles[0].texCoords = sf::Vector2f(4 * tileSize, tileSize);
+					quadTiles[1].texCoords = sf::Vector2f(5 * tileSize, tileSize);
+					quadTiles[2].texCoords = sf::Vector2f(5 * tileSize, 2 * tileSize);
+					quadTiles[3].texCoords = sf::Vector2f(4 * tileSize, 2 * tileSize);
+				}
+			}
+			canvas.draw(tiles, &tileTexture);
+		}
+		else {
+			for (int i = 0; i < tiles.getVertexCount() / 4; i++) {
+				sf::Vertex* quadTiles = &tiles[i * 4];
+				if (quadTiles[1].texCoords.x == 5 * tileSize) {
+					quadTiles[0].texCoords = sf::Vector2f(4 * tileSize, 2 * tileSize);
+					quadTiles[1].texCoords = sf::Vector2f(5 * tileSize, 2 * tileSize);
+					quadTiles[2].texCoords = sf::Vector2f(5 * tileSize, 3 * tileSize);
+					quadTiles[3].texCoords = sf::Vector2f(4 * tileSize, 3 * tileSize);
+				}
+			}
+			canvas.draw(tiles, &tileTexture);
+		}
 		mainSprite.setTexture(canvas.getTexture());
 		window.draw(mainSprite);
+
+
 		if (allieBasePresent) {
 			window.draw(allieBase);
 		}
@@ -343,12 +398,19 @@ void TileMap::generateMapRandom() {
 }
 
 void TileMap::generateMapEmpty() {
+
 	std::ofstream customMap("maps/empty_map.bcm");
+	fileName = "empty_map";
 	for (int i = 0; i < (width / tileSize) * (height / tileSize); i++) {
 		customMap << "(" << i % (width / tileSize) << ","
 			<< std::floor(i / (width / tileSize)) << "," << 0 << "," << 4
 			<< "," << false << ",)" << std::endl;
 	}
+
+	customMap << "enemyBase" << "(" << (width / 2) + widgetWidth << ","
+		<< "0" << ",)" << std::endl;
+	customMap << "allieBase" << "(" << (width / 2) + widgetWidth << ","
+		<< height - tileSize << ",)" << std::endl;
 	customMap << "end";
 	customMap.close();
 }
@@ -488,12 +550,6 @@ void TileMap::editMap(sf::RenderWindow & mWindow) {
 			toFile.append(std::to_string(int((enemiesCords[i].y) / tileSize)));
 			toFile.append(",)\n");
 		}
-		toFile.append("p2(");
-		toFile.append(std::to_string(
-			int((mapPl2.getGlobalBounds().left - widgetWidth) / tileSize)));
-		toFile.append(",");
-		toFile.append(std::to_string(int(mapPl2.getGlobalBounds().top / tileSize)));
-		toFile.append(",)\n");
 
 		toFile.append("allieBase(");
 		toFile.append(std::to_string(
@@ -872,3 +928,8 @@ bool TileMap::checkTile(sf::FloatRect bullet) {
 }
 
 std::vector<sf::Vector2f>& TileMap::getEnemiesCords() { return enemiesCords; }
+
+void TileMap::setNemMap(bool set)
+{
+	newMap = set;
+}

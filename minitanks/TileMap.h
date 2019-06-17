@@ -10,13 +10,14 @@ health meanings:
 health [0, 3] is different types of brick cells, when they are damaged
 health = 4 means that this cell could not be damaged
 health = 5 special condition, means that over the ground cell it is a bush
+health = 6 special condition, means that this cell is filled with water
 */
 
 class TileMap {
 public:
 	TileMap();
 	TileMap(std::string FILE, int tileSize, int width, int height,
-		int widgetWidth, bool randomMap, bool editMode, int playersNum);
+		int widgetWidth, bool editMode, int playersNum);
 	void changeCurrentHealth(int xPoint, int yPoint, int delta);
 	bool checkCollisionOfPoint(int xPoint, int yPoint, bool bullet);
 	bool getEditMode();
@@ -24,8 +25,8 @@ public:
 	void editMap(sf::RenderWindow& mWindow);
 	void setExitEditMode(bool ex);
 	bool initMap(std::string FILE, int tileSize, int width, int height,
-		int widgetWidth, bool randomMap, bool editMode, int plauersNum);
-	void draw(sf::RenderWindow& window);
+		int widgetWidth, bool editMode, int plauersNum);
+	void draw(sf::RenderWindow& window, float time);
 	void setFirstLayer(bool set);
 	int widgetWidth;
 	int pl1X, pl1Y, pl2X, pl2Y;
@@ -34,8 +35,12 @@ public:
 	sf::Sprite allieBase, enemyBase;
 	bool win = false, fail = false;
 	std::vector<sf::Vector2f>& getEnemiesCords();
+	bool newMap = true;
+	void setNemMap(bool set);
 
 private:
+	float currentFrame = 0;
+	bool animation = true;
 	std::vector<sf::Vector2f> enemiesCords;
 	std::vector<sf::Sprite> enemiesEditMap;
 	int counterE = 0;
