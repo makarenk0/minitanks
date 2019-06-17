@@ -416,12 +416,13 @@ void initSound() {
   hitBuffer.loadFromFile("assets\\broke_armor.wav");
   hit.setBuffer(hitBuffer);
   hit.setVolume(70.f);
-  buffer1.loadFromFile("assets\\mainOST.ogg");
+  buffer1.loadFromFile("assets\\panzer.wav");
   buffer2.loadFromFile("assets\\flaunch.wav");
   shoot.setBuffer(buffer2);
   ost.setBuffer(buffer1);
   ost.setLoop(true);
   ost.setVolume(70.f);
+  ost.setPlayingOffset(sf::Time(sf::seconds(7.f)));
 }
 
 void pause() {
