@@ -1,9 +1,7 @@
 #include "CollisionChecker.h"
-
 std::vector<Enemy> vecEnemiesBuffer;
 int accumulator;
 const sf::Vector2f respawnPoint = sf::Vector2f(336.f, 672.f);
-
 
 bool checkCollisionTiles(TileMap &map, Bullet bullet) {
     return map.checkTile(bullet.getGlobalBounds());
@@ -48,6 +46,7 @@ bool checkCollisionPlayer(Bullet bullet, Player &player, sf::Sound &hit) {
   if (bullet.getGlobalBounds().intersects(player.getGlobalBounds())) {
     hit.play();
 	player.decreaseHealth();
+	
     if (player.getCurrentHealth() <= 0) {
 		player.setPosition(respawnPoint);
 	  player.resetHealth();

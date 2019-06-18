@@ -8,6 +8,7 @@
 #include "TileMap.h"
 #include "Widget.h"
 #include "toolbox.h"
+#include "Effects.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -56,6 +57,7 @@ Endscreen lose(false, mapHeight, mapWidth);
 TileMap map;
 Player pl1;
 Player pl2;
+Effects newEffect;
 
 sf::SoundBuffer buffer1, buffer2;
 sf::Sound ost, shoot;
@@ -69,6 +71,7 @@ void initEnemies();
 int main() {
   srand(time(0));
   initSound();
+  newEffect.initEffects(mWindow);
   sf::Clock clock1, clock2, clock3, clockMain;
   mWindow.setFramerateLimit(FPS);
 
@@ -181,20 +184,15 @@ int main() {
       }
 
       mWindow.clear();
-
       map.setFirstLayer(true); // draw first layer
       map.draw(mWindow, mainTime);
-
       pl1.updatePlayer(
           clock1); // player between ground and some(bushes) overlays
       pl1.draw(mWindow);
-
       for (auto &i : vecEnemies) {
         i.updateEnemy(BehaviourCounter, pl1.x, pl1.y);
         i.draw(mWindow);
       }
-
-
       if (BehaviourCounter % (100 / difficulty) == 0) {
         for (auto &i : vecEnemies) {
           if (rand() % 2) {
@@ -205,7 +203,6 @@ int main() {
           }
         }
       }
-      // TUT ESHE NORMALNO, PERVAYA ITERACIYA PASHET
       vecBulletBuffer.clear();
       for (auto &i : vecBullets) {
         i.updateBullet();
@@ -216,23 +213,24 @@ int main() {
           shouldDestroy++;
         if (checkCollisionEnemies(i, vecEnemies, hit, p1Widget, p2Widget))
           shouldDestroy++;
-        if (checkCollisionPlayer(i, pl1, hit))
-          shouldDestroy++;
+		if (checkCollisionPlayer(i, pl1, hit)) {
+			shouldDestroy++;
+			newEffect.shakeScreen(10);
+		}
         if (shouldDestroy == 0)
           vecBulletBuffer.push_back(i);
 		vecEnemies = getEnemies();
 
       }
-	//  std::cout << m << std::endl;
-
-      
       vecBullets = vecBulletBuffer;
 
       map.setFirstLayer(false); // draw overlay
       map.draw(mWindow, mainTime);
       p1Widget.update(pl1.getAmmoCount(), pl1.getCurrentHealth(), mWindow);
+	  newEffect.updateEffects(mWindow);
       mWindow.display();
       if (map.fail) {
+		  mWindow.setView(mWindow.getDefaultView());
         won = false;
         vecBullets.clear();
         map.fail = false;
@@ -241,6 +239,7 @@ int main() {
         renderMode = 4;
         difficulty = 1;
       } else if (map.win) {
+		  mWindow.setView(mWindow.getDefaultView());
         won = true;
         vecBullets.clear();
         map.win = false;
@@ -341,25 +340,29 @@ int main() {
 			shouldDestroy++;
         if (checkCollisionEnemies(i, vecEnemies, hit, p1Widget, p2Widget))
           shouldDestroy++;
-        if (checkCollisionPlayer(i, pl1, hit))
-          shouldDestroy++;
-        if (checkCollisionPlayer(i, pl2, hit))
-          shouldDestroy++;
+		if (checkCollisionPlayer(i, pl1, hit)) {
+			newEffect.shakeScreen(60);
+			shouldDestroy++;
+		}
+		if (checkCollisionPlayer(i, pl2, hit)) {
+			newEffect.shakeScreen(60);
+			shouldDestroy++;
+		}
         if (shouldDestroy == 0)
           vecBulletBuffer.push_back(i);
 		vecEnemies = getEnemies();
 		
       } 
 	  vecBullets = vecBulletBuffer;
-     
-
       map.setFirstLayer(false); // draw first layer
       map.draw(mWindow, mainTime);
 	  p1Widget.update(pl1.getAmmoCount(), pl1.getCurrentHealth(), mWindow);
 	  p2Widget.update(pl2.getAmmoCount(), pl2.getCurrentHealth(), mWindow);
+	  newEffect.updateEffects(mWindow);
       mWindow.display();
 
 	  if (map.fail) {
+		  mWindow.setView(mWindow.getDefaultView());
 		  won = false;
 		  vecBullets.clear();
 		  map.fail = false;
@@ -369,6 +372,7 @@ int main() {
 		  difficulty = 1;
 	  }
 	  else if (map.win) {
+		  mWindow.setView(mWindow.getDefaultView());
 		  won = true;
 		  vecBullets.clear();
 		  map.win = false;
