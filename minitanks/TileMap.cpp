@@ -19,7 +19,7 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 	this->height = height;
 	this->fileName = FILE;
 	this->editMode = editMode;
-	counterE = 0;
+	counterE = 1;
 	toolsWidth = width;
 	enemiesCords.clear();
 	canvas.create(width, height);
@@ -34,6 +34,9 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 	enemiesCords.clear();
 	tiles.clear();
 	overlay.clear();
+
+	enemiesEditMap.clear();
+
 	fromFile = "";
 	if (editMode) {
 
@@ -109,17 +112,17 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 
 		if (buf.substr(0, 2) == "p1") {
 			buf = buf.substr(3);
-			pl1X = tileSize * std::stoi(readValue(buf));
+			pl1X = tileSize * std::stoi(readValue(buf)) + tileSize / 2;
 			buf = buf.substr(last + 1);
-			pl1Y = tileSize * std::stoi(readValue(buf));
+			pl1Y = tileSize * std::stoi(readValue(buf)) + tileSize / 2;
 			continue;
 
 		}
 		else if (buf.substr(0, 2) == "p2") {
 			buf = buf.substr(3);
-			pl2X = tileSize * std::stoi(readValue(buf));
+			pl2X = tileSize * std::stoi(readValue(buf))+ tileSize/2;
 			buf = buf.substr(last + 1);
-			pl2Y = tileSize * std::stoi(readValue(buf));
+			pl2Y = tileSize * std::stoi(readValue(buf)) + tileSize / 2;
 			continue;
 
 		}
@@ -150,14 +153,22 @@ bool TileMap::initMap(std::string FILE, int tileSize, int width, int height,
 
 		}
 		else if (buf.substr(0, 5) == "enemy") {
-			enemiesCords.resize(counterE + 1);
+			enemiesCords.resize(counterE);
 			buf = buf.substr(6);
 			int enemyX = tileSize * std::stoi(readValue(buf));
 			buf = buf.substr(last + 1);
 			int enemyY = tileSize * std::stoi(readValue(buf));
-			enemiesCords[counterE].x = enemyX;
-			enemiesCords[counterE].y = enemyY;
-
+			enemiesCords[counterE-1].x = enemyX+tileSize/2;
+			enemiesCords[counterE-1].y = enemyY + tileSize / 2;
+			if (editMode) {
+				sf::Sprite enemies;
+				enemy.loadFromFile("assets/enemy.png");
+				enemies.setTexture(enemy);
+				enemies.setPosition(enemyX+widgetWidth, enemyY);
+				enemiesEditMap.push_back(enemies);
+			}
+			
+		
 			counterE++;
 
 			// std::cout << enemyX << "," << enemyY << std::endl;
@@ -421,8 +432,6 @@ void TileMap::openEditWindow() {
 	// init graphic part of menu
 	toolsMenu.resize(amountOfTools * 4);
 	overlaysMenu.resize(amountOfTools * 4);
-	counterE = 0;
-	enemiesCords.resize(1);
 	toolsMenu.setPrimitiveType(sf::Quads);
 	overlaysMenu.setPrimitiveType(sf::Quads);
 	int indent = 20; // 20 px between buttons
@@ -542,12 +551,12 @@ void TileMap::editMap(sf::RenderWindow & mWindow) {
 		toFile.append(std::to_string(int(mapPl2.getGlobalBounds().top / tileSize)));
 		toFile.append(",)\n");
 
-		for (int i = 0; i < counterE; i++) {
+		for (int i = 0; i < counterE-1; i++) {
 			toFile.append("enemy(");
 			toFile.append(
-				std::to_string(int((enemiesCords[i].x - widgetWidth) / tileSize)));
+				std::to_string(int((enemiesCords[i].x - tileSize / 2) / tileSize)));
 			toFile.append(",");
-			toFile.append(std::to_string(int((enemiesCords[i].y) / tileSize)));
+			toFile.append(std::to_string(int((enemiesCords[i].y - tileSize / 2) / tileSize)));
 			toFile.append(",)\n");
 		}
 
@@ -617,10 +626,13 @@ void TileMap::editMap(sf::RenderWindow & mWindow) {
 				enemySprEdit.setPosition(previousX * tileSize + widgetWidth,
 					previousY * tileSize);
 				enemiesEditMap.push_back(sf::Sprite(enemySprEdit));
-				enemiesCords[counterE].x = previousX * tileSize + widgetWidth;
-				enemiesCords[counterE].y = previousY * tileSize;
+
+				
+				enemiesCords.resize(counterE);
+				enemiesCords[counterE-1].x = previousX * tileSize + tileSize / 2;
+				enemiesCords[counterE-1].y = previousY * tileSize + tileSize / 2;
 				counterE++;
-				enemiesCords.resize(counterE + 1);
+				
 			}
 		}
 		else {
@@ -921,10 +933,11 @@ bool TileMap::checkTile(sf::FloatRect bullet) {
 					return true;
 				}
 			}
-		
-	}
 
-	return false;
+		}
+
+		return false;
+	}
 }
 
 std::vector<sf::Vector2f>& TileMap::getEnemiesCords() { return enemiesCords; }

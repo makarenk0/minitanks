@@ -33,7 +33,7 @@ long unsigned int BehaviourCounter = 0;
 int difficulty = 1;
 const int playerMaxHealth = 3;
 int enemyMaxHealth = 2;
-const float enemySpeed = 3.f;
+const float enemySpeed = 2.f;
 bool won;
 int frameRandom;
 float mainTime;
@@ -520,6 +520,7 @@ void initEnemies() {
   for (auto &i : map.getEnemiesCords()) {
 	  numerizer++;
     Enemy newEnemy;
+	std::cout << i.x << std::endl;
 	newEnemy.initEnemy("ENEMY", i.x, i.y, playerSize, playerSize,
 		0, enemySpeed, cellWidth, &map, enemyMaxHealth);
     newEnemy.setEnemyTexture(enemyTex);

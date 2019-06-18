@@ -9,6 +9,7 @@ private:
   float enemySpeed;
   int direction;
   float frame=0;
+  int randomizer;
 public:
   Enemy();
   ~Enemy();
