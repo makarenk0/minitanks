@@ -215,7 +215,7 @@ int main() {
           shouldDestroy++;
 		if (checkCollisionPlayer(i, pl1, hit)) {
 			shouldDestroy++;
-			newEffect.shakeScreen(10);
+			newEffect.shakeScreen(20);
 		}
         if (shouldDestroy == 0)
           vecBulletBuffer.push_back(i);

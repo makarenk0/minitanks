@@ -23,10 +23,12 @@ void Effects::shakeScreen(uint16_t _frames) {
 }
 void Effects::updateShake(sf::RenderWindow& target) {
 	if (currentFrame <= maxFrame) {
-		this->_deviationX = rand() % (2 * DEVIATION_MAX) - DEVIATION_MAX;
-		this->_deviationY = rand() % (2 * DEVIATION_MAX) - DEVIATION_MAX;
-		newView.setCenter(target.getDefaultView().getCenter().x + _deviationX, target.getDefaultView().getCenter().y + _deviationY);
-		newView.setRotation(_deviationX % 30 );
+		if (currentFrame % 2 == 0) {
+			this->_deviationX = rand() % (2 * DEVIATION_MAX) - DEVIATION_MAX;
+			this->_deviationY = rand() % (2 * DEVIATION_MAX) - DEVIATION_MAX;
+			newView.setCenter(target.getDefaultView().getCenter().x + _deviationX, target.getDefaultView().getCenter().y + _deviationY);
+			newView.setRotation(_deviationX % 20);
+		}
 		target.setView(newView);
 	}
 	else {
